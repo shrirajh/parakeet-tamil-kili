@@ -1,6 +1,7 @@
 # parakeet-tamil-kili · தமிழ் கிளி
 
-Speech recognition for Tamil, English, and the two mixed together, small enough to run on a CPU.
+The leading open speech recognition model for conversational Tamil, including Tamil mixed with English. It is
+fast (about 28× real time on 8 CPU threads) and competitive on read Tamil.
 A 0.6B FastConformer-TDT fine-tuned from [NVIDIA parakeet-tdt-0.6b-v3](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3).
 
 - **Write-up** (interactive, English and Tamil): https://shrirajh.github.io/parakeet-tamil-kili/
@@ -10,28 +11,55 @@ A 0.6B FastConformer-TDT fine-tuned from [NVIDIA parakeet-tdt-0.6b-v3](https://h
 
 ## Results
 
-Fold WER, %; lower is better. 5 epochs of run 10, greedy decoding; "+ LM" is the gated beam-4 decode with the
-Sangraha 5-gram. Up to 2,000 clips per test set (all of FLEURS: 580, MILE: 1,333). PER and EER for every set are in
-the write-up.
+Tamil: PER, sounds misheard (%). English: WER (%). Lower is better; best per row in bold. 5 epochs of run 10, greedy
+decoding; "+ LM" is the gated beam-4 decode with the Sangraha 5-gram. Up to 2,000 clips per test set (all of FLEURS:
+580, MILE: 1,333), the same clips and the same scorer for every model.
 
-| test set | kind | **[kili](https://huggingface.co/shrirajh/parakeet-tamil-kili)** | [kili + LM](https://huggingface.co/shrirajh/parakeet-tamil-kili/tree/main/lm) | [indic-transcribe-core](https://huggingface.co/bodhan-ai/indic-transcribe-core) | [IndicWhisper](https://github.com/AI4Bharat/vistaar) | [original parakeet v3](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3) |
-|---|---|---|---|---|---|---|
-| IndicVoices | conversational | **34.05** | 33.53 | 49.28 | 68.84 | 103.92 |
-| Kathbath | read | 29.15 | 25.38 | 20.80 | 21.77 | 117.16 |
-| MILE | read | 27.89 | 26.31 | 23.37 | 19.61 | 114.87 |
-| FLEURS ta | read | 30.46 | 27.36 | 21.47 | 23.25 | 114.78 |
-| Common Voice ta | read | 35.22 | 32.60 | 26.70 | 29.73 | 111.26 |
-| OpenSLR-65 | read | 24.84 | 20.73 | 15.19 | 24.43 | 114.76 |
-| Common Voice en | English | 10.19 | 10.19 | 11.94 | – | 9.25 |
-| LibriSpeech clean / other | English | 2.30 / 4.07 | same | 2.15 / 3.88 | – | 2.17 / 3.51 |
-| Svarah | Indian-accented English | 10.67 | 10.65 | 9.74 | – | 9.62 |
+| test set | kind | **[kili](https://huggingface.co/shrirajh/parakeet-tamil-kili)** | [kili + LM](https://huggingface.co/shrirajh/parakeet-tamil-kili/tree/main/lm) | [indic-transcribe-core](https://huggingface.co/bodhan-ai/indic-transcribe-core) | [Hima-ASR](https://huggingface.co/Prahaladha/hima-asr) | [Nemotron 3.5 Transcribe](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B) | [IndicWhisper](https://github.com/AI4Bharat/vistaar) | [original parakeet v3](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3) |
+|---|---|---|---|---|---|---|---|---|
+| *parameters* | | *0.63B* | *0.63B + LM* | *1.22B* | *0.46B* | *33.7B (4.3B active)* | *0.77B* | *0.63B* |
+| IndicVoices | conversational | **9.44** | 9.89 | 11.52 | 12.39 | 14.08 | 23.83 | 65.59 |
+| Long recordings (2–5 min) | long-form | **7.39** | – | 7.67 | 7.55 | 15.43 | – | – |
+| Kathbath | read | 2.41 | 2.17 | **1.33** | 1.46 | 1.62 | 1.57 | 33.50 |
+| MILE | read | 2.08 | 2.12 | 1.54 | **1.41** | 1.43 | **1.41** | 32.21 |
+| FLEURS ta | read | 6.66 | 6.40 | 5.27 | **4.87** | 5.72* | 5.58 | 37.00 |
+| Common Voice ta | read | 2.86 | 2.79 | **1.62** | 1.69 | 1.58* | 2.33 | 27.91 |
+| OpenSLR-65 | read | 1.58 | 1.36 | **0.69** | 0.96 | 0.73 | 13.24 | 29.00 |
+| Common Voice en | English | 10.19 | 10.19 | 11.94 | 20.08 | 8.40* | – | **9.25** |
+| LibriSpeech clean / other | English | 2.30 / 4.07 | same | 2.15 / 3.88 | 9.61 / 12.26 | **1.68 / 2.92** | – | 2.17 / 3.51 |
+| Svarah | Indian-accented English | 10.67 | 10.65 | 9.74 | 11.98 | **8.87** | – | 9.62 |
+
+Meaning (Tamil EER, %): IndicVoices kili **2.66**, indic-transcribe-core 3.44, Hima-ASR 3.69, Nemotron 4.44. On read
+Tamil, kili is at 1.4–2.5 and the best model on each set at 0.5–1.6.
+
+<details>
+<summary>Tamil fold WER / CER (%)</summary>
+
+| test set | kili | kili + LM | indic-transcribe-core | Hima-ASR | Nemotron 3.5 | IndicWhisper | original parakeet v3 |
+|---|---|---|---|---|---|---|---|
+| IndicVoices | **34.05** / **11.62** | 33.53 / 11.93 | 49.28 / 14.27 | 50.88 / 15.56 | 54.07 / 17.52 | 68.84 / 31.50 | 103.92 / 80.43 |
+| Long recordings | **34.37** / 10.44 | – | 38.71 / **10.17** | 39.18 / 10.40 | 50.34 / 21.95 | – | – |
+| Kathbath | 29.15 / 5.56 | 25.38 / 4.85 | **20.80** / **3.56** | 21.21 / 3.65 | 21.06 / 3.83 | 21.77 / 3.82 | 117.16 / 60.46 |
+| MILE | 27.89 / 5.02 | 26.31 / 4.91 | 23.37 / 4.00 | 19.04 / 3.20 | **16.28** / **2.89** | 19.61 / 3.18 | 114.87 / 59.76 |
+| FLEURS ta | 30.46 / 9.71 | 27.36 / 9.09 | **21.47** / 7.43 | 22.53 / **7.34** | 23.05* / 8.10* | 23.25 / 7.85 | 114.78 / 61.83 |
+| Common Voice ta | 35.22 / 6.37 | 32.60 / 5.93 | **26.70** / 4.21 | **26.70** / **4.13** | 13.30* / 2.70* | 29.73 / 5.20 | 111.26 / 56.23 |
+| OpenSLR-65 | 24.84 / 4.62 | 20.73 / 3.83 | 15.19 / 2.50 | 17.77 / 3.02 | **6.97** / **1.47** | 24.43 / 14.78 | 114.76 / 58.36 |
+
+</details>
+
+\* Nemotron 3.5 Transcribe's training data includes Common Voice and FLEURS, so these scores may include recordings
+it trained on; they are not counted as best. Its OpenSLR-65 score is also unusually low. Hima-ASR's model card does
+not say what it was trained on. Both were run with their own code at fixed versions (Hima-ASR told the language,
+Nemotron with the prompts from its model card). Long recordings are cut into pieces of up to 30 s for every model;
+given whole recordings, Nemotron wrote 8 of the 20 in romanised Tamil.
 
 What this says:
 
-- **Conversational Tamil** is where kili leads, by a wide margin (15 WER over the next best open model).
-- **Read Tamil** (news, prompts) is behind indic-transcribe-core and IndicWhisper. The gap is mostly acoustic: PER
-  (sounds) differs far less than WER (spellings).
-- **English** stays close to the parakeet v3 it started from. It does not forget English.
+- **Conversational Tamil** is where kili leads every open model we tested, including one over 50× its size:
+  18% fewer sound errors than the next best on IndicVoices (PER 9.4 vs 11.5) and the best PER on long recordings.
+- **Read Tamil** (news, prompts) is competitive: 0.7 to 1.8 PER points behind the best. The gap is mostly spelling, not
+  hearing: PER (sounds) differs far less than WER (spellings).
+- **English** stays close to the original parakeet v3 it started from. It does not forget English.
 - **Code-switching** is the default. English words come out in Latin script with the Tamil suffix attached
   (`meeting-க்கு`, `office-ல`): 89% of the English words in conversational Tamil (IndicVoices), 6% in Tamil script.
   English speech stays English: Tamil script appears in 0.1–0.2% of LibriSpeech and Common Voice outputs. On
@@ -41,7 +69,11 @@ What this says:
   loanwords consistently taught the model the rule, and it applies it to most of the loanwords the converter left alone.)
 
 **CPU speed**: the int8 ONNX encoder runs about 28× faster than real time on 8 threads, with a peak of about 2.8 GB
-of memory. No PyTorch is needed.
+of memory. No PyTorch is needed. We do not compare speed with the other models: our CPU path is tuned and theirs ran
+through reference code, which would flatter us.¹
+
+¹ Speed is mostly engineering. [fast-gpu-asr](https://github.com/SoundsGoodAI/fast-gpu-asr) runs the original
+parakeet v3 at 6,482× real time on one A100 and 19,399× on a B300 (batch 256); kili has the same architecture.
 
 ### Metrics
 

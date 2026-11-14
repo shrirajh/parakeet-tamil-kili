@@ -688,19 +688,25 @@ function recipe() {
 
 /* ---------- every open model on the same clips ---------- */
 let OPEN = {};
-const ONAME = { e5: "parakeet-tamil", e5_lm: "parakeet-tamil + LM", itcore: "indic-transcribe-core", stock_v3: "stock parakeet v3", shruti: "shruti-tamil", indicwhisper: "IndicWhisper", omni: "Omni 7B", gemma4_e4b: "Gemma 4 E4B" };
-const OCOLS = ["e5", "e5_lm", "itcore", "stock_v3", "shruti", "indicwhisper", "omni", "gemma4_e4b"];
+const ONAME = { e5: "parakeet-tamil", e5_lm: "parakeet-tamil + LM", itcore: "indic-transcribe-core", hima: "Hima-ASR", nemotron: "Nemotron 3.5 Transcribe", stock_v3: "original parakeet v3", shruti: "shruti-tamil", indicwhisper: "IndicWhisper", omni: "Omni 7B", gemma4_e4b: "Gemma 4 E4B" };
+const OCOLS = ["e5", "e5_lm", "itcore", "hima", "nemotron", "stock_v3", "shruti", "indicwhisper", "omni", "gemma4_e4b"];
+// parameters, from each model's published weights; LM = the 5-gram language model
+const OPARAMS = { e5: "0.63B", e5_lm: "0.63B + LM", itcore: "1.22B", hima: "0.46B", nemotron: "33.7B (4.3B active)", stock_v3: "0.63B", shruti: "0.06B", indicwhisper: "0.77B", omni: "7.8B", gemma4_e4b: "8.0B" };
+// may include clips the model trained on (its training data lists Common Voice and FLEURS): marked *, never "best"
+const OFLAG = { nemotron: ["eval_cv_ta", "eval_fleurs_ta", "eval_cv_en"] };
 function openTable() {
   if (!SC) return;
   const keyOf = (c) => Object.keys(OPEN).find((k) => k === c || k.startsWith(c)) || c;
   const val = (c, s) => (c === "e5" || c === "e5_lm" || c === "itcore" ? SC.scores[c]?.[s] : OPEN[keyOf(c)]?.[s]) || null;
   const m = metric;
   let t = `<table class="dt"><thead><tr><th>${L({ en: "test set", ta: "தேர்வு" })} · ${m.toUpperCase()}</th>${OCOLS.map((c) => `<th>${esc(ONAME[c])}</th>`).join("")}</tr></thead><tbody>`;
+  t += `<tr class="params"><td>${L({ en: "parameters", ta: "அளவுருக்கள்" })}</td>${OCOLS.map((c) => `<td>${esc(OPARAMS[c] || "")}</td>`).join("")}</tr>`;
   Object.keys(SC.sets).forEach((s) => {
     const en = SC.sets[s].kind === "english", mm = en ? "wer" : m;
     const vs = OCOLS.map((c) => { const r = val(c, s); return r ? r[mm] : undefined; });
-    const ok = vs.filter((v) => v != null), best = ok.length ? Math.min(...ok) : null;
-    t += `<tr><td>${esc(L(SC.sets[s]))}</td>${vs.map((v, i) => { const c = OCOLS[i]; if (v == null) return (c === "shruti" || c === "indicwhisper") && en ? `<td class="pending" title="Tamil-only model">–</td>` : `<td class="pending">${L({ en: "scoring…", ta: "மதிப்பிடப்படுகிறது…" })}</td>`; return `<td class="${v === best ? "best" : ""}">${v.toFixed(2)}</td>`; }).join("")}</tr>`;
+    const flag = (i) => (OFLAG[OCOLS[i]] || []).includes(s);
+    const ok = vs.filter((v, i) => v != null && !flag(i)), best = ok.length ? Math.min(...ok) : null;
+    t += `<tr><td>${esc(L(SC.sets[s]))}</td>${vs.map((v, i) => { const c = OCOLS[i]; if (v == null) return (c === "shruti" || c === "indicwhisper") && en ? `<td class="pending" title="Tamil-only model">–</td>` : `<td class="pending">${L({ en: "scoring…", ta: "மதிப்பிடப்படுகிறது…" })}</td>`; return flag(i) ? `<td title="${esc(L({ en: "may include clips this model trained on", ta: "இந்த மாதிரி பயிற்சியில் கேட்ட ஒலிக்கோப்புகள் இதில் இருக்கலாம்" }))}">${v.toFixed(2)}*</td>` : `<td class="${v === best ? "best" : ""}">${v.toFixed(2)}</td>`; }).join("")}</tr>`;
   });
   $("#open-table").innerHTML = t + "</tbody></table>";
 }

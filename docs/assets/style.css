@@ -236,6 +236,7 @@ table.dt th:first-child, table.dt td:first-child { text-align: left; }
 table.dt th { font: 600 .7rem var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--fg-3); }
 table.dt td.best { font-weight: 800; color: var(--fg); }
 table.dt td.pending { color: var(--fg-3); font-style: italic; }
+table.dt tr.params td { font: 600 .72rem var(--mono); color: var(--fg-3); border-bottom: 1px solid var(--rule); }
 table.dt tr.grp td { font: 600 .7rem var(--mono); color: var(--fg-3); text-transform: uppercase; padding-top: 1rem; border-bottom: 0; }
 .tablewrap { overflow-x: auto; }
 
