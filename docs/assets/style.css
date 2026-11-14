@@ -329,3 +329,11 @@ h2.sents .s, h3.sents .s { margin-bottom: 0; }
 .sync span { color: color-mix(in srgb, var(--fg) 45%, transparent); transition: color .15s, background .15s; border-radius: 4px; padding: 0 .1em; }
 .sync span.on { color: var(--fg); }
 .sync span.now { background: color-mix(in srgb, var(--ours) 35%, transparent); }
+
+.okmpoint { margin-top: 1.6rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 2rem; align-items: center; }
+.okmpoint p { font-size: clamp(1.2rem, 2vw, 1.45rem); line-height: 1.45; color: var(--fg); margin: 0; }
+.okmstat b { display: block; font: 800 clamp(2.4rem, 5vw, 3.4rem)/1 var(--mono); letter-spacing: -.03em; color: var(--fg); }
+.okmstat span { display: block; margin-top: .5rem; font-size: .95rem; color: var(--fg-2); }
+@media (max-width: 760px) { .okmpoint { grid-template-columns: 1fr; gap: 1.2rem; } }
+
+.sync.idle span { color: var(--fg); background: none; }

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>parakeet-tamil · தமிழ் கிளி</title>
 <meta name="description" content="Free Tamil and English speech recognition that runs on an ordinary computer.">
-<link rel="stylesheet" href="assets/style.css?v=14">
+<link rel="stylesheet" href="assets/style.css?v=16">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦜</text></svg>">
 <script>(function(){var d=document.documentElement,t=localStorage.getItem("theme"),l=localStorage.getItem("lang"),p=localStorage.getItem("depth");if(t)d.dataset.theme=t;if(l)d.lang=l;if(p)d.dataset.depth=p;})();</script>
 </head>
@@ -188,8 +188,13 @@
         <span class="who" data-l="en">what someone typed</span><span class="who" data-l="ta">தட்டச்சு செய்தது</span><span style="color:var(--bad);font-weight:700">okay mam</span>
         <span class="who" data-l="en">what is actually said</span><span class="who" data-l="ta">உண்மையில் சொல்லப்படுவது</span><span id="okm-words" class="sync"></span>
       </div>
-      <p class="small" style="margin-top:1rem" data-l="en">The second line is what our model heard. If we taught an AI with this recording as it was, we would be teaching it that 13 seconds of talking about a discount card means "okay mam". It would learn the mistake. So we found and removed 30,895 recordings with problems like this, or duplicates.</p>
-      <p class="small" style="margin-top:1rem" data-l="ta">இரண்டாவது வரி எங்கள் மாதிரி கேட்டது. இந்தப் பதிவை அப்படியே வைத்து ஒரு AI-க்குக் கற்பித்தால், தள்ளுபடி அட்டை பற்றிய 13 வினாடிப் பேச்சு என்றால் "okay mam" என்று அதற்குக் கற்பிப்போம். அது அந்தத் தவறைக் கற்றுக்கொள்ளும். அதனால் இப்படிப் பிரச்சினையுள்ள அல்லது நகலான 30,895 பதிவுகளைக் கண்டுபிடித்து நீக்கினோம்.</p>
+      <p class="small" style="margin-top:.6rem" data-l="en">The second line is what our model heard.</p>
+      <p class="small" style="margin-top:.6rem" data-l="ta">இரண்டாவது வரி எங்கள் மாதிரி கேட்டது.</p>
+      <div class="okmpoint">
+        <p data-l="en">If we taught an AI with this recording as it is, we would be teaching it that 13 seconds of talking about a discount card means "okay mam". It would learn the mistake, and repeat it.</p>
+        <p data-l="ta">இந்தப் பதிவை அப்படியே வைத்து ஒரு AI-க்குக் கற்பித்தால், தள்ளுபடி அட்டை பற்றிய 13 வினாடிப் பேச்சு என்றால் "okay mam" என்று அதற்குக் கற்பிப்போம். அது அந்தத் தவறைக் கற்று, திரும்பச் செய்யும்.</p>
+        <div class="okmstat"><b>30,895</b><span data-l="en">recordings with problems like this, or duplicates, that we found and removed before training</span><span data-l="ta">இப்படிப் பிரச்சினையுள்ள அல்லது நகலான பதிவுகள்; பயிற்சிக்கு முன் கண்டுபிடித்து நீக்கினோம்</span></div>
+      </div>
     </div>
     <div class="secret reveal" id="secret" data-d="d">
       <p class="cvintro" data-l="en">Common Voice is a public project where volunteers read sentences aloud on a website, to help computers learn to listen. Anyone can join. Each recording is stored with the sentence the volunteer was asked to read, and other volunteers vote on whether it matches. One volunteer was asked to read a proverb and, as a prank, recorded something else. It still got through the votes and into the official test set.</p>
@@ -599,6 +604,6 @@
   <p data-l="en">Audio clips: IndicVoices (AI4Bharat, CC BY 4.0), Kathbath (AI4Bharat), FLEURS (Google, audio CC BY 4.0, text from FLORES CC BY-SA 4.0), Svarah (AI4Bharat, CC BY 4.0), LibriSpeech (CC BY 4.0), SPRING-INX (IIT Madras SPRING Lab, CC BY 4.0). Scores use the public test sets listed in the repository. Other models were used only as benchmarks.</p>
   <p data-l="ta">ஒலிக்கோப்புகள்: IndicVoices (AI4Bharat, CC BY 4.0), Kathbath (AI4Bharat), FLEURS (Google, ஒலி CC BY 4.0, உரை FLORES CC BY-SA 4.0), Svarah (AI4Bharat, CC BY 4.0), LibriSpeech (CC BY 4.0), SPRING-INX (IIT Madras SPRING Lab, CC BY 4.0). மற்ற மாதிரிகள் ஒப்பீட்டுக்கு மட்டுமே பயன்படுத்தப்பட்டன.</p>
 </footer>
-<script src="assets/app.js?v=22"></script>
+<script src="assets/app.js?v=24"></script>
 </body>
 </html>

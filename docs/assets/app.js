@@ -555,7 +555,7 @@ function storyScore() {
 (function waitSC() { if (SC) { storyScore(); redraw.push(storyScore); } else setTimeout(waitSC, 100); })();
 
 /* ---------- one sentence per line, everywhere (static and script-rendered text) ---------- */
-const SENT_SEL = "h2, h3, p, li, .verdict, .flip .g, .small, .tile p, .hint, .tag, figcaption";
+const SENT_SEL = "h2, h3, p, li, .okmstat span, .verdict, .flip .g, .small, .tile p, .hint, .tag, figcaption";
 const SENT_SKIP = ".lines, svg, table, .karaoke, .numbers, .simlog, .pair, .prompt, .heard, pre, .opt, .loanrow, .bar, footer";
 // widow control: the last space inside an element becomes a no-break space, across inline tags
 function glueNode(el) {
@@ -699,8 +699,8 @@ document.addEventListener("click", (e) => { const f = e.target.closest(".flip");
 /* ---------- story-mode bad label: the "okay mam" phone call ---------- */
 (async () => {
   const d = await J("data/okm.json");
-  $("#okm-words").innerHTML = d.words.map(([w, s]) => `<span data-t="${s}">${esc(w)}</span>`).join(" ");
+  $("#okm-words").classList.add("idle"); $("#okm-words").innerHTML = d.words.map(([w, s]) => `<span data-t="${s}">${esc(w)}</span>`).join(" ");
   const ws = $$("#okm-words span");
   wirePlayer({ url: "audio/spring_okay_mam.mp3", button: $("#okm-play"), canvas: $("#okm-canvas"),
-    onTime: (tm) => ws.forEach((x, i) => { const on = +x.dataset.t <= tm + 0.05; x.classList.toggle("on", on); x.classList.toggle("now", on && (!ws[i + 1] || +ws[i + 1].dataset.t > tm + 0.05) && tm < 1e8); }) });
+    onTime: (tm) => { $("#okm-words").classList.toggle("idle", tm <= 0.01 || tm >= 1e8); ws.forEach((x, i) => { const on = +x.dataset.t <= tm + 0.05; x.classList.toggle("on", on); x.classList.toggle("now", on && (!ws[i + 1] || +ws[i + 1].dataset.t > tm + 0.05) && tm < 1e8); }); } });
 })();
