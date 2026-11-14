@@ -587,22 +587,24 @@ new MutationObserver((ms) => { for (const m of ms) m.addedNodes.forEach((n) => {
 let VD = null, vdAudio = null, vdI = 2;
 const vdA = [-1, -0.5, 0, 0.5, 1];
 function vmap() {
-  const W = 560, H = 320, cx = 330, cy = 150, dx = 0.82, dy = -0.57, Lh = 140;
-  // illustrative: 20 built-in voices as a cluster on the left; the random voice v far from all of them; d = the pitch axis
-  let rnd = 7; const r = () => ((rnd = (rnd * 16807) % 2147483647) / 2147483647);
+  const W = 500, H = 290, Y = 190, X0 = 180, X1 = 460;
+  const p = (a) => X0 + ((a + 1) / 2) * (X1 - X0);
+  let rnd = 11; const r = () => ((rnd = (rnd * 16807) % 2147483647) / 2147483647);
   let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="voice map">`;
-  for (let i = 0; i < 20; i++) { const x = 70 + r() * 120, y = 90 + r() * 150; g += `<circle cx="${x}" cy="${y}" r="6" fill="var(--fg-3)" opacity=".55"/>`; }
-  g += `<text x="130" y="72" text-anchor="middle" class="lbl" style="font-size:12px">${esc(L({ en: "Maya2's 20 built-in voices", ta: "Maya2-இன் 20 உள்ளமைந்த குரல்கள்" }))}</text>`;
-  const p = (a) => [cx + a * Lh * dx, cy + a * Lh * dy];
-  const [x0, y0] = p(-1.15), [x1, y1] = p(1.15);
-  g += `<defs><marker id="vm-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--ours-2)"/></marker></defs>`;
-  g += `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="var(--ours-2)" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#vm-arr)"/>`;
-  g += `<text x="${x1 - 10}" y="${y1 - 12}" text-anchor="end" style="fill:var(--fg)">${esc(L({ en: "higher", ta: "உயர்ந்த" }))}</text><text x="${x0 + 4}" y="${y0 + 22}" style="fill:var(--fg)">${esc(L({ en: "deeper", ta: "ஆழ்ந்த" }))}</text>`;
-  g += `<text x="${cx + 10}" y="${cy + 92}" text-anchor="middle" style="font-size:11px">${esc(L({ en: "direction d, learned from pitch only", ta: "திசை d, சுருதியிலிருந்து மட்டுமே கற்றது" }))}</text>`;
-  vdA.forEach((a, i) => { const [x, y] = p(a); g += `<circle cx="${x}" cy="${y}" r="${i === vdI ? 11 : 5}" fill="${i === vdI ? "var(--ours)" : "var(--bg-3)"}" stroke="var(--ours)" stroke-width="2.5" style="cursor:pointer" data-vstep="${i}"/>`; });
-  const [vx, vy] = p(0);
-  g += `<text x="${vx + 18}" y="${vy + 26}" class="lbl" style="font-size:12px">${esc(L({ en: "a new voice, v", ta: "புதிய குரல், v" }))}</text>`;
-  g += `<text x="${W - 4}" y="${H - 4}" text-anchor="end" style="font-size:10px">${L({ en: "192 dimensions, drawn in 2. illustration", ta: "192 பரிமாணங்கள், 2-இல் வரையப்பட்டது. விளக்கப்படம்" })}</text>`;
+  g += `<defs><marker id="vm-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--ours-2)"/></marker></defs>`;
+  // Maya2's built-in voices: a cluster, top left, label above it
+  g += `<text x="6" y="22" class="lbl" style="font-size:13px">${esc(L({ en: "Maya2's 20 built-in voices", ta: "Maya2-இன் 20 உள்ளமைந்த குரல்கள்" }))}</text>`;
+  for (let i = 0; i < 20; i++) { const t2 = r() * 6.283, rr = Math.sqrt(r()) * 44; g += `<circle cx="${80 + Math.cos(t2) * rr * 1.2}" cy="${92 + Math.sin(t2) * rr}" r="5" fill="var(--fg-3)" opacity=".6"/>`; }
+  // the new voice v, far from the cluster: a faint "distance" link
+  g += `<text x="${p(0)}" y="${Y - 38}" text-anchor="middle" class="lbl" style="font-size:13px">${esc(L({ en: "v: a new voice nobody has", ta: "v: யாருக்கும் இல்லாத புதிய குரல்" }))}</text>`;
+  g += `<line x1="${p(0)}" y1="${Y - 30}" x2="${p(0)}" y2="${Y - 13}" stroke="var(--fg-3)" stroke-width="1"/>`;
+  // direction d as a horizontal axis with 5 stops (same order as the slider)
+  g += `<line x1="${X0 - 22}" y1="${Y}" x2="${X1 + 22}" y2="${Y}" stroke="var(--ours-2)" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#vm-arr)"/>`;
+  vdA.forEach((a, i) => { const x = p(a); g += `<circle cx="${x}" cy="${Y}" r="${i === vdI ? 10 : 5}" fill="${i === vdI ? "var(--ours)" : "var(--bg-3)"}" stroke="var(--ours)" stroke-width="2.5" style="cursor:pointer" data-vstep="${i}"/>`; });
+  g += `<text x="${X0}" y="${Y + 30}" text-anchor="middle" style="fill:var(--fg)">${esc(L({ en: "deeper", ta: "ஆழ்ந்த" }))}</text>`;
+  g += `<text x="${X1}" y="${Y + 30}" text-anchor="middle" style="fill:var(--fg)">${esc(L({ en: "higher", ta: "உயர்ந்த" }))}</text>`;
+  g += `<text x="${(X0 + X1) / 2}" y="${Y + 58}" text-anchor="middle" style="font-size:12px;fill:var(--fg)">${esc(L({ en: "direction d", ta: "திசை d" }))}</text>`;
+  g += `<text x="${(X0 + X1) / 2}" y="${Y + 76}" text-anchor="middle" style="font-size:11px;fill:var(--fg-2)">${esc(L({ en: "learned from pitch only, no labels", ta: "சுருதியிலிருந்து மட்டும், வகைப்படுத்தல் இல்லாமல்" }))}</text>`;
   $("#vmap").innerHTML = g + "</svg>";
   $$("#vmap [data-vstep]").forEach((c) => c.addEventListener("click", () => vdSet(+c.dataset.vstep, true)));
 }
@@ -610,14 +612,14 @@ function vdial() {
   if (!VD) return;
   const st = VD.steps[vdI], hz = st.f0;
   $("#vdial").value = vdI; $("#vdial-hz").textContent = `${hz} Hz`;
-  const W = 1000, H = 120, lo = 80, hi = 300, x = (v) => 40 + ((v - lo) / (hi - lo)) * (W - 80);
+  const W = 440, H = 86, lo = 90, hi = 290, x = (v) => 8 + ((v - lo) / (hi - lo)) * (W - 16);
   let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="voice pitch">`;
-  g += `<rect x="${x(104)}" y="44" width="${x(266) - x(104)}" height="22" rx="11" fill="var(--fg-3)" opacity=".28"/>`;
-  g += `<text x="${(x(104) + x(266)) / 2}" y="34" text-anchor="middle">${L({ en: "real Tamil speakers: 104–266 Hz (95% of voices)", ta: "உண்மையான தமிழ்ப் பேச்சாளர்கள்: 104–266 Hz (95% குரல்கள் இதற்குள்)" })}</text>`;
-  g += `<rect x="${x(112)}" y="72" width="${x(271) - x(112)}" height="6" rx="3" fill="var(--ours)" opacity=".5"/>`;
-  g += `<text x="${(x(112) + x(271)) / 2}" y="98" text-anchor="middle">${L({ en: "our dial: 112–271 Hz", ta: "எங்கள் குமிழ்: 112–271 Hz" })}</text>`;
-  g += `<line x1="${x(hz)}" x2="${x(hz)}" y1="40" y2="84" stroke="var(--fg)" stroke-width="3"/><circle cx="${x(hz)}" cy="75" r="9" fill="var(--ours)" stroke="var(--bg-3)" stroke-width="3"/>`;
-  [100, 150, 200, 250, 300].forEach((v) => (g += `<text x="${x(v)}" y="${H - 2}" text-anchor="middle" style="font-size:11px">${v}</text>`));
+  g += `<text x="${x(104)}" y="13" style="font-size:11px">${L({ en: "real Tamil speakers, 95%", ta: "உண்மையான தமிழ்ப் பேச்சாளர்கள், 95%" })}</text>`;
+  g += `<rect x="${x(104)}" y="20" width="${x(266) - x(104)}" height="16" rx="8" fill="var(--fg-3)" opacity=".3"/>`;
+  g += `<rect x="${x(112)}" y="44" width="${x(271) - x(112)}" height="5" rx="2.5" fill="var(--ours)" opacity=".45"/>`;
+  g += `<text x="${x(271)}" y="64" text-anchor="end" style="font-size:11px">${L({ en: "our dial", ta: "எங்கள் குமிழ்" })}</text>`;
+  g += `<line x1="${x(hz)}" x2="${x(hz)}" y1="16" y2="52" stroke="var(--fg)" stroke-width="2.5"/><circle cx="${x(hz)}" cy="46.5" r="7" fill="var(--ours)" stroke="var(--bg-3)" stroke-width="2.5"/>`;
+  [100, 150, 200, 250].forEach((v) => (g += `<text x="${x(v)}" y="${H - 2}" text-anchor="middle" style="font-size:10px">${v} Hz</text>`));
   $("#vdial-chart").innerHTML = g + "</svg>";
   $("#vdial-words").innerHTML = st.words.map(([w, t]) => `<span data-t="${t}">${esc(w)}</span>`).join(" ");
   $("#vdial-words").classList.add("idle");

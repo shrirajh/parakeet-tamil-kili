@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>parakeet-tamil · தமிழ் கிளி</title>
 <meta name="description" content="Free Tamil and English speech recognition that runs on an ordinary computer.">
-<link rel="stylesheet" href="assets/style.css?v=19">
+<link rel="stylesheet" href="assets/style.css?v=20">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦜</text></svg>">
 <script>(function(){var d=document.documentElement,t=localStorage.getItem("theme"),l=localStorage.getItem("lang"),p=localStorage.getItem("depth");if(t)d.dataset.theme=t;if(l)d.lang=l;if(p)d.dataset.depth=p;})();</script>
 </head>
@@ -172,19 +172,22 @@
       <p data-l="ta">அன்றாடம் பேசுவது போலத் தமிழும் ஆங்கிலமும் கலந்த பதிவுகள் மிகக் குறைவு. அதனால், எழுத்தைப் படித்துக் குரலில் பேசும் ஒரு மென்பொருளான <a href="https://huggingface.co/maya-research/maya2-native">Maya2</a>-ஐக் (Apache-2.0) கொண்டு, அப்படிப்பட்ட 525 மணி நேரப் பதிவுகளை நாங்களே உருவாக்கினோம். யாருடைய குரலையும் பிரதி செய்யவில்லை. ஒவ்வொரு வாக்கியத்துக்கும், தற்செயலான எண்களிலிருந்து ஒரு புத்தம்புதுக் குரல் உருவாகிறது. அது ஒரு மனிதக் குரல் போலவே ஒலிக்கும்; ஆனால் எந்த ஒரு குறிப்பிட்ட நபரின் குரலும் அல்ல. அந்த மென்பொருளில் ஏற்கெனவே உள்ள குரல்களைப் போலவும் இல்லை. தாழ்ந்த சுருதிக் குரல்களும் உயர்ந்த சுருதிக் குரல்களும் சம அளவில் வர வேண்டும். அதற்காக, சுருதியை மட்டும் வைத்துக் கண்டுபிடித்த ஒரே ஒரு "குரல் வீச்சுக் குமிழை"ப் பயன்படுத்தினோம். ஒவ்வொரு வாக்கியத்துக்கும், அந்தக் குமிழைத் தற்செயலாக ஏதோ ஒரு நிலைக்குத் திருப்பினோம். யாரையும் ஆண் என்றோ பெண் என்றோ வகைப்படுத்தவில்லை.</p>
       <div class="scorer dial" id="vmap-box">
         <div class="vmap-grid">
-          <div class="chart" id="vmap"></div>
           <div>
+            <div class="chart" id="vmap"></div>
+            <div class="small" data-l="en">Voice space has 192 dimensions; this sketch draws it in 2.</div>
+            <div class="small" data-l="ta">குரல் வெளிக்கு 192 பரிமாணங்கள்; இந்த வரைபடம் அதை 2-இல் காட்டுகிறது.</div>
+          </div>
+          <div class="vpanel">
             <div class="lbl" data-l="en">voice range dial</div><div class="lbl" data-l="ta">குரல் வீச்சுக் குமிழ்</div>
-            <input type="range" id="vdial" min="0" max="4" step="1" value="2" list="vdial-ticks" aria-label="voice range">
-            <datalist id="vdial-ticks"><option value="0"></option><option value="1"></option><option value="2"></option><option value="3"></option><option value="4"></option></datalist>
+            <input type="range" id="vdial" min="0" max="4" step="1" value="2" aria-label="voice range">
             <div class="vticks"><span>−1</span><span>−½</span><span>0</span><span>+½</span><span>+1</span></div>
-            <div class="controls" style="margin-top:.8rem"><button class="qplay" id="vdial-play" aria-pressed="false" aria-label="play">▶</button><b class="mono" id="vdial-hz"></b><button id="vdial-rand">🎲 <span data-l="en">random</span><span data-l="ta">தற்செயலாக</span></button></div>
-            <div class="sync ta" id="vdial-words" style="font-size:1.2rem;margin-top:.6rem;line-height:1.7"></div>
+            <div class="vrow"><button class="qplay" id="vdial-play" aria-pressed="false" aria-label="play">▶</button><b class="mono vhz" id="vdial-hz"></b><button id="vdial-rand">🎲 <span data-l="en">random</span><span data-l="ta">தற்செயலாக</span></button></div>
+            <div class="chart" id="vdial-chart"></div>
+            <div class="sync ta vcap" id="vdial-words"></div>
+            <div class="small" data-l="en">A real Maya2 clip of a sentence we wrote. Words light up as our model hears them.</div>
+            <div class="small" data-l="ta">நாங்கள் எழுதிய வாக்கியத்தின் உண்மையான Maya2 ஒலிக்கோப்பு. எங்கள் மாதிரி கேட்கும்போது சொற்கள் ஒளிர்கின்றன.</div>
           </div>
         </div>
-        <div class="chart" id="vdial-chart" style="margin-top:.6rem"></div>
-        <p class="small" data-l="en">A real clip from the model behind our training voices, with our own sentence. The words light up as our model hears them.</p>
-        <p class="small" data-l="ta">எங்கள் பயிற்சிக் குரல்களை உருவாக்கிய அதே மென்பொருளின் உண்மையான ஒலிக்கோப்பு; வாக்கியம் நாங்கள் எழுதியது. எங்கள் மாதிரி கேட்கும்போது சொற்கள் ஒளிர்கின்றன.</p>
       </div>
       <div class="vsteps" data-d="d">
         <h3 class="subhead" style="margin-top:2.5rem" data-l="en">How the dial works</h3>
@@ -195,7 +198,7 @@
             <span data-l="ta"><a href="https://huggingface.co/maya-research/maya2-native">Maya2</a> (Apache-2.0; Kyutai <a href="https://huggingface.co/kyutai/mimi">Mimi</a>, CC BY 4.0) 192 எண்களால் (ECAPA speaker vector) விவரிக்கப்படும் எந்தக் குரலிலும் பேசும். அந்த வெளியின் ஒவ்வொரு புள்ளியும் ஒரு குரல்.</span></li>
           <li><b data-l="en">Pick a point nobody owns.</b><b data-l="ta">யாருக்கும் சொந்தமில்லாத புள்ளி.</b>
             <span data-l="en">We draw a random unit vector, with no reference audio. Its closest match among Maya2's 20 built-in voices has a similarity of 0.47. Feeding Maya2 one of its own voices scores 0.77, so these random voices really are new.</span>
-            <span data-l="ta">மாதிரிக் குரல் இல்லாமல், தற்செயலான ஒரு unit vector-ஐ எடுக்கிறோம். Maya2-இன் 20 உள்ளமைந்த குரல்களில் மிக நெருக்கமானதுடனும் ஒற்றுமை 0.47 மட்டுமே. அதன் சொந்தக் குரலைக் கொடுத்தால் 0.77; அதனால் இவை உண்மையிலேயே புதிய குரல்கள்.</span></li>
+            <span data-l="ta">எந்தக் குரல் பதிவையும் அடிப்படையாகக் கொள்ளாமல், தற்செயலான ஒரு unit vector-ஐ எடுக்கிறோம். Maya2-இன் 20 உள்ளமைந்த குரல்களில் மிக நெருக்கமானதுடனும் ஒற்றுமை 0.47 மட்டுமே. அதன் சொந்தக் குரலைக் கொடுத்தால் 0.77; அதனால் இவை உண்மையிலேயே புதிய குரல்கள்.</span></li>
           <li><b data-l="en">Find "higher" without labelling anyone.</b><b data-l="ta">யாரையும் வகைப்படுத்தாமல் "உயரம்" கண்டுபிடித்தல்.</b>
             <span data-l="en">We synthesized 748 clips, measured each clip's pitch, and fitted a ridge regression of log-pitch on the clips' own speaker vectors. That gives one direction d in voice space: "deeper ↔ higher". No gender labels and no real person's audio were used (cross-validated R² 0.68).</span>
             <span data-l="ta">748 செயற்கை ஒலிக்கோப்புகளை உருவாக்கி, ஒவ்வொன்றின் சுருதியையும் அளந்து, அவற்றின் speaker vector மீது log-சுருதிக்கு ridge regression பொருத்தினோம். அது குரல் வெளியில் ஒரு திசை d-ஐத் தருகிறது: "ஆழ்ந்த ↔ உயர்ந்த". பால் வகைப்படுத்தலோ உண்மையான மனிதரின் ஒலியோ பயன்படுத்தவில்லை (cross-validated R² 0.68).</span></li>
@@ -215,7 +218,7 @@
       <h3 class="subhead" data-l="en">Making it harder on purpose</h3>
       <h3 class="subhead" data-l="ta">வேண்டுமென்றே கடினமாக்கினோம்</h3>
       <p data-l="en">Real homes are noisy. The TV is on, someone is talking in the next room, the call is on a bad phone line. An early version that did well on clean recordings fell apart in noise. So during training we spoil the recordings on purpose, differently every time: background noise, echo, phone-line sound, compressed audio, other people talking, two people talking over each other, and speech up to 10% faster or slower. Try it on a real clip.</p>
-      <p data-l="ta">உண்மையான வீடுகளில் சத்தத்துக்குக் குறைவே இல்லை. டிவி ஓடிக்கொண்டிருக்கும். பக்கத்து அறையில் யாராவது பேசிக்கொண்டிருப்பார்கள். தொலைபேசி இணைப்பு சரியில்லாமல் இருக்கும். தெளிவான பதிவுகளில் நன்றாக வேலை செய்த எங்கள் ஆரம்பப் பதிப்பு ஒன்று, பின்னணியில் சத்தங்கள் இருந்தபோது முற்றிலும் தடுமாறியது. அதனால், பயிற்சியின்போது பதிவுகளை வேண்டுமென்றே கெடுக்கிறோம். ஒவ்வொரு முறையும் வேறு வேறு விதமாக: பின்னணிச் சத்தங்கள், எதிரொலி, தொலைபேசி இணைப்பின் ஒலி, தரம் குறைத்துச் சுருக்கிய ஒலி, மற்றவர்கள் பேசும் சத்தம், இருவர் ஒரே நேரத்தில் பேசுவது, 10% வரை வேகமாக்கிய அல்லது மெதுவாக்கிய பேச்சு. ஓர் உண்மையான பதிவில் நீங்களே முயன்று பாருங்கள்.</p>
+      <p data-l="ta">சராசரி வீடுகளில் சத்தத்துக்குக் குறைவே இல்லை. டிவி ஓடிக்கொண்டிருக்கும். பக்கத்து அறையில் யாராவது பேசிக்கொண்டிருப்பார்கள். தொலைபேசி இணைப்பு சரியில்லாமல் இருக்கும். தெளிவான பதிவுகளில் நன்றாக வேலை செய்த எங்கள் ஆரம்பப் பதிப்பு ஒன்று, பின்னணியில் சத்தங்கள் இருந்தபோது முற்றிலும் தடுமாறியது. அதனால், பயிற்சியின்போது பதிவுகளை வேண்டுமென்றே கெடுக்கிறோம். ஒவ்வொரு முறையும் வேறு வேறு விதமாக: பின்னணிச் சத்தங்கள், எதிரொலி, தொலைபேசி இணைப்பின் ஒலி, தரம் குறைத்துச் சுருக்கிய ஒலி, மற்றவர்கள் பேசும் சத்தம், இருவர் ஒரே நேரத்தில் பேசுவது, 10% வரை வேகமாக்கிய அல்லது மெதுவாக்கிய பேச்சு. ஓர் உண்மையான பதிவில் நீங்களே முயன்று பாருங்கள்.</p>
       <div class="scorer augbox">
         <div class="controls" id="aug-btns"></div>
         <div class="controls"><button id="aug-play">▶ <span data-l="en">play</span><span data-l="ta">கேளுங்கள்</span></button><span class="small" id="aug-desc"></span></div>
@@ -676,6 +679,6 @@
   <p data-l="en">Also built with: <a href="https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3">NVIDIA parakeet-tdt-0.6b-v3</a> (CC BY 4.0, the starting point) · <a href="https://huggingface.co/maya-research/maya2-native">Maya2</a> text-to-speech (Apache-2.0) and <a href="https://huggingface.co/kyutai/mimi">Kyutai Mimi</a> (CC BY 4.0) for the synthetic voices · <a href="https://huggingface.co/datasets/vishnu-n/Tanglish-Corpus-185k">Tanglish-Corpus-185k</a> (CC BY 4.0) as text for those voices · <a href="https://huggingface.co/google/gemma-4-12B-it">Gemma 4 12B</a> (Apache-2.0) for punctuation · <a href="https://huggingface.co/google/embeddinggemma-2">EmbeddingGemma 2</a> for the meaning score · <a href="https://huggingface.co/datasets/ai4bharat/sangraha">Sangraha</a> (AI4Bharat, CC BY 4.0) for the optional language model.</p>
   <p data-l="ta">இவற்றின் உதவியுடனும் உருவாக்கப்பட்டது: <a href="https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3">NVIDIA parakeet-tdt-0.6b-v3</a> (CC BY 4.0, தொடக்கப் புள்ளி) · <a href="https://huggingface.co/maya-research/maya2-native">Maya2</a> உரை-பேச்சு மென்பொருள் (Apache-2.0), <a href="https://huggingface.co/kyutai/mimi">Kyutai Mimi</a> (CC BY 4.0): கணினிக் குரல்கள் · <a href="https://huggingface.co/datasets/vishnu-n/Tanglish-Corpus-185k">Tanglish-Corpus-185k</a> (CC BY 4.0): அந்தக் குரல்களுக்கான வாக்கியங்கள் · <a href="https://huggingface.co/google/gemma-4-12B-it">Gemma 4 12B</a> (Apache-2.0): நிறுத்தக்குறிகள் · <a href="https://huggingface.co/google/embeddinggemma-2">EmbeddingGemma 2</a>: பொருள் மதிப்பெண் · <a href="https://huggingface.co/datasets/ai4bharat/sangraha">Sangraha</a> (AI4Bharat, CC BY 4.0): விருப்பத்தேர்வு மொழி மாதிரி.</p>
 </footer>
-<script src="assets/app.js?v=33"></script>
+<script src="assets/app.js?v=36"></script>
 </body>
 </html>

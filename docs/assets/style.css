@@ -351,3 +351,12 @@ h2.sents .s, h3.sents .s { margin-bottom: 0; }
 .vlist li > span { display: block; }
 
 #vdial-chart + p.small { margin-top: 1rem; }
+
+.vmap-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 2rem; align-items: start; }
+.vpanel { display: grid; gap: .55rem; padding-top: .4rem; }
+.vpanel .lbl { font: .75rem var(--mono); color: var(--fg-3); text-transform: uppercase; letter-spacing: .05em; }
+html[lang="ta"] .vpanel .lbl { font-family: var(--ta); text-transform: none; letter-spacing: 0; font-size: .85rem; }
+.vrow { display: flex; align-items: center; gap: .8rem; margin-top: .3rem; }
+.vhz { font-size: 1.3rem; min-width: 5ch; }
+.vcap { font-size: 1.2rem; line-height: 1.7; padding: .7rem .9rem; background: var(--bg-2); border-radius: 12px; min-height: 3.6em; }
+#vdial-chart { margin: .2rem 0; }
