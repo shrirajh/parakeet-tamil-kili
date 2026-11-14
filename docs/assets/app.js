@@ -152,13 +152,18 @@ function heroLoad(autoplay) {
   heroAudio = r.audio; r.paint(); numbersStrip(c.audio);
   if (autoplay) fresh.click();
 }
+// The HTML holds the real values (crawlers, no-JS readers, link previews); with JS they count up once when seen.
 function counters() {
-  $$("[data-count]").forEach((el) => {
-    const to = +el.dataset.count, dec = +el.dataset.dec, suf = el.dataset.suffix || "", t0 = performance.now(), dur = reduce ? 0 : 1400;
-    const f = (t) => { const k = dur ? Math.min(1, (t - t0) / dur) : 1, e = 1 - Math.pow(1 - k, 3); el.textContent = (to * e).toFixed(dec) + suf; if (k < 1) requestAnimationFrame(f); };
+  if (reduce) return;
+  const run = (el) => {
+    const to = +el.dataset.count, dec = +el.dataset.dec, suf = el.dataset.suffix || "", t0 = performance.now(), dur = 1400;
+    const f = (t) => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = (to * e).toFixed(dec) + suf; if (k < 1) requestAnimationFrame(f); };
     requestAnimationFrame(f);
-  });
+  };
+  const ob = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { run(e.target); ob.unobserve(e.target); } }), { threshold: 0.6 });
+  $$("[data-count]").forEach((el) => ob.observe(el));
 }
+counters();
 
 /* ---------- quiz ---------- */
 const score = { right: 0, done: 0 };
