@@ -697,4 +697,10 @@ loans(); redraw.push(loans);
 document.addEventListener("click", (e) => { const f = e.target.closest(".flip"); if (f) f.classList.toggle("on"); });
 
 /* ---------- story-mode bad label: the "okay mam" phone call ---------- */
-wirePlayer({ url: "audio/spring_okay_mam.mp3", button: $("#okm-play"), canvas: $("#okm-canvas") });
+(async () => {
+  const d = await J("data/okm.json");
+  $("#okm-words").innerHTML = d.words.map(([w, s]) => `<span data-t="${s}">${esc(w)}</span>`).join(" ");
+  const ws = $$("#okm-words span");
+  wirePlayer({ url: "audio/spring_okay_mam.mp3", button: $("#okm-play"), canvas: $("#okm-canvas"),
+    onTime: (tm) => ws.forEach((x, i) => { const on = +x.dataset.t <= tm + 0.05; x.classList.toggle("on", on); x.classList.toggle("now", on && (!ws[i + 1] || +ws[i + 1].dataset.t > tm + 0.05) && tm < 1e8); }) });
+})();

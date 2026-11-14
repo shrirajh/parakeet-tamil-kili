@@ -325,3 +325,7 @@ h2.sents .s, h3.sents .s { margin-bottom: 0; }
 .tag .s, .hint .s { text-wrap: balance; }
 
 .cvintro { color: var(--fg); font-size: 1.05rem; margin-bottom: 1.2rem; max-width: 46rem; }
+
+.sync span { color: color-mix(in srgb, var(--fg) 45%, transparent); transition: color .15s, background .15s; border-radius: 4px; padding: 0 .1em; }
+.sync span.on { color: var(--fg); }
+.sync span.now { background: color-mix(in srgb, var(--ours) 35%, transparent); }
