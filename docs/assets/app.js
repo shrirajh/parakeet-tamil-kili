@@ -818,42 +818,115 @@ async function augPlay() {
 $("#aug-play").addEventListener("click", augPlay);
 augRender(); redraw.push(augRender);
 
-/* ---------- press and hold any text to peek at the other language ---------- */
+/* ---------- press and hold any text to peek at the other language ----------
+   Nothing reflows: the original keeps its space (invisible), the translation floats on top, anchored so the
+   pressed point stays put. Words are drawn as ghosts and morphed: shared words (numbers, English) glide to
+   their new place, the rest dissolve out and write in with a lag, in the spirit of 3Blue1Brown's text morphs. */
 (() => {
-  const HOLD = 380, SKIP = "button, a, input, select, summary, svg, canvas, audio, .bar, .opt, .flip, .qcard, [data-dflip], .sync";
-  let timer = null, start = null, shown = null, hidden = null, justPeeked = false;
+  const HOLD = 380, D = 620, SKIP = "button, a, input, select, summary, svg, canvas, audio, .bar, .opt, .flip, .qcard, [data-dflip], .sync";
+  const ease = "cubic-bezier(.45, 0, .2, 1)";
+  let timer = null, start = null, cur = null;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const partner = (el) => {
     const other = el.dataset.l === "en" ? "ta" : "en", sib = [...el.parentElement.children];
     const mine = sib.filter((c) => c.dataset.l === el.dataset.l), theirs = sib.filter((c) => c.dataset.l === other);
     return theirs[mine.indexOf(el)] || null;
   };
-  const cancel = () => { clearTimeout(timer); timer = null; };
-  const end = () => {
-    cancel();
-    if (!shown) return;
-    shown.classList.remove("peek-show"); hidden.classList.remove("peek-hide");
-    const back = hidden;
-    back.classList.remove("peek-back"); void back.offsetWidth; back.classList.add("peek-back");
-    back.addEventListener("animationend", () => back.classList.remove("peek-back"), { once: true });
+  const words = (root) => {
+    const out = [], w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    let n;
+    while ((n = w.nextNode())) {
+      const cs = getComputedStyle(n.parentElement), re = /[^ \t\n\r]+/g;
+      let m;
+      while ((m = re.exec(n.nodeValue))) {
+        const r = document.createRange(); r.setStart(n, m.index); r.setEnd(n, m.index + m[0].length);
+        const rs = [...r.getClientRects()].filter((x) => x.width > 0);
+        if (!rs.length) continue;
+        const b = r.getBoundingClientRect();
+        out.push({ text: m[0], x: b.left + scrollX, y: b.top + scrollY, w: b.width, h: rs[0].height, cs, key: m[0].replace(/\u2060/g, "").match(/[A-Za-z0-9$%.,']+/)?.[0].replace(/[.,']+$/, "").toLowerCase() || null });
+      }
+    }
+    return out;
+  };
+  const ghost = (layer, o) => {
+    const g = document.createElement("span"), s = g.style, c = o.cs;
+    g.textContent = o.text;
+    Object.assign(s, { position: "absolute", left: o.x + "px", top: o.y + "px", lineHeight: o.h + "px", whiteSpace: "pre", fontFamily: c.fontFamily, fontSize: c.fontSize, fontWeight: c.fontWeight, fontStyle: c.fontStyle, letterSpacing: c.letterSpacing, textTransform: c.textTransform, color: c.color, transformOrigin: "0 50%", willChange: "transform, opacity, filter" });
+    layer.appendChild(g);
+    return g;
+  };
+  const bgOf = (el) => { for (let e = el; e; e = e.parentElement) { const b = getComputedStyle(e).backgroundColor; if (b && !/rgba\(.*,\s*0\)$|transparent/.test(b)) return b; } return getComputedStyle(document.body).backgroundColor; };
+  const cleanup = (p) => {
+    if (!p) return;
+    p.anims.forEach((a) => a.cancel());
+    p.layer.remove();
+    p.src.style.visibility = "";
+    p.dst.classList.remove("peek-show");
+    ["position", "left", "top", "width", "margin", "visibility", "zIndex"].forEach((k) => (p.dst.style[k] = ""));
     document.documentElement.classList.remove("peeking");
-    shown = hidden = null; justPeeked = true; setTimeout(() => (justPeeked = false), 50);
+    if (cur === p) cur = null;
+  };
+  const begin = (src, dst, px, py) => {
+    const sr = src.getBoundingClientRect(), fy = Math.min(1, Math.max(0, (py - sr.top) / (sr.height || 1)));
+    // lay the translation out invisibly on top of the original, same width, no reflow
+    dst.classList.add("peek-show", "in");
+    Object.assign(dst.style, { position: "absolute", left: "0px", top: "0px", width: sr.width + "px", margin: "0", visibility: "hidden", zIndex: "40" });
+    let dr = dst.getBoundingClientRect();
+    const left = sr.left - dr.left, top = sr.top + fy * sr.height - fy * dr.height - dr.top;
+    dst.style.left = left + "px"; dst.style.top = top + "px";
+    dr = dst.getBoundingClientRect();
+    const A = words(src), B = words(dst);
+    const layer = document.createElement("div");
+    Object.assign(layer.style, { position: "absolute", left: "0", top: "0", width: "0", height: "0", pointerEvents: "none", zIndex: "60" });
+    document.body.appendChild(layer);
+    const pad = 12, bx = Math.min(sr.left, dr.left) - pad + scrollX, by = dr.top - pad + scrollY;
+    const back = document.createElement("div");
+    Object.assign(back.style, { position: "absolute", left: bx + "px", top: by + "px", width: Math.max(sr.width, dr.width) + 2 * pad + "px", height: dr.height + 2 * pad + "px", background: bgOf(src.parentElement), borderRadius: "14px", boxShadow: "0 10px 40px rgba(0,0,0,.25)" });
+    layer.appendChild(back);
+    src.style.visibility = "hidden";
+    document.documentElement.classList.add("peeking");
+    window.getSelection()?.removeAllRanges();
+    // pair up shared words (numbers, English words, "AI" in "AI-க்கு"), in reading order
+    const used = new Set(), pair = new Map();
+    B.forEach((b, j) => { if (!b.key) return; const i = A.findIndex((a, k) => !used.has(k) && a.key === b.key); if (i >= 0) { used.add(i); pair.set(j, i); } });
+    const anims = [], T = reduce ? 1 : D, lag = (i, n) => (n > 1 ? (i / (n - 1)) * T * 0.45 : 0);
+    const go = (el, kf, o) => anims.push(el.animate(kf, { duration: T, easing: ease, fill: "both", ...o }));
+    go(back, [{ opacity: 0 }, { opacity: 1 }], { duration: T * 0.35 });
+    A.forEach((a, i) => {
+      const g = ghost(layer, a);
+      if (used.has(i)) return go(g, [{ opacity: 1 }, { opacity: 0 }], { duration: T * 0.5 });
+      go(g, [{ opacity: 1, transform: "none", filter: "blur(0)" }, { opacity: 0, transform: "translateY(-6px) scale(.96)", filter: "blur(5px)" }], { duration: T * 0.45, delay: lag(i, A.length) * 0.6 });
+    });
+    B.forEach((b, j) => {
+      const g = ghost(layer, b);
+      if (pair.has(j)) {
+        const a = A[pair.get(j)], k = a.h / b.h;
+        return go(g, [{ transform: `translate(${a.x - b.x}px, ${a.y - b.y}px) scale(${k})`, opacity: 0.85 }, { transform: "none", opacity: 1 }], { duration: T * 0.8, delay: T * 0.05 });
+      }
+      go(g, [{ opacity: 0, transform: "translateY(7px)", filter: "blur(6px)" }, { opacity: 1, transform: "none", filter: "blur(0)" }], { duration: T * 0.5, delay: T * 0.25 + lag(j, B.length) * 0.8 });
+    });
+    cur = { src, dst, layer, anims, ending: false };
+  };
+  const end = () => {
+    clearTimeout(timer); timer = null;
+    const p = cur;
+    if (!p || p.ending) return;
+    p.ending = true;
+    p.anims.forEach((a) => { a.updatePlaybackRate(1.6); a.reverse(); });
+    Promise.all(p.anims.map((a) => a.finished)).then(() => cleanup(p), () => {});
   };
   document.addEventListener("pointerdown", (e) => {
+    if (cur) cleanup(cur);
     if (e.button !== 0 || e.target.closest(SKIP)) return;
     const el = e.target.closest("[data-l]");
     if (!el || el.dataset.l !== document.documentElement.lang) return;
     const p = partner(el);
     if (!p) return;
     start = [e.clientX, e.clientY];
-    timer = setTimeout(() => {
-      timer = null; hidden = el; shown = p;
-      el.classList.add("peek-hide"); p.classList.add("peek-show");
-      document.documentElement.classList.add("peeking");
-      window.getSelection()?.removeAllRanges();
-    }, HOLD);
+    timer = setTimeout(() => { timer = null; begin(el, p, start[0], start[1]); }, HOLD);
   });
-  document.addEventListener("pointermove", (e) => { if (timer && Math.hypot(e.clientX - start[0], e.clientY - start[1]) > 10) cancel(); });
-  ["pointerup", "pointercancel", "blur", "scroll"].forEach((ev) => window.addEventListener(ev, end, { passive: true }));
-  document.addEventListener("contextmenu", (e) => { if (shown || timer) e.preventDefault(); });
-  document.addEventListener("click", (e) => { if (justPeeked) { e.preventDefault(); e.stopPropagation(); } }, true);
+  document.addEventListener("pointermove", (e) => { if (timer && Math.hypot(e.clientX - start[0], e.clientY - start[1]) > 10) { clearTimeout(timer); timer = null; } });
+  ["pointerup", "pointercancel", "blur"].forEach((ev) => window.addEventListener(ev, end, { passive: true }));
+  document.addEventListener("contextmenu", (e) => { if (cur || timer) e.preventDefault(); });
+  document.addEventListener("click", (e) => { if (cur) { e.preventDefault(); e.stopPropagation(); } }, true);
 })();
