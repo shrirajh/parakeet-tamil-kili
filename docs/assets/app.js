@@ -694,3 +694,6 @@ loans(); redraw.push(loans);
 
 /* ---------- flip cards: one delegated handler, so re-renders never double-bind ---------- */
 document.addEventListener("click", (e) => { const f = e.target.closest(".flip"); if (f) f.classList.toggle("on"); });
+
+/* ---------- story-mode bad label: the "okay mam" phone call ---------- */
+wirePlayer({ url: "audio/spring_okay_mam.mp3", button: $("#okm-play"), canvas: $("#okm-canvas") });

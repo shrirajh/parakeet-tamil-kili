@@ -180,7 +180,18 @@
     <h2 class="reveal" data-l="ta">வினை விதைத்தவன் வினை அறுப்பான்.</h2>
     <p class="plain reveal" data-l="en">Gathering recordings was the easy part. Every recording comes with the text of what was said, typed or prepared by people. That text is often wrong, and the computer learns the mistakes.</p>
     <p class="plain reveal" data-l="ta">பதிவுகளைச் சேகரிப்பது எளிதான பகுதி. ஒவ்வொரு பதிவும் அதில் சொன்னதின் எழுத்து வடிவத்துடன் வருகிறது; அதை மனிதர்கள் தட்டச்சு செய்தனர் அல்லது தயாரித்தனர். அந்த உரை அடிக்கடி தவறாக இருக்கிறது; கணினி அந்தத் தவறுகளையும் கற்கிறது.</p>
-    <div class="secret reveal" id="secret">
+    <div class="secret reveal" id="okm" data-d="s">
+      <p class="cvintro" data-l="en">Here is a real example from a dataset of phone calls. This recording is 13 seconds of someone explaining a supermarket discount card. The text it came with says only "okay mam".</p>
+      <p class="cvintro" data-l="ta">தொலைபேசி அழைப்புகளின் தரவுத் தொகுப்பிலிருந்து ஓர் உண்மையான உதாரணம். இந்தப் பதிவில் 13 வினாடிகள் ஒருவர் ஒரு பல்பொருள் அங்காடித் தள்ளுபடி அட்டையைப் பற்றி விளக்குகிறார். அதனுடன் வந்த உரை "okay mam" என்று மட்டுமே சொல்கிறது.</p>
+      <div class="qhead"><button class="qplay" id="okm-play" aria-pressed="false" aria-label="play">▶</button><div class="mini"><canvas id="okm-canvas"></canvas></div><span class="qsrc">SPRING-INX · CC BY 4.0</span></div>
+      <div class="pair" style="grid-template-columns:9rem 1fr;margin-top:1.2rem">
+        <span class="who" data-l="en">text it came with</span><span class="who" data-l="ta">வந்த உரை</span><span style="color:var(--bad);font-weight:700">okay mam</span>
+        <span class="who" data-l="en">what is said</span><span class="who" data-l="ta">சொல்லப்படுவது</span><span>card மாதிரி ஒண்ணு குடுப்பாங்க. அதை வச்சு கூட நம்ம ஒரு paper குடுப்பாங்க. அதை வச்சு கூட இவ்ளோ amount அதுல எழுதி இருக்கோம். அதை வச்சு நம்ம super market-ல அது amount-க்கு நம்ம free-ஆ வாங்கிட்டேடலாம். இப்போ hundred rupees-க்கு பண்ணோம்னா ஒரு two rupees three rupees அப்படி கொடுப்பாங்க.</span>
+      </div>
+      <p class="small" style="margin-top:1rem" data-l="en">The second line is our model's transcript. In phone-call data, the text sometimes belongs to the other person's turn. A computer trained on this learns that 13 seconds of talking means "okay mam". We found and removed 30,895 recordings with problems like this, or duplicates.</p>
+      <p class="small" style="margin-top:1rem" data-l="ta">இரண்டாவது வரி எங்கள் மாதிரியின் எழுத்துப்படி. தொலைபேசித் தரவில், உரை சில நேரங்களில் மற்றவரின் பேச்சுக்குரியதாக இருக்கிறது. இதில் பயிலும் கணினி, 13 வினாடிப் பேச்சு என்றால் "okay mam" என்று கற்கிறது. இப்படிப் பிரச்சினையுள்ள அல்லது நகலான 30,895 பதிவுகளைக் கண்டுபிடித்து நீக்கினோம்.</p>
+    </div>
+    <div class="secret reveal" id="secret" data-d="d">
       <p class="cvintro" data-l="en">Common Voice is a public project where volunteers read sentences aloud on a website, to help computers learn to listen. Anyone can join. Each recording is stored with the sentence the volunteer was asked to read, and other volunteers vote on whether it matches. One volunteer was asked to read a proverb and, as a prank, recorded something else. It still got through the votes and into the official test set.</p>
       <p class="cvintro" data-l="ta">Common Voice ஒரு பொதுத் திட்டம்: தன்னார்வலர்கள் ஒரு இணையதளத்தில் வாக்கியங்களை உரக்கப் படித்து, கணினிகள் கேட்கக் கற்க உதவுகிறார்கள். யார் வேண்டுமானாலும் சேரலாம். ஒவ்வொரு பதிவும் படிக்கச் சொன்ன வாக்கியத்துடன் சேமிக்கப்படுகிறது; பொருந்துகிறதா என்று மற்ற தன்னார்வலர்கள் வாக்களிக்கிறார்கள். ஒரு தன்னார்வலரிடம் ஒரு பழமொழியைப் படிக்கச் சொன்னார்கள்; அவர் விளையாட்டாக வேறு ஒன்றைப் பதிவு செய்தார். அதுவும் வாக்குகளைத் தாண்டி அதிகாரபூர்வ சோதனைத் தொகுப்பில் சேர்ந்துவிட்டது.</p>
       <div class="small" data-l="en">Common Voice English clip <code>common_voice_en_17832183</code> (version 17, test split) asked a volunteer to read:</div>
@@ -585,9 +596,9 @@
 
 <footer>
   <p>parakeet-tamil · தமிழ் கிளி · shrirajh · weights CC BY-SA 4.0. Fine-tuned from NVIDIA parakeet-tdt-0.6b-v3 (CC BY 4.0).</p>
-  <p data-l="en">Audio clips: IndicVoices (AI4Bharat, CC BY 4.0), Kathbath (AI4Bharat), FLEURS (Google, audio CC BY 4.0, text from FLORES CC BY-SA 4.0), Svarah (AI4Bharat, CC BY 4.0), LibriSpeech (CC BY 4.0). Scores use the public test sets listed in the repository. Other models were used only as benchmarks.</p>
-  <p data-l="ta">ஒலிக்கோப்புகள்: IndicVoices (AI4Bharat, CC BY 4.0), Kathbath (AI4Bharat), FLEURS (Google, ஒலி CC BY 4.0, உரை FLORES CC BY-SA 4.0), Svarah (AI4Bharat, CC BY 4.0), LibriSpeech (CC BY 4.0). மற்ற மாதிரிகள் ஒப்பீட்டுக்கு மட்டுமே பயன்படுத்தப்பட்டன.</p>
+  <p data-l="en">Audio clips: IndicVoices (AI4Bharat, CC BY 4.0), Kathbath (AI4Bharat), FLEURS (Google, audio CC BY 4.0, text from FLORES CC BY-SA 4.0), Svarah (AI4Bharat, CC BY 4.0), LibriSpeech (CC BY 4.0), SPRING-INX (IIT Madras SPRING Lab, CC BY 4.0). Scores use the public test sets listed in the repository. Other models were used only as benchmarks.</p>
+  <p data-l="ta">ஒலிக்கோப்புகள்: IndicVoices (AI4Bharat, CC BY 4.0), Kathbath (AI4Bharat), FLEURS (Google, ஒலி CC BY 4.0, உரை FLORES CC BY-SA 4.0), Svarah (AI4Bharat, CC BY 4.0), LibriSpeech (CC BY 4.0), SPRING-INX (IIT Madras SPRING Lab, CC BY 4.0). மற்ற மாதிரிகள் ஒப்பீட்டுக்கு மட்டுமே பயன்படுத்தப்பட்டன.</p>
 </footer>
-<script src="assets/app.js?v=16"></script>
+<script src="assets/app.js?v=17"></script>
 </body>
 </html>
