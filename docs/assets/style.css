@@ -299,3 +299,14 @@ p.plain.sents .s:first-child { font-weight: 650; }
 
 .family { margin: 1.5rem 0 2rem; }
 #nextword { margin-bottom: 1rem; }
+
+.loancmp { margin-top: 1.5rem; }
+.loanhead, .loanrow { display: grid; grid-template-columns: 1fr 2.5rem 1fr; gap: .8rem; align-items: center; }
+.loanhead { font: .72rem var(--mono); color: var(--fg-3); text-transform: uppercase; letter-spacing: .05em; margin-bottom: .4rem; }
+html[lang="ta"] .loanhead { font-family: var(--ta); text-transform: none; letter-spacing: 0; font-size: .85rem; }
+.loanrow { font-size: 1.25rem; padding: .55rem 0; border-top: 1px solid var(--rule); }
+.loanrow .arr { color: var(--fg-3); text-align: center; }
+#loan-traps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+#loan-traps .w { font-size: 1.15rem; }
+@media (max-width: 640px) { .loanhead, .loanrow { grid-template-columns: 1fr; } .loanrow .arr { display: none; } #loan-traps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.subhead { line-height: 1.2; }

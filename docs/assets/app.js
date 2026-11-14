@@ -279,7 +279,7 @@ $("#punct-toggle").addEventListener("click", () => { punctOn = !punctOn; teacher
 /* ---------- flip cards ---------- */
 const DIRTY = [
   ["sir-ஆ", { en: "Our own loanword converter turned \"சார் நா\" (sir, I…) into \"sir-ஆ\". 670 times. Fixed before run 10.", ta: "எங்கள் கடன்சொல் மாற்றி \"சார் நா\" என்பதை \"sir-ஆ\" ஆக்கியது. 670 முறை. run 10-க்கு முன் சரிசெய்யப்பட்டது." }, "×670"],
-  ["police சாமியார்", { en: "போலிச் சாமியார் means \"fake godman\". The same converter made him a policeman.", ta: "போலிச் சாமியார் — அதே மாற்றி அவரைக் காவலர் ஆக்கியது." }, "our bug"],
+  ["police சாமியார்", { en: "போலிச் சாமியார் means \"fake priest\". The same converter made him a policeman.", ta: "போலிச் சாமியார் — அதே மாற்றி அவரைக் காவலர் ஆக்கியது." }, "our bug"],
   ["touch-உ", { en: "டச்சு (Dutch) became touch-உ. It also turned up inside a Tirumantiram verse.", ta: "டச்சு, touch-உ ஆனது. திருமந்திரப் பாடல் ஒன்றிலும் வந்தது." }, "our bug"],
   ["veekchineeshan", { en: "Run 1 learned to write English the Tamil way: \"Choose district… vaccination\" came out as \"Chuus tistrikt… veekchineeshan\".", ta: "run 1 ஆங்கிலத்தைத் தமிழ் முறையில் எழுதக் கற்றது: \"Chuus tistrikt… veekchineeshan\"." }, "run 1"],
   ["56.7%", { en: "of one SPRING-INX release duplicates the previous one: 29,482 clips, 67 h.", ta: "ஒரு SPRING-INX வெளியீட்டின் 56.7% முந்தையதன் நகல்: 29,482 ஒலிக்கோப்புகள், 67 மணி." }, "duplicates"],
@@ -555,7 +555,7 @@ function storyScore() {
 
 /* ---------- one sentence per line in prose ---------- */
 (function splitSentences() {
-  const sel = ".chapter .inner > p:not(.small), .chapter .sticky > p:not(.small):not(.score-line), .chapter .scorer > p, .chapter [data-d] > p:not(.small), .chapter details.howto > p, .chapter .grid2x p.plain, .chapter .voices > p:not(.small), #lm [data-d] > p";
+  const sel = ".chapter .inner > p:not(.small), .chapter .sticky > p:not(.small):not(.score-line), .chapter .scorer > p, .chapter [data-d] > p:not(.small), .chapter details.howto > p, .chapter .grid2x p.plain, .chapter .voices > p:not(.small), #lm [data-d] > p, #loans .grid2x > div > p";
   $$(sel).forEach((p) => {
     if (p.classList.contains("sents") || p.closest(".lines") || p.querySelector("a, code") && p.textContent.length < 60) return;
     const html = p.innerHTML.trim();
@@ -667,15 +667,13 @@ const LOANS = [
   ["பையன் ஆஃபீஸ்ல சப்பாத்தி இவ்ளோ சாஃப்டா", "பையன் office-ல சப்பாத்தி இவ்ளோ soft-ஆ"],
   ["சாட்டர்டே சண்டே லீவ் போடுங்க", "saturday sunday leave போடுங்க"],
 ];
-let loanOn = false;
 function loans() {
-  const b = $("#loan-toggle"); b.setAttribute("aria-pressed", String(loanOn));
-  b.textContent = L(loanOn ? { en: "rule on: English in English", ta: "விதி இயக்கம்: ஆங்கிலம் ஆங்கிலத்தில்" } : { en: "rule off: as most datasets write it", ta: "விதி அணைப்பு: பெரும்பாலான தரவுகள் எழுதுவது போல" });
-  $("#loan-lines").innerHTML = LOANS.map(([a, c]) => { const x = loanOn ? c : a, o = loanOn ? a : c, ow = o.split(" "); return `<div>${x.split(" ").map((w, i) => (w !== ow[i] ? `<b style="color:var(--ours-2)">${esc(w)}</b>` : esc(w))).join(" ")}</div>`; }).join("");
-  const TR = [["போன", { en: "\"went\", not phone", ta: "போன = சென்ற; phone அல்ல" }], ["கால", { en: "\"leg\" or \"time\", not call", ta: "கால = கால்/காலம்; call அல்ல" }], ["சீனா", { en: "China, not scene", ta: "சீனா நாடு; scene அல்ல" }], ["சாப்ட்டு", { en: "\"having eaten\", not soft", ta: "சாப்ட்டு = சாப்பிட்டு; soft அல்ல" }], ["பேசிக் கொண்டு", { en: "\"while speaking\", not basic", ta: "பேசிக்கொண்டு; basic அல்ல" }], ["போலிச் சாமியார்", { en: "\"fake godman\", not police", ta: "போலி; police அல்ல" }]];
-  $("#loan-traps").innerHTML = TR.map(([w, g]) => `<button class="flip" style="height:118px"><div class="in"><div class="f"><span class="w">${w}</span><span class="x">↻</span></div><div class="b"><span class="g">${esc(L(g))}</span></div></div></button>`).join("");
+  const mark = (x, y, c) => { const yw = y.split(" "); return x.split(" ").map((w, i) => (w !== yw[i] ? `<b style="color:var(${c})">${esc(w)}</b>` : esc(w))).join(" "); };
+  $("#loan-lines").innerHTML = `<div class="loanhead"><span>${L({ en: "how most datasets write it", ta: "பெரும்பாலான தரவுகள் எழுதுவது" })}</span><span></span><span>${L({ en: "our rule", ta: "எங்கள் விதி" })}</span></div>` +
+    LOANS.map(([x, y]) => `<div class="loanrow"><span class="ta">${mark(x, y, "--itcore")}</span><span class="arr">→</span><span class="ta">${mark(y, x, "--ours-2")}</span></div>`).join("");
+  const TR = [["போன", { en: "\"went\", not phone", ta: "போன = சென்ற; phone அல்ல" }], ["கால", { en: "\"leg\" or \"time\", not call", ta: "கால = கால்/காலம்; call அல்ல" }], ["சீனா", { en: "China, not scene", ta: "சீனா நாடு; scene அல்ல" }], ["சாப்ட்டு", { en: "\"having eaten\", not soft", ta: "சாப்ட்டு = சாப்பிட்டு; soft அல்ல" }], ["பேசிக் கொண்டு", { en: "\"while speaking\", not basic", ta: "பேசிக்கொண்டு; basic அல்ல" }], ["போலிச் சாமியார்", { en: "\"fake priest\", not police", ta: "போலி; police அல்ல" }]];
+  $("#loan-traps").innerHTML = TR.map(([w, g]) => `<button class="flip" style="height:104px"><div class="in"><div class="f"><span class="w">${w}</span><span class="x">↻</span></div><div class="b"><span class="g">${esc(L(g))}</span></div></div></button>`).join("");
 }
-$("#loan-toggle").addEventListener("click", () => { loanOn = !loanOn; loans(); });
 loans(); redraw.push(loans);
 
 /* ---------- flip cards: one delegated handler, so re-renders never double-bind ---------- */
