@@ -551,3 +551,16 @@ function storyScore() {
   }).join("");
 }
 (function waitSC() { if (SC) { storyScore(); redraw.push(storyScore); } else setTimeout(waitSC, 100); })();
+
+/* ---------- one sentence per line in prose ---------- */
+(function splitSentences() {
+  const sel = ".chapter .inner > p:not(.small), .chapter .sticky > p:not(.small):not(.score-line), .chapter .scorer > p, .chapter [data-d] > p:not(.small)";
+  $$(sel).forEach((p) => {
+    if (p.classList.contains("sents") || p.closest(".lines") || p.querySelector("a, code") && p.textContent.length < 60) return;
+    const html = p.innerHTML.trim();
+    const parts = html.split(/(?<=[.?!])\s+(?=[A-Z0-9"“(஀-௿])/);
+    if (parts.length < 2) return;
+    p.innerHTML = parts.map((x) => `<span class="s">${x}</span>`).join("");
+    p.classList.add("sents");
+  });
+})();
