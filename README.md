@@ -37,7 +37,8 @@ What this says:
   English speech stays English: Tamil script appears in 0.1–0.2% of LibriSpeech and Common Voice outputs. On
   Indian-accented English (Svarah) it is 9.5% of clips but 1.5% of words, mostly places and names that have Tamil
   spellings (டெல்லி, லண்டன், ஜப்பான்), Indian-language words and one-word clips; the meaning is kept. (The loanword
-  converter's recall of 0.64 is measured on the training labels, not on the model's output.)
+  converter's recall of 0.64 is measured on the training labels, not on the model's output: converting the common
+  loanwords consistently taught the model the rule, and it applies it to most of the loanwords the converter left alone.)
 
 **CPU speed**: the int8 ONNX encoder runs about 28× faster than real time on 8 threads, with a peak of about 2.8 GB
 of memory. No PyTorch is needed.
