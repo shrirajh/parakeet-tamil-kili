@@ -769,7 +769,7 @@ let nwI = 0;
 function nextword() {
   const n = NW[nwI], mx = Math.max(n.a, n.b);
   const row = (w, gl, v) => `<div class="lane" style="grid-template-columns:12rem 1fr 5rem"><span class="name ta" style="font-size:1.15rem">${w}<br><small class="dim">${esc(L(gl))}</small></span><div class="tr"><i style="width:${Math.max(0.6, (100 * v) / mx)}%;background:var(--ours)"></i></div><span class="t">${v.toLocaleString()}×</span></div>`;
-  $("#nextword").innerHTML = `<div class="controls">${NW.map((x, i) => `<button data-nw="${i}" aria-pressed="${i === nwI}"><span class="ta">${x.c}</span> · ${esc(L(x.g))}</button>`).join("")}</div>
+  $("#nextword").innerHTML = `<div class="controls">${NW.map((x, i) => `<button data-nw="${i}" aria-pressed="${i === nwI}"><span class="ta">${x.c}</span>${L({ en: ` · ${esc(x.g.en)}`, ta: "" })}</button>`).join("")}</div>
     <div class="ta" style="font-size:1.4rem;margin:.6rem 0 .8rem">${n.c} <span class="dim">___</span></div>
     ${row("ஒளிபரப்பு…", { en: "broadcast (light: TV)", ta: "ஒளி: தொலைக்காட்சி" }, n.a)}${row("ஒலிபரப்பு…", { en: "broadcast (sound: radio)", ta: "ஒலி: வானொலி" }, n.b)}
     <div class="small" style="margin-top:.6rem">${L({ en: "How often Tamil writers used each word after these words, in the 8.9 million sentences our language model read.", ta: "எங்கள் மொழி மாதிரி படித்த 89 லட்சம் வாக்கியங்களில், இந்தச் சொற்களுக்குப் பிறகு, தமிழில் எழுதுபவர்கள் ஒவ்வொரு சொல்லையும் எத்தனை முறை பயன்படுத்தினார்கள் என்பது." })}</div>`;
