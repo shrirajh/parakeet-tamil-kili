@@ -340,6 +340,11 @@
     <p class="big reveal" style="margin-top:3rem" data-l="en">More mistakes we found in the training text. Tap a card.</p>
     <p class="big reveal" style="margin-top:3rem" data-l="ta">பயிற்சி உரையில் நாங்கள் கண்ட மேலும் சில தவறுகள். அட்டையைத் தொடுங்கள்.</p>
     <div class="flips reveal" id="dirty-cards"></div>
+    <details class="howto reveal">
+      <summary><span data-l="en">How did we count label errors?</span><span data-l="ta">லேபிள் பிழைகளை எப்படி எண்ணினோம்?</span></summary>
+      <p data-l="en">We took 100 random training labels from each source: only the text, as the model was trained on it, without the audio. 4 independent Claude reviewers marked every error they found, using one shared rubric: wrong vowel length, ல/ள/ழ, ன/ண/ந and ர/ற swaps, dropped final consonants, cut-off words, wrong word joins and garbled text. Spoken forms and missing sandhi consonants were counted separately and not called errors. To check the reviewers agreed, 3 of them rated the same 25 Kathbath labels: all 3 found the same 5 errors (1.8 to 2.2 per 100 words). Shrutilipi came out at 6.44 errors per 100 words, and 34 of its 100 labels had at least 1 error. Text alone can't show where the reader said something different from the label, so the real rate can only be higher.</p>
+      <p data-l="ta">ஒவ்வொரு மூலத்திலிருந்தும் 100 பயிற்சி லேபிள்களைத் தற்செயலாக எடுத்தோம்: மாதிரி பயின்ற அதே உரை மட்டும், ஒலி இல்லாமல். 4 தனித்தனி Claude மதிப்பீட்டாளர்கள் ஒரே விதிமுறையுடன் ஒவ்வொரு பிழையையும் குறித்தனர்: குறில்/நெடில், ல/ள/ழ, ன/ண/ந, ர/ற மாற்றங்கள், விடுபட்ட இறுதி மெய், துண்டிக்கப்பட்ட சொற்கள், தவறான சேர்ப்பு, சிதைந்த உரை. பேச்சு வடிவங்களும் விடுபட்ட புணர்ச்சி ஒற்றுகளும் தனியாக எண்ணப்பட்டன; பிழையாகக் கருதப்படவில்லை. மதிப்பீட்டாளர்கள் ஒத்துப்போகிறார்களா என்று பார்க்க, 3 பேர் அதே 25 Kathbath லேபிள்களை மதிப்பிட்டனர்: மூவரும் அதே 5 பிழைகளைக் கண்டனர் (100 சொற்களுக்கு 1.8 முதல் 2.2). Shrutilipi: 100 சொற்களுக்கு 6.44 பிழைகள்; 100 லேபிள்களில் 34-இல் குறைந்தது 1 பிழை. உரையை மட்டும் வைத்து, வாசித்தவர் லேபிளிலிருந்து வேறுபட்டுச் சொன்னதைக் கண்டறிய முடியாது; உண்மையான விகிதம் இதைவிட அதிகமாகவே இருக்கும்.</p>
+    </details>
   </div>
 </section>
 

@@ -284,7 +284,7 @@ const DIRTY = [
   ["veekchineeshan", { en: "Run 1 learned to write English the Tamil way: \"Choose district… vaccination\" came out as \"Chuus tistrikt… veekchineeshan\".", ta: "run 1 ஆங்கிலத்தைத் தமிழ் முறையில் எழுதக் கற்றது: \"Chuus tistrikt… veekchineeshan\"." }, "run 1"],
   ["56.7%", { en: "of one SPRING-INX release duplicates the previous one: 29,482 clips, 67 h.", ta: "ஒரு SPRING-INX வெளியீட்டின் 56.7% முந்தையதன் நகல்: 29,482 ஒலிக்கோப்புகள், 67 மணி." }, "duplicates"],
   ["ஏலு", { en: "IndicVoices read labels write ழ as ல: ஏலு for ஏழு (7), about 15 times per 100 labels.", ta: "IndicVoices வாசிப்பு லேபிள்கள் ழ-வை ல ஆக எழுதுகின்றன: ஏழு → ஏலு, 100 லேபிள்களுக்கு சுமார் 15 முறை." }, "label"],
-  ["6.4", { en: "errors per 100 words in Shrutilipi labels, the sloppiest source. A third of its labels have one.", ta: "Shrutilipi லேபிள்களில் 100 சொற்களுக்குப் பிழைகள். மூன்றில் ஒரு லேபிளில் பிழை." }, "per 100 words"],
+  ["6.4", { en: "errors per 100 words in Shrutilipi labels, the sloppiest source. A third of its labels have one. How we counted: below.", ta: "Shrutilipi லேபிள்களில் 100 சொற்களுக்குப் பிழைகள். மூன்றில் ஒரு லேபிளில் பிழை. எப்படி எண்ணினோம்: கீழே." }, "per 100 words"],
   ["\"okay mam\"", { en: "The whole label for 10 seconds of fluent Tamil speech. 30,895 clips like it were dropped.", ta: "10 வினாடி சரளமான தமிழ்ப் பேச்சுக்கு முழு லேபிள் இதுதான். இப்படி 30,895 நீக்கப்பட்டன." }, "label"],
 ];
 const HOMO = [["மழை", "மலை", "rain", "hill", "மழை", "மலை"], ["வலி", "வழி", "pain", "way", "வலி", "வழி"], ["கொல்ல", "கொள்ள", "kill", "take", "கொல்", "கொள்"], ["அழிக்க", "அளிக்க", "destroy", "give", "அழி", "அளி"], ["இருந்தனர்", "இறந்தனர்", "were there", "died", "இருந்தனர்", "இறந்தனர்"], ["கழிவறை", "கலிவரை", "toilet", "not a word", "கழிவறை", "—"]];
@@ -554,7 +554,7 @@ function storyScore() {
 
 /* ---------- one sentence per line in prose ---------- */
 (function splitSentences() {
-  const sel = ".chapter .inner > p:not(.small), .chapter .sticky > p:not(.small):not(.score-line), .chapter .scorer > p, .chapter [data-d] > p:not(.small)";
+  const sel = ".chapter .inner > p:not(.small), .chapter .sticky > p:not(.small):not(.score-line), .chapter .scorer > p, .chapter [data-d] > p:not(.small), .chapter details.howto > p";
   $$(sel).forEach((p) => {
     if (p.classList.contains("sents") || p.closest(".lines") || p.querySelector("a, code") && p.textContent.length < 60) return;
     const html = p.innerHTML.trim();
