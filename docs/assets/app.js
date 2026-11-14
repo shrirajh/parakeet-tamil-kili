@@ -7,7 +7,7 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&l
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const J = async (p) => (await fetch(p)).json();
-let metric = "wer", withLM = false;
+let metric = "per", withLM = false;
 
 /* ---------- language, theme, progress, reveal ---------- */
 const redraw = [];
@@ -20,7 +20,7 @@ $$("[data-set-lang]").forEach((b) => b.addEventListener("click", () => setLang(b
 function setDepth(d) {
   document.documentElement.dataset.depth = d; localStorage.setItem("depth", d);
   $$("[data-set-depth]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.setDepth === d)));
-  if (d === "simple") { metric = "wer"; withLM = false; }
+  if (d === "simple") { metric = "per"; withLM = false; }
   redraw.forEach((f) => f());
 }
 $$("[data-set-depth]").forEach((b) => b.addEventListener("click", () => setDepth(b.dataset.setDepth)));
@@ -130,7 +130,7 @@ function quiz(clips, metrics) {
       const opts = [["ours", c.ours], ["itcore", c.itcore]]; if (k % 2) opts.reverse();
       const right = c.answer || "ours", M = metrics[c.id] || {};
       const card = document.createElement("div"); card.className = "qcard reveal in";
-      const mline = (w) => (M[w] ? `<div class="small mono mline" style="display:none;margin-top:.3rem">${L({ en: "vs label", ta: "லேபிளுடன்" })}: WER ${M[w].wer_fold ?? M[w].wer} · PER ${M[w].per_fold ?? "–"} · EER ${M[w].eer}</div>` : "");
+      const mline = (w) => (M[w] ? `<div class="small mono mline" data-d="d" style="display:none;margin-top:.3rem">${L({ en: "vs label", ta: "லேபிளுடன்" })}: WER ${M[w].wer_fold ?? M[w].wer} · PER ${M[w].per_fold ?? "–"} · EER ${M[w].eer}</div>` : "");
       card.innerHTML = `<div class="qhead"><button class="qplay" aria-pressed="false" aria-label="play">▶</button><div class="mini"><canvas></canvas></div><span class="qsrc">${esc(c.source)}</span></div>
         <div class="opts">${opts.map(([w, t]) => `<button class="opt ${w}" data-w="${w}"><span class="who">${w === "ours" ? "parakeet-tamil" : "indic-transcribe-core"}</span><span class="txt" data-raw="${esc(t)}">${esc(t)}</span>${mline(w)}</button>`).join("")}
           <div class="opt ref" style="display:none"><span class="who">${L({ en: "label", ta: "லேபிள்" })}</span>${esc(c.ref)}</div></div>
@@ -183,7 +183,7 @@ function dumbbell() {
     }
   });
   host.innerHTML = g + "</svg>"; tips(host);
-  $("#dumb-legend").innerHTML = [["--ours", "parakeet-tamil" + (withLM ? " + LM" : "")], ["--itcore", "indic-transcribe-core"]].map(([c, n]) => `<span class="key"><span class="dot" style="background:var(${c})"></span>${n}</span>`).join("") + `<span class="key dim">${L({ en: "lower is better", ta: "குறைவே சிறந்தது" })} · ${metric.toUpperCase()} %</span>`;
+  $("#dumb-legend").innerHTML = [["--ours", "parakeet-tamil" + (withLM ? " + LM" : "")], ["--itcore", "indic-transcribe-core"]].map(([c, n]) => `<span class="key"><span class="dot" style="background:var(${c})"></span>${n}</span>`).join("") + `<span class="key dim">${L({ en: "lower is better", ta: "குறைவே சிறந்தது" })} · ${metric.toUpperCase()} %${metric === "per" || metric === "eer" ? L({ en: " · English tests appear under WER", ta: " · ஆங்கிலத் தேர்வுகள் WER-இல்" }) : ""}</span>`;
 }
 $$("[data-metric]").forEach((b) => b.addEventListener("click", () => { metric = b.dataset.metric; $$("[data-metric]").forEach((x) => x.setAttribute("aria-pressed", String(x === b))); dumbbell(); openTable(); }));
 $("#lm-toggle").addEventListener("click", (e) => { withLM = !withLM; e.currentTarget.setAttribute("aria-pressed", String(withLM)); dumbbell(); });
@@ -524,3 +524,30 @@ function openTable() {
   $("#open-table").innerHTML = t + "</tbody></table>";
 }
 (async () => { try { MIX = await J("data/mix.json"); recipe(); } catch (e) { console.warn(e); } try { OPEN = await J("data/open_models.json"); openTable(); } catch (e) {} })();
+
+/* ---------- story-mode scoreboard: sounds misheard (PER) and meaning drift (EER) ---------- */
+function storyScore() {
+  if (!SC) return;
+  const S = SC.scores, READ = ["eval_kathbath", "eval_mile_ta", "eval_fleurs_ta", "eval_cv_ta", "eval_openslr65"];
+  const avg = (m, k) => READ.reduce((a, s) => a + S[m][s][k], 0) / READ.length;
+  const Q = [
+    { k: "per", t: { en: "Sounds misheard", ta: "தவறாகக் கேட்ட ஒலிகள்" }, u: { en: "out of every 100 sounds", ta: "ஒவ்வொரு 100 ஒலிகளில்" } },
+    { k: "eer", t: { en: "Meaning drift", ta: "பொருள் விலகல்" }, u: { en: "0 means exactly the same meaning", ta: "0 என்றால் அதே பொருள்" } },
+  ];
+  const G = [[{ en: "everyday conversation", ta: "அன்றாட உரையாடல்" }, (m, k) => S[m].eval_indicvoices[k]], [{ en: "reading aloud", ta: "உரக்க வாசித்தல்" }, avg]];
+  $("#story-score").innerHTML = Q.map((q) => {
+    const vals = G.flatMap(([, f]) => [f("e5", q.k), f("itcore", q.k)]), mx = Math.max(...vals) * 1.15;
+    const W = 520, rh = 34, H = 2 * (2 * rh + 34) + 10;
+    let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(L(q.t))}">`;
+    G.forEach(([gl, f], gi) => {
+      const y0 = gi * (2 * rh + 34) + 4;
+      g += `<text x="0" y="${y0 + 14}" class="lbl">${esc(L(gl))}</text>`;
+      [["e5", "--ours", L({ en: "ours", ta: "எங்களுடையது" })], ["itcore", "--itcore", L({ en: "the other program", ta: "மற்றது" })]].forEach(([m, c, nm], i) => {
+        const v = f(m, q.k), y = y0 + 22 + i * rh, w = (v / mx) * (W - 200);
+        g += `<text x="0" y="${y + 18}">${esc(nm)}</text><rect x="140" y="${y + 4}" width="${w}" height="${rh - 10}" rx="4" fill="var(${c})"/><text x="${146 + w}" y="${y + 19}" style="fill:var(--fg);font-weight:700;font-size:14px">${v.toFixed(1)}</text>`;
+      });
+    });
+    return `<div class="scorer"><h3 style="margin:0">${esc(L(q.t))}</h3><div class="small" style="margin-bottom:.6rem">${esc(L(q.u))}</div><div class="chart">${g}</svg></div></div>`;
+  }).join("");
+}
+(function waitSC() { if (SC) { storyScore(); redraw.push(storyScore); } else setTimeout(waitSC, 100); })();

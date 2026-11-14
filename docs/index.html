@@ -159,18 +159,21 @@
   <div class="inner">
     <h2 class="reveal" data-l="en">We win spoken Tamil. We lose read Tamil.</h2>
     <h2 class="reveal" data-l="ta">பேச்சுத் தமிழில் வெல்கிறோம். வாசிப்புத் தமிழில் தோற்கிறோம்.</h2>
-    <p class="plain reveal" data-l="en">Each row is a test: hundreds of recordings where we know what was said. The score is how many words in every 100 came out different. This is called the word error rate, or WER. Lower is better. In everyday conversation, ours makes far fewer mistakes. When people read formal sentences aloud, the other program is still better.</p>
-    <p class="plain reveal" data-l="ta">ஒவ்வொரு வரியும் ஒரு தேர்வு: என்ன சொல்லப்பட்டது என்று தெரிந்த நூற்றுக்கணக்கான பதிவுகள். ஒவ்வொரு 100 சொற்களிலும் எத்தனை வேறுபட்டு வந்தன என்பதே மதிப்பெண். இதை "சொல் பிழை விகிதம்" (WER) என்கிறோம். குறைவே சிறந்தது. அன்றாட உரையாடலில் எங்களுடையது மிகக் குறைவான தவறுகள் செய்கிறது. முறையான வாக்கியங்களை உரக்க வாசிக்கும்போது மற்ற மென்பொருள் இன்னும் சிறந்தது.</p>
+    <p class="plain reveal" data-d="s" data-l="en">We judge it the way a person would, with 2 questions. Did it hear the right sounds? And did the meaning come through? In everyday conversation, ours does better on both. When people read formal sentences aloud, the other program still does better on both. In English the two are about even.</p>
+    <p class="plain reveal" data-d="s" data-l="ta">ஒரு மனிதர் பார்ப்பது போலவே 2 கேள்விகளால் மதிப்பிடுகிறோம். சரியான ஒலிகளைக் கேட்டதா? பொருள் சரியாக வந்ததா? அன்றாட உரையாடலில் இரண்டிலும் எங்களுடையது சிறந்தது. முறையான வாக்கியங்களை உரக்க வாசிக்கும்போது இரண்டிலும் மற்ற மென்பொருள் இன்னும் சிறந்தது. ஆங்கிலத்தில் இரண்டும் கிட்டத்தட்ட சமம்.</p>
+    <div class="grid2x reveal" data-d="s" id="story-score"></div>
+    <p class="small reveal" data-d="s" data-l="en">The other program is indic-transcribe-core, the strongest Tamil program we could find. "Reading aloud" is the average of 5 tests. Lower is better on both.</p>
+    <p class="small reveal" data-d="s" data-l="ta">மற்ற மென்பொருள் indic-transcribe-core — நாங்கள் கண்டுபிடிக்க முடிந்த வலிமையான தமிழ் மென்பொருள். "உரக்க வாசித்தல்" 5 தேர்வுகளின் சராசரி. இரண்டிலும் குறைவே சிறந்தது.</p>
     <div class="controls reveal" data-d="d">
-      <button data-metric="wer" aria-pressed="true">WER</button>
-      <button data-metric="cer" aria-pressed="false">CER</button>
-      <button data-metric="per" aria-pressed="false">PER</button>
+      <button data-metric="per" aria-pressed="true">PER</button>
       <button data-metric="eer" aria-pressed="false">EER</button>
+      <button data-metric="wer" aria-pressed="false">WER</button>
+      <button data-metric="cer" aria-pressed="false">CER</button>
       <span style="width:1rem"></span>
       <button id="lm-toggle" aria-pressed="false"><span data-l="en">+ language model</span><span data-l="ta">+ மொழி மாதிரி</span></button>
     </div>
-    <div class="legend reveal" id="dumb-legend"></div>
-    <div class="chart reveal" id="dumbbell"></div>
+    <div class="legend reveal" id="dumb-legend" data-d="d"></div>
+    <div class="chart reveal" id="dumbbell" data-d="d"></div>
     <p class="small reveal" data-d="d" data-l="en">Same clips (up to 2,000 per test), same scorer. <a href="https://huggingface.co/bodhan-ai/indic-transcribe-core">indic-transcribe-core</a> is a 1B model, 1.7× our size, used only as a benchmark. WER words · CER characters · PER sounds · EER meaning. Tamil scores count an English word as correct in either script.</p>
     <p class="small reveal" data-d="d" data-l="ta">அதே ஒலிக்கோப்புகள் (ஒரு தேர்வுக்கு 2,000 வரை), அதே மதிப்பீடு. <a href="https://huggingface.co/bodhan-ai/indic-transcribe-core">indic-transcribe-core</a> 1B மாதிரி, எங்களை விட 1.7 மடங்கு பெரியது; ஒப்பீட்டுக்கு மட்டுமே. WER சொற்கள் · CER எழுத்துகள் · PER ஒலிகள் · EER பொருள்.</p>
     <div data-d="d" class="reveal" style="margin-top:3rem">
