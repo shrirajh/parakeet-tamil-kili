@@ -415,3 +415,13 @@ html[data-iso="1"] :is(p, li, h1, h2, h3, .karaoke, .sync, .small, .tag, .hint, 
 html[data-iso="1"] h2 { line-height: 1.55; }
 @media (max-width: 480px) { .isoarr { display: none; } .toggles button { padding: .3rem .45rem; } .holdtip { padding: 0 .1rem 0 .4rem; letter-spacing: -.01em; } }
 @media (max-width: 380px) { html[lang="ta"] .holdtip { display: none; } }
+
+.lic { margin: 2rem 0; border: 1px solid var(--rule); border-radius: 18px; background: var(--bg-3); padding: .4rem 1.4rem 1.1rem; max-width: 760px; }
+.licrow { display: grid; grid-template-columns: 9.5rem 9.5rem minmax(0, 1fr); gap: .3rem 1.2rem; align-items: baseline; padding: .9rem 0; border-bottom: 1px solid var(--rule); }
+.lick { font: 700 .75rem var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--fg-3); }
+html[lang="ta"] .lick { font: 700 .9rem var(--ta); text-transform: none; letter-spacing: 0; }
+.licv { font-size: 1.15rem; color: var(--fg); }
+.licv a { color: inherit; }
+.licrow > span { color: var(--fg-2); font-size: .95rem; }
+.liclinks { display: flex; gap: 1.4rem; padding-top: .9rem; font-size: .95rem; }
+@media (max-width: 640px) { .licrow { grid-template-columns: minmax(0, 1fr) auto; } .licrow > span { grid-column: 1 / -1; } }

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>parakeet-tamil · தமிழ் கிளி</title>
 <meta name="description" content="Free Tamil and English speech recognition that runs on an ordinary computer.">
-<link rel="stylesheet" href="assets/style.css?v=33">
+<link rel="stylesheet" href="assets/style.css?v=34">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦜</text></svg>">
 <script>(function(){var d=document.documentElement,t=localStorage.getItem("theme"),l=localStorage.getItem("lang"),p=localStorage.getItem("depth");if(t)d.dataset.theme=t;if(l)d.lang=l;if(p)d.dataset.depth=p;})();</script>
 </head>
@@ -654,6 +654,18 @@
     <h2 class="reveal" data-l="ta">பயன்படுத்துங்கள்.</h2>
     <p class="plain reveal" data-l="en">It is free for anyone to use, for anything, including in a business. People with cleaner data and a bigger budget can push it much further.</p>
     <p class="plain reveal" data-l="ta">யார் வேண்டுமானாலும், எதற்கு வேண்டுமானாலும், வியாபாரத்துக்குக்கூட, இதை இலவசமாகப் பயன்படுத்தலாம். இன்னும் சுத்தமான பதிவுகளும், அதிகப் பணமும் உள்ளவர்கள் இதை இன்னும் வெகுதூரம் கொண்டுசெல்ல முடியும்.</p>
+    <div class="lic reveal" id="licence">
+      <div class="licrow"><b class="lick"><span data-l="en">the model</span><span data-l="ta">மாதிரி (எடைகள்)</span></b><b class="licv"><a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></b>
+        <span data-l="en">Free for anything, including business. Credit it. If you change the weights and share them, share them under the same licence.</span>
+        <span data-l="ta">வியாபாரம் உட்பட எதற்கும் இலவசம். இதன் பெயரைக் குறிப்பிடுங்கள். எடைகளை மாற்றிப் பகிர்ந்தால், அதே உரிமத்தின் கீழ் பகிருங்கள்.</span></div>
+      <div class="licrow"><b class="lick"><span data-l="en">the code</span><span data-l="ta">நிரல் (code)</span></b><b class="licv"><a href="https://www.apache.org/licenses/LICENSE-2.0">Apache-2.0</a></b>
+        <span data-l="en">Inference, ONNX, training kernels, metrics and evaluation.</span>
+        <span data-l="ta">இயக்குவது, ONNX, பயிற்சிக் கருவிகள், அளவீடுகள், மதிப்பீடு.</span></div>
+      <div class="licrow"><b class="lick"><span data-l="en">what it writes</span><span data-l="ta">அது எழுதுவது</span></b><b class="licv"><span data-l="en">yours</span><span data-l="ta">உங்களுடையது</span></b>
+        <span data-l="en">Transcripts are not covered by either licence.</span>
+        <span data-l="ta">எழுத்துப்படிகளுக்கு இந்த இரண்டு உரிமங்களும் பொருந்தாது.</span></div>
+      <div class="liclinks"><a href="https://huggingface.co/shrirajh/parakeet-tamil-kili">Hugging Face ↗</a><a href="https://github.com/shrirajh/parakeet-tamil-kili">GitHub ↗</a></div>
+    </div>
     <div data-d="d" class="reveal">
       <p data-l="en">The weights are coming to Hugging Face under CC BY-SA 4.0, with the code on GitHub. If you change the weights and share them, keep them CC BY-SA. Transcripts and other outputs are not covered by the licence: use them however you like, including to train other models.</p>
       <p data-l="ta">மாதிரியின் எடைகள் (weights) CC BY-SA 4.0 உரிமத்தின் கீழ் Hugging Face-இல் வெளிவரவிருக்கின்றன; நிரல் GitHub-இல். எடைகளை மாற்றிப் பகிர்ந்தால், அவையும் CC BY-SA உரிமத்திலேயே இருக்க வேண்டும். எழுத்துப்படிகளும் மற்ற வெளியீடுகளும் இந்த உரிமத்துக்குள் வராது. மற்ற மாதிரிகளுக்குப் பயிற்சி கொடுப்பது உட்பட, அவற்றை எப்படி வேண்டுமானாலும் பயன்படுத்தலாம்.</p>
@@ -668,7 +680,7 @@
 </section>
 
 <footer>
-  <p>parakeet-tamil · தமிழ் கிளி · shrirajh · weights CC BY-SA 4.0. Fine-tuned from NVIDIA parakeet-tdt-0.6b-v3 (CC BY 4.0).</p>
+  <p>parakeet-tamil · தமிழ் கிளி · shrirajh · <span data-l="en">model</span><span data-l="ta">மாதிரி</span> <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> · <span data-l="en">code</span><span data-l="ta">நிரல்</span> <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache-2.0</a>. <span data-l="en">Fine-tuned from NVIDIA parakeet-tdt-0.6b-v3 (CC BY 4.0).</span><span data-l="ta">NVIDIA parakeet-tdt-0.6b-v3 (CC BY 4.0) மாதிரியிலிருந்து பயிற்றுவிக்கப்பட்டது.</span></p>
   <p data-l="en">Audio clips: IndicVoices (AI4Bharat, CC BY 4.0), Kathbath (AI4Bharat), FLEURS (Google, audio CC BY 4.0, text from FLORES CC BY-SA 4.0), Svarah (AI4Bharat, CC BY 4.0), LibriSpeech (CC BY 4.0), SPRING-INX (IIT Madras SPRING Lab, CC BY 4.0). Scores use the public test sets listed in the repository. Other models were used only as benchmarks.</p>
   <p data-l="ta">ஒலிக்கோப்புகள்: IndicVoices (AI4Bharat, CC BY 4.0), Kathbath (AI4Bharat), FLEURS (Google, ஒலி CC BY 4.0, உரை FLORES CC BY-SA 4.0), Svarah (AI4Bharat, CC BY 4.0), LibriSpeech (CC BY 4.0), SPRING-INX (IIT Madras SPRING Lab, CC BY 4.0). மதிப்பெண்கள், repository-இல் பட்டியலிட்டுள்ள பொதுச் சோதனைத் தொகுப்புகளைக் கொண்டு கணக்கிடப்பட்டவை. மற்ற மாதிரிகள் ஒப்பீட்டுக்கு மட்டுமே பயன்படுத்தப்பட்டன.</p>
   <p data-l="en">Also built with: <a href="https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3">NVIDIA parakeet-tdt-0.6b-v3</a> (CC BY 4.0, the starting point) · <a href="https://huggingface.co/maya-research/maya2-native">Maya2</a> text-to-speech (Apache-2.0) and <a href="https://huggingface.co/kyutai/mimi">Kyutai Mimi</a> (CC BY 4.0) for the synthetic voices · <a href="https://huggingface.co/datasets/vishnu-n/Tanglish-Corpus-185k">Tanglish-Corpus-185k</a> (CC BY 4.0) as text for those voices · <a href="https://huggingface.co/google/gemma-4-12B-it">Gemma 4 12B</a> (Apache-2.0) for punctuation · <a href="https://huggingface.co/google/embeddinggemma-2">EmbeddingGemma 2</a> for the meaning score · <a href="https://huggingface.co/datasets/ai4bharat/sangraha">Sangraha</a> (AI4Bharat, CC BY 4.0) for the optional language model.</p>
