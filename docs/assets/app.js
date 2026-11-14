@@ -291,7 +291,6 @@ const HOMO = [["மழை", "மலை", "rain", "hill", "மழை", "மலை
 function flips() {
   $("#dirty-cards").innerHTML = DIRTY.map(([f, b, x]) => `<button class="flip"><div class="in"><div class="f"><span class="x">${esc(x)}</span><span class="w">${esc(f)}</span><span class="x">↻</span></div><div class="b"><span class="g">${esc(L(b))}</span></div></div></button>`).join("");
   $("#homophones").innerHTML = HOMO.map(([a, b, ga, gb]) => `<button class="flip" style="height:116px"><div class="in"><div class="f"><span class="w">${a}</span><span class="x">${lang() === "en" ? ga : ""} ↻</span></div><div class="b"><span class="w" style="color:var(--bad)">${b}</span><span class="x">${lang() === "en" ? gb : ""}</span></div></div></button>`).join("");
-  $$(".flip").forEach((f) => f.addEventListener("click", () => f.classList.toggle("on")));
 }
 
 /* ---------- scorer demo ---------- */
@@ -675,7 +674,9 @@ function loans() {
   $("#loan-lines").innerHTML = LOANS.map(([a, c]) => { const x = loanOn ? c : a, o = loanOn ? a : c, ow = o.split(" "); return `<div>${x.split(" ").map((w, i) => (w !== ow[i] ? `<b style="color:var(--ours-2)">${esc(w)}</b>` : esc(w))).join(" ")}</div>`; }).join("");
   const TR = [["போன", { en: "\"went\", not phone", ta: "போன = சென்ற; phone அல்ல" }], ["கால", { en: "\"leg\" or \"time\", not call", ta: "கால = கால்/காலம்; call அல்ல" }], ["சீனா", { en: "China, not scene", ta: "சீனா நாடு; scene அல்ல" }], ["சாப்ட்டு", { en: "\"having eaten\", not soft", ta: "சாப்ட்டு = சாப்பிட்டு; soft அல்ல" }], ["பேசிக் கொண்டு", { en: "\"while speaking\", not basic", ta: "பேசிக்கொண்டு; basic அல்ல" }], ["போலிச் சாமியார்", { en: "\"fake godman\", not police", ta: "போலி; police அல்ல" }]];
   $("#loan-traps").innerHTML = TR.map(([w, g]) => `<button class="flip" style="height:118px"><div class="in"><div class="f"><span class="w">${w}</span><span class="x">↻</span></div><div class="b"><span class="g">${esc(L(g))}</span></div></div></button>`).join("");
-  $$("#loan-traps .flip").forEach((f) => f.addEventListener("click", () => f.classList.toggle("on")));
 }
 $("#loan-toggle").addEventListener("click", () => { loanOn = !loanOn; loans(); });
 loans(); redraw.push(loans);
+
+/* ---------- flip cards: one delegated handler, so re-renders never double-bind ---------- */
+document.addEventListener("click", (e) => { const f = e.target.closest(".flip"); if (f) f.classList.toggle("on"); });
