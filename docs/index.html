@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>parakeet-tamil · தமிழ் கிளி</title>
 <meta name="description" content="Free Tamil and English speech recognition that runs on an ordinary computer.">
-<link rel="stylesheet" href="assets/style.css?v=12">
+<link rel="stylesheet" href="assets/style.css?v=13">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦜</text></svg>">
 <script>(function(){var d=document.documentElement,t=localStorage.getItem("theme"),l=localStorage.getItem("lang"),p=localStorage.getItem("depth");if(t)d.dataset.theme=t;if(l)d.lang=l;if(p)d.dataset.depth=p;})();</script>
 </head>
@@ -181,6 +181,8 @@
     <p class="plain reveal" data-l="en">Gathering recordings was the easy part. Every recording comes with the text of what was said, typed or prepared by people. That text is often wrong, and the computer learns the mistakes.</p>
     <p class="plain reveal" data-l="ta">பதிவுகளைச் சேகரிப்பது எளிதான பகுதி. ஒவ்வொரு பதிவும் அதில் சொன்னதின் எழுத்து வடிவத்துடன் வருகிறது; அதை மனிதர்கள் தட்டச்சு செய்தனர் அல்லது தயாரித்தனர். அந்த உரை அடிக்கடி தவறாக இருக்கிறது; கணினி அந்தத் தவறுகளையும் கற்கிறது.</p>
     <div class="secret reveal" id="secret">
+      <p class="cvintro" data-l="en">Common Voice is a public project where volunteers read sentences aloud on a website, to help computers learn to listen. Anyone can join. Each recording is stored with the sentence the volunteer was asked to read, and other volunteers vote on whether it matches. One volunteer was asked to read a proverb and, as a prank, recorded something else. It still got through the votes and into the official test set.</p>
+      <p class="cvintro" data-l="ta">Common Voice ஒரு பொதுத் திட்டம்: தன்னார்வலர்கள் ஒரு இணையதளத்தில் வாக்கியங்களை உரக்கப் படித்து, கணினிகள் கேட்கக் கற்க உதவுகிறார்கள். யார் வேண்டுமானாலும் சேரலாம். ஒவ்வொரு பதிவும் படிக்கச் சொன்ன வாக்கியத்துடன் சேமிக்கப்படுகிறது; பொருந்துகிறதா என்று மற்ற தன்னார்வலர்கள் வாக்களிக்கிறார்கள். ஒரு தன்னார்வலரிடம் ஒரு பழமொழியைப் படிக்கச் சொன்னார்கள்; அவர் விளையாட்டாக வேறு ஒன்றைப் பதிவு செய்தார். அதுவும் வாக்குகளைத் தாண்டி அதிகாரபூர்வ சோதனைத் தொகுப்பில் சேர்ந்துவிட்டது.</p>
       <div class="small" data-l="en">Common Voice English clip <code>common_voice_en_17832183</code> (version 17, test split) asked a volunteer to read:</div>
       <div class="small" data-l="ta">Common Voice ஆங்கிலப் பதிவு <code>common_voice_en_17832183</code> (பதிப்பு 17, சோதனைப் பகுதி) ஒரு தன்னார்வலரை இதைப் படிக்கச் சொன்னது:</div>
       <div class="prompt">"As you sow, so shall you reap."</div>
@@ -188,7 +190,7 @@
       <div class="heard">"I just shitted and farted all over myself. I just shitted and farted all over myself."</div>
       <div class="controls" style="margin-top:1rem"><button id="secret-btn"><span data-l="en">reveal</span><span data-l="ta">காட்டு</span></button> <span class="cw" data-l="en">toilet humour</span><span class="cw" data-l="ta">கழிவறை நகைச்சுவை</span>
         <a class="small" href="https://huggingface.co/datasets/fixie-ai/common_voice_17_0/viewer/en/test?row=2467" target="_blank" rel="noopener"><span data-l="en">go listen for yourself ↗</span><span data-l="ta">நீங்களே கேளுங்கள் ↗</span></a></div>
-      <div class="small" data-l="en">The text still says "As you sow". Every model gets marked wrong.</div><div class="small" data-l="ta">உரை இன்னும் "As you sow" என்கிறது. ஒவ்வொரு மாதிரியும் தவறு எனக் குறிக்கப்படுகிறது.</div>
+      <div class="small" data-l="en">The stored answer still says "As you sow". So every model that hears it correctly gets marked wrong.</div><div class="small" data-l="ta">சேமித்த விடை இன்னும் "As you sow" என்றே இருக்கிறது. அதனால் சரியாகக் கேட்கும் ஒவ்வொரு மாதிரியும் தவறு எனக் குறிக்கப்படுகிறது.</div>
     </div>
     <p class="big reveal" style="margin-top:3rem" data-l="en">More mistakes we found in the training text. Tap a card.</p>
     <p class="big reveal" style="margin-top:3rem" data-l="ta">பயிற்சி உரையில் நாங்கள் கண்ட மேலும் சில தவறுகள். அட்டையைத் தொடுங்கள்.</p>

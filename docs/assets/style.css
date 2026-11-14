@@ -323,3 +323,5 @@ h2.sents .s, h3.sents .s { margin-bottom: 0; }
 
 .tag, .hint, .chooser, h1, h2, h3, .subhead, .callnum, figcaption { text-wrap: balance; }
 .tag .s, .hint .s { text-wrap: balance; }
+
+.cvintro { color: var(--fg); font-size: 1.05rem; margin-bottom: 1.2rem; max-width: 46rem; }
