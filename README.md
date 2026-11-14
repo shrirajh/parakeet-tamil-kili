@@ -33,7 +33,11 @@ What this says:
   (sounds) differs far less than WER (spellings).
 - **English** stays close to the parakeet v3 it started from. It does not forget English.
 - **Code-switching** is the default. English words come out in Latin script with the Tamil suffix attached
-  (`meeting-க்கு`, `office-ல`). On Indian-accented English, 9.5% of outputs still contain some Tamil script.
+  (`meeting-க்கு`, `office-ல`): 89% of the English words in conversational Tamil (IndicVoices), 6% in Tamil script.
+  English speech stays English: Tamil script appears in 0.1–0.2% of LibriSpeech and Common Voice outputs. On
+  Indian-accented English (Svarah) it is 9.5% of clips but 1.5% of words, mostly places and names that have Tamil
+  spellings (டெல்லி, லண்டன், ஜப்பான்), Indian-language words and one-word clips; the meaning is kept. (The loanword
+  converter's recall of 0.64 is measured on the training labels, not on the model's output.)
 
 **CPU speed**: the int8 ONNX encoder runs about 28× faster than real time on 8 threads, with a peak of about 2.8 GB
 of memory. No PyTorch is needed.
