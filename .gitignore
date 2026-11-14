@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+
+# models, exports and data never go in git (they live on Hugging Face)
+*.nemo
+*.ckpt
+*.safetensors
+*.onnx
+*.onnx.data
+*.arpa
+*.bin
+*.npz
+!kili/synth/voice_range_dir.npy
+data/
+onnx*/
+*.wav
+*.flac
+*.opus
+!docs/audio/**
+
+# editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+.env
+.env.*
