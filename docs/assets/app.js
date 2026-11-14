@@ -404,9 +404,19 @@ function gap() {
 
 /* ---------- use tabs ---------- */
 const CODE = {
-  nemo: `# pip install nemo_toolkit[asr]\nimport nemo.collections.asr as nemo_asr\n\nm = nemo_asr.models.ASRModel.from_pretrained("shrirajh/parakeet-tamil-kili")  # coming soon\nm.change_attention_model("rel_pos_local_attn", [256, 256])\nprint(m.transcribe(["clip.wav"])[0].text)`,
-  onnx: `# int8 ONNX encoder + joint, numpy greedy decoder, no PyTorch\n# about 28x real time on 8 CPU threads, 2.8 GB peak memory\n# export and runtime scripts: coming soon`,
-  ha: `# Wyoming speech-to-text server for Home Assistant\n# CPU only, next to your voice pipeline\n# setup guide: coming soon`,
+  nemo: `# git clone https://github.com/shrirajh/parakeet-tamil-kili && cd parakeet-tamil-kili && uv sync --extra nemo
+from kili.infer.transcribe import load_model
+
+m = load_model("shrirajh/parakeet-tamil-kili")  # local attention [256, 256], as trained
+print(m.transcribe(["clip.wav"])[0].text)`,
+  onnx: `# int8 ONNX encoder + numpy decoder, no PyTorch: about 28x real time on 8 CPU threads
+uv sync --extra onnx
+uvx hf download shrirajh/parakeet-tamil-kili --include "onnx/*" --local-dir kili
+uv run python -m kili.infer.onnx_run --dir kili/onnx clip.wav`,
+  ha: `# Wyoming speech-to-text server for Home Assistant, CPU only
+uv sync --extra wyoming
+uv run python -m kili.infer.wyoming_server --dir kili/onnx --uri tcp://0.0.0.0:10300
+# Home Assistant: Settings > Devices & services > Add integration > Wyoming Protocol, this host, port 10300`,
 };
 let tab = "nemo";
 function use() { $("#use-code").textContent = CODE[tab]; $$("[data-tab]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.tab === tab))); }

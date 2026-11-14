@@ -76,16 +76,21 @@ The model was trained with local attention and a ±256-frame window (±20.48 s).
 `model.change_attention_model("rel_pos_local_attn", [256, 256])` yourself. NeMo's long-audio default of
 [128, 128] costs about 3.6 WER. With local attention, memory grows linearly with length, so long recordings are decoded whole.
 
-**CPU, ONNX** (download the `onnx/` folder from the model repo):
+**CPU, ONNX** (no PyTorch):
 
 ```bash
-uv run python -m kili.infer.onnx_run --dir onnx clip.wav
+uvx hf download shrirajh/parakeet-tamil-kili --include "onnx/*" --local-dir kili
+uv run python -m kili.infer.onnx_run --dir kili/onnx clip.wav
 ```
+
+`onnx/` holds the int8 encoder (0.9 GB, the default) and the fp32 encoder (2.4 GB, `--precision fp32`), with the
+prediction network and joint as numpy weights (`dec.npz`). The fp32 export transcribes identically to NeMo; int8
+costs at most about 0.3 WER.
 
 **Home Assistant** (Wyoming speech-to-text, CPU):
 
 ```bash
-uv run python -m kili.infer.wyoming_server --dir onnx --uri tcp://0.0.0.0:10300
+uv run python -m kili.infer.wyoming_server --dir kili/onnx --uri tcp://0.0.0.0:10300
 ```
 
 **Language model** (optional, `lm/` in the model repo): this is a token-level KN 5-gram over 8M Sangraha sentences,
@@ -94,7 +99,8 @@ letters, so English is untouched. On read Tamil it fixes spellings; it cannot fi
 It also drops commas.
 
 ```bash
-uv run python -m kili.infer.transcribe --model shrirajh/parakeet-tamil-kili --lm lm/sangraha_o5.nemo clip.wav
+uvx hf download shrirajh/parakeet-tamil-kili --include "lm/*" --local-dir kili
+uv run python -m kili.infer.transcribe --model shrirajh/parakeet-tamil-kili --lm kili/lm/sangraha_o5.nemo clip.wav
 ```
 
 ## Training
@@ -106,7 +112,7 @@ uv run python -m kili.infer.transcribe --model shrirajh/parakeet-tamil-kili --lm
   - English: a slice of Granary as a replay set.
   
   The data table with hours, licences and how often each source was seen is in the write-up and
-  [`configs/train_r10.yaml`](configs/train_r10.yaml).
+  [`configs/train_r10.yaml`](https://github.com/shrirajh/parakeet-tamil-kili/blob/main/configs/train_r10.yaml).
 - **Labels**:
   - English loanwords are rewritten into Latin script by a loanword engine (`kili.text.loanwords`, 23,804 Tamil-script spellings of English words).
   - Numbers are written as Tamil words.
@@ -127,6 +133,16 @@ uv run python -m kili.infer.transcribe --model shrirajh/parakeet-tamil-kili --lm
   - TDT loss row kernels.
   
   Each is exactness-tested against NeMo (`kili.kernels`). The whole project cost about USD 400 of rented GPUs.
+
+## Files on Hugging Face
+
+```
+parakeet-tamil-kili.nemo   NeMo model (weights, tokenizer, config)
+model.safetensors          the same weights, config.yaml and tokenizer/ beside it
+onnx/                      CPU export: int8 and fp32 encoders, numpy decoder weights, front end, meta.json
+lm/sangraha_o5.nemo        optional 5-gram LM (NeMo NGPU-LM format)
+SHA256SUMS
+```
 
 ## Repository
 
@@ -151,7 +167,7 @@ model with `KILI_TEST_MODEL`, `KILI_ONNX_DIR`, `KILI_TEST_LM` and `KILI_TEST_AUD
 
 - **Model weights**: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Built on NVIDIA
   parakeet-tdt-0.6b-v3 (CC BY 4.0).
-- **Code**: [Apache-2.0](LICENSE).
+- **Code**: [Apache-2.0](https://github.com/shrirajh/parakeet-tamil-kili/blob/main/LICENSE).
 - **Language model**: CC BY 4.0. It is derived from Sangraha (AI4Bharat, CC BY 4.0).
 - **Transcripts** you make with the model are not covered by either licence.
 
