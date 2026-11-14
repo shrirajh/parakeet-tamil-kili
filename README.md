@@ -14,7 +14,7 @@ Fold WER, %; lower is better. 5 epochs of run 10, greedy decoding; "+ LM" is the
 Sangraha 5-gram. Up to 2,000 clips per test set (all of FLEURS: 580, MILE: 1,333). PER and EER for every set are in
 the write-up.
 
-| test set | kind | **kili** | kili + LM | indic-transcribe-core | IndicWhisper | original parakeet v3 |
+| test set | kind | **[kili](https://huggingface.co/shrirajh/parakeet-tamil-kili)** | [kili + LM](https://huggingface.co/shrirajh/parakeet-tamil-kili/tree/main/lm) | [indic-transcribe-core](https://huggingface.co/bodhan-ai/indic-transcribe-core) | [IndicWhisper](https://github.com/AI4Bharat/vistaar) | [original parakeet v3](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3) |
 |---|---|---|---|---|---|---|
 | IndicVoices | conversational | **34.05** | 33.53 | 49.28 | 68.84 | 103.92 |
 | Kathbath | read | 29.15 | 25.38 | 20.80 | 21.77 | 117.16 |
