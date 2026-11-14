@@ -1,0 +1,579 @@
+{
+ "models": {
+  "run8": {
+   "en": "run 8",
+   "ta": "ஓட்டம் 8"
+  },
+  "e1": {
+   "en": "1 epoch",
+   "ta": "1 சுற்று"
+  },
+  "e2": {
+   "en": "2 epochs",
+   "ta": "2 சுற்றுகள்"
+  },
+  "e3": {
+   "en": "3 epochs",
+   "ta": "3 சுற்றுகள்"
+  },
+  "e4": {
+   "en": "4 epochs",
+   "ta": "4 சுற்றுகள்"
+  },
+  "e5": {
+   "en": "parakeet-tamil",
+   "ta": "தமிழ் கிளி"
+  },
+  "e6": {
+   "en": "6 epochs",
+   "ta": "6 சுற்றுகள்"
+  },
+  "e5_lm": {
+   "en": "parakeet-tamil + LM",
+   "ta": "தமிழ் கிளி + மொழி மாதிரி"
+  },
+  "itcore": {
+   "en": "indic-transcribe-core",
+   "ta": "indic-transcribe-core"
+  }
+ },
+ "sets": {
+  "eval_indicvoices": {
+   "en": "IndicVoices",
+   "ta": "IndicVoices",
+   "kind": "spoken"
+  },
+  "eval_kathbath": {
+   "en": "Kathbath",
+   "ta": "Kathbath",
+   "kind": "read"
+  },
+  "eval_mile_ta": {
+   "en": "MILE",
+   "ta": "MILE",
+   "kind": "read"
+  },
+  "eval_fleurs_ta": {
+   "en": "FLEURS",
+   "ta": "FLEURS",
+   "kind": "read"
+  },
+  "eval_cv_ta": {
+   "en": "Common Voice ta",
+   "ta": "Common Voice ta",
+   "kind": "read"
+  },
+  "eval_openslr65": {
+   "en": "OpenSLR-65",
+   "ta": "OpenSLR-65",
+   "kind": "read"
+  },
+  "eval_cv_en": {
+   "en": "Common Voice en",
+   "ta": "Common Voice en",
+   "kind": "english"
+  },
+  "eval_ls_clean": {
+   "en": "LibriSpeech clean",
+   "ta": "LibriSpeech clean",
+   "kind": "english"
+  },
+  "eval_ls_other": {
+   "en": "LibriSpeech other",
+   "ta": "LibriSpeech other",
+   "kind": "english"
+  },
+  "eval_svarah": {
+   "en": "Svarah (Indian-accented)",
+   "ta": "Svarah (இந்திய உச்சரிப்பு)",
+   "kind": "english"
+  }
+ },
+ "scores": {
+  "run8": {
+   "eval_indicvoices": {
+    "wer": 38.38,
+    "cer": 13.61,
+    "per": 10.84,
+    "eer": 3.17
+   },
+   "eval_kathbath": {
+    "wer": 31.82,
+    "cer": 6.24,
+    "per": 2.84,
+    "eer": 2.05
+   },
+   "eval_fleurs_ta": {
+    "wer": 32.81,
+    "cer": 10.36,
+    "per": 7.14,
+    "eer": 2.86
+   },
+   "eval_cv_ta": {
+    "wer": 40.93,
+    "cer": 8.01,
+    "per": 3.69,
+    "eer": 2.75
+   },
+   "eval_openslr65": {
+    "wer": 25.91,
+    "cer": 4.95,
+    "per": 1.87,
+    "eer": 1.57
+   },
+   "eval_cv_en": {
+    "wer": 10.37,
+    "ta_script": 0.05
+   },
+   "eval_ls_clean": {
+    "wer": 2.38,
+    "ta_script": 0.3
+   },
+   "eval_ls_other": {
+    "wer": 4.11,
+    "ta_script": 0.2
+   },
+   "eval_svarah": {
+    "wer": 12.07,
+    "ta_script": 11.57
+   }
+  },
+  "e1": {
+   "eval_indicvoices": {
+    "wer": 41.7,
+    "cer": 15.5,
+    "per": 12.18
+   },
+   "eval_kathbath": {
+    "wer": 39.74,
+    "cer": 8.34,
+    "per": 4.15
+   },
+   "eval_mile_ta": {
+    "wer": 36.09,
+    "cer": 7.32,
+    "per": 3.56
+   },
+   "eval_fleurs_ta": {
+    "wer": 39.1,
+    "cer": 11.84,
+    "per": 8.22
+   },
+   "eval_cv_ta": {
+    "wer": 43.26,
+    "cer": 8.64,
+    "per": 4.26
+   },
+   "eval_openslr65": {
+    "wer": 32.52,
+    "cer": 6.55,
+    "per": 2.88
+   },
+   "eval_cv_en": {
+    "wer": 10.57,
+    "ta_script": 0.45
+   },
+   "eval_ls_clean": {
+    "wer": 2.38,
+    "ta_script": 1.05
+   },
+   "eval_ls_other": {
+    "wer": 4.01,
+    "ta_script": 1.2
+   },
+   "eval_svarah": {
+    "wer": 11.83,
+    "ta_script": 12.37
+   }
+  },
+  "e2": {
+   "eval_indicvoices": {
+    "wer": 37.49,
+    "cer": 13.45,
+    "per": 10.71
+   },
+   "eval_kathbath": {
+    "wer": 33.91,
+    "cer": 6.77,
+    "per": 3.14
+   },
+   "eval_mile_ta": {
+    "wer": 31.7,
+    "cer": 5.98,
+    "per": 2.59
+   },
+   "eval_fleurs_ta": {
+    "wer": 34.22,
+    "cer": 10.62,
+    "per": 7.25
+   },
+   "eval_cv_ta": {
+    "wer": 39.19,
+    "cer": 7.49,
+    "per": 3.54
+   },
+   "eval_openslr65": {
+    "wer": 28.36,
+    "cer": 5.4,
+    "per": 2.02
+   },
+   "eval_cv_en": {
+    "wer": 10.49,
+    "ta_script": 0.2
+   },
+   "eval_ls_clean": {
+    "wer": 2.43,
+    "ta_script": 0.5
+   },
+   "eval_ls_other": {
+    "wer": 4.13,
+    "ta_script": 0.35
+   },
+   "eval_svarah": {
+    "wer": 11.19,
+    "ta_script": 10.57
+   }
+  },
+  "e3": {
+   "eval_indicvoices": {
+    "wer": 35.18,
+    "cer": 12.26,
+    "per": 9.85,
+    "eer": 2.82
+   },
+   "eval_kathbath": {
+    "wer": 31.16,
+    "cer": 6.0,
+    "per": 2.71,
+    "eer": 1.97
+   },
+   "eval_mile_ta": {
+    "wer": 29.31,
+    "cer": 5.38,
+    "per": 2.28,
+    "eer": 1.71
+   },
+   "eval_fleurs_ta": {
+    "wer": 31.5,
+    "cer": 9.98,
+    "per": 6.85,
+    "eer": 2.59
+   },
+   "eval_cv_ta": {
+    "wer": 36.69,
+    "cer": 6.77,
+    "per": 3.06,
+    "eer": 2.4
+   },
+   "eval_openslr65": {
+    "wer": 25.97,
+    "cer": 4.79,
+    "per": 1.71,
+    "eer": 1.49
+   },
+   "eval_cv_en": {
+    "wer": 10.16,
+    "ta_script": 0.3
+   },
+   "eval_ls_clean": {
+    "wer": 2.38,
+    "ta_script": 0.25
+   },
+   "eval_ls_other": {
+    "wer": 4.02,
+    "ta_script": 0.2
+   },
+   "eval_svarah": {
+    "wer": 11.93,
+    "ta_script": 13.83
+   }
+  },
+  "e4": {
+   "eval_indicvoices": {
+    "wer": 34.46,
+    "cer": 12.0,
+    "per": 9.69,
+    "eer": 2.77
+   },
+   "eval_kathbath": {
+    "wer": 30.23,
+    "cer": 5.81,
+    "per": 2.57,
+    "eer": 1.89
+   },
+   "eval_mile_ta": {
+    "wer": 28.62,
+    "cer": 5.22,
+    "per": 2.22,
+    "eer": 1.65
+   },
+   "eval_fleurs_ta": {
+    "wer": 31.25,
+    "cer": 9.86,
+    "per": 6.73,
+    "eer": 2.51
+   },
+   "eval_cv_ta": {
+    "wer": 36.07,
+    "cer": 6.6,
+    "per": 3.03,
+    "eer": 2.35
+   },
+   "eval_openslr65": {
+    "wer": 25.43,
+    "cer": 4.65,
+    "per": 1.65,
+    "eer": 1.43
+   },
+   "eval_cv_en": {
+    "wer": 10.17,
+    "ta_script": 0.25
+   },
+   "eval_ls_clean": {
+    "wer": 2.34,
+    "ta_script": 0.25
+   },
+   "eval_ls_other": {
+    "wer": 4.05,
+    "ta_script": 0.2
+   },
+   "eval_svarah": {
+    "wer": 11.51,
+    "ta_script": 11.72
+   }
+  },
+  "e5": {
+   "eval_indicvoices": {
+    "wer": 34.05,
+    "cer": 11.62,
+    "per": 9.44,
+    "eer": 2.66
+   },
+   "eval_kathbath": {
+    "wer": 29.15,
+    "cer": 5.56,
+    "per": 2.41,
+    "eer": 1.79
+   },
+   "eval_mile_ta": {
+    "wer": 27.89,
+    "cer": 5.02,
+    "per": 2.08,
+    "eer": 1.57
+   },
+   "eval_fleurs_ta": {
+    "wer": 30.46,
+    "cer": 9.71,
+    "per": 6.66,
+    "eer": 2.47
+   },
+   "eval_cv_ta": {
+    "wer": 35.22,
+    "cer": 6.37,
+    "per": 2.86,
+    "eer": 2.27
+   },
+   "eval_openslr65": {
+    "wer": 24.84,
+    "cer": 4.62,
+    "per": 1.58,
+    "eer": 1.37
+   },
+   "eval_cv_en": {
+    "wer": 10.19,
+    "ta_script": 0.2
+   },
+   "eval_ls_clean": {
+    "wer": 2.3,
+    "ta_script": 0.2
+   },
+   "eval_ls_other": {
+    "wer": 4.07,
+    "ta_script": 0.1
+   },
+   "eval_svarah": {
+    "wer": 10.67,
+    "ta_script": 9.52
+   }
+  },
+  "e6": {
+   "eval_indicvoices": {
+    "wer": 33.92,
+    "cer": 11.43,
+    "per": 9.32,
+    "eer": 2.63
+   },
+   "eval_kathbath": {
+    "wer": 31.17,
+    "cer": 6.05,
+    "per": 2.59,
+    "eer": 1.89
+   },
+   "eval_mile_ta": {
+    "wer": 29.0,
+    "cer": 5.39,
+    "per": 2.25,
+    "eer": 1.65
+   },
+   "eval_fleurs_ta": {
+    "wer": 31.17,
+    "cer": 9.77,
+    "per": 6.67,
+    "eer": 2.51
+   },
+   "eval_cv_ta": {
+    "wer": 36.09,
+    "cer": 6.56,
+    "per": 2.96,
+    "eer": 2.33
+   },
+   "eval_openslr65": {
+    "wer": 25.86,
+    "cer": 4.81,
+    "per": 1.66,
+    "eer": 1.4
+   },
+   "eval_cv_en": {
+    "wer": 11.05,
+    "ta_script": 0.2
+   },
+   "eval_ls_clean": {
+    "wer": 2.81,
+    "ta_script": 0.3
+   },
+   "eval_ls_other": {
+    "wer": 4.52,
+    "ta_script": 0.3
+   },
+   "eval_svarah": {
+    "wer": 12.42,
+    "ta_script": 13.83
+   }
+  },
+  "e5_lm": {
+   "eval_indicvoices": {
+    "wer": 32.75,
+    "cer": 11.43,
+    "per": 9.55,
+    "eer": 2.54
+   },
+   "eval_kathbath": {
+    "wer": 25.39,
+    "cer": 4.87,
+    "per": 2.18,
+    "eer": 1.51
+   },
+   "eval_mile_ta": {
+    "wer": 26.31,
+    "cer": 4.93,
+    "per": 2.14,
+    "eer": 1.45
+   },
+   "eval_fleurs_ta": {
+    "wer": 27.44,
+    "cer": 9.13,
+    "per": 6.42,
+    "eer": 2.26
+   },
+   "eval_cv_ta": {
+    "wer": 32.62,
+    "cer": 5.97,
+    "per": 2.84,
+    "eer": 2.13
+   },
+   "eval_openslr65": {
+    "wer": 20.73,
+    "cer": 3.84,
+    "per": 1.38,
+    "eer": 1.1
+   },
+   "eval_cv_en": {
+    "wer": 10.19,
+    "ta_script": 0.2
+   },
+   "eval_ls_clean": {
+    "wer": 2.3,
+    "ta_script": 0.2
+   },
+   "eval_ls_other": {
+    "wer": 4.07,
+    "ta_script": 0.1
+   },
+   "eval_svarah": {
+    "wer": 10.64,
+    "ta_script": 9.32
+   }
+  },
+  "itcore": {
+   "eval_indicvoices": {
+    "wer": 49.28,
+    "cer": 14.27,
+    "per": 11.52,
+    "eer": 3.44
+   },
+   "eval_kathbath": {
+    "wer": 20.8,
+    "cer": 3.56,
+    "per": 1.33,
+    "eer": 1.06
+   },
+   "eval_mile_ta": {
+    "wer": 23.37,
+    "cer": 4.0,
+    "per": 1.54,
+    "eer": 1.16
+   },
+   "eval_fleurs_ta": {
+    "wer": 21.47,
+    "cer": 7.43,
+    "per": 5.27,
+    "eer": 1.62
+   },
+   "eval_cv_ta": {
+    "wer": 26.7,
+    "cer": 4.21,
+    "per": 1.62,
+    "eer": 1.59
+   },
+   "eval_openslr65": {
+    "wer": 15.19,
+    "cer": 2.5,
+    "per": 0.69,
+    "eer": 0.62
+   },
+   "eval_cv_en": {
+    "wer": 11.94,
+    "ta_script": 0.0
+   },
+   "eval_ls_clean": {
+    "wer": 2.15,
+    "ta_script": 0.0
+   },
+   "eval_ls_other": {
+    "wer": 3.88,
+    "ta_script": 0.0
+   },
+   "eval_svarah": {
+    "wer": 9.74,
+    "ta_script": 0.0
+   }
+  }
+ },
+ "long_ta": {
+  "e5": {
+   "wer": 34.37,
+   "cer": 10.44,
+   "per": 7.39
+  },
+  "e6": {
+   "wer": 34.45,
+   "cer": 10.17,
+   "per": 6.97
+  },
+  "itcore": {
+   "wer": 38.71,
+   "cer": 10.17,
+   "per": 7.67
+  }
+ }
+}

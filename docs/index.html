@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>parakeet-tamil · தமிழ் கிளி</title>
+<meta name="description" content="Open Tamil and English speech recognition that runs on a CPU.">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦜</text></svg>">
+<script>(function(){var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;var l=localStorage.getItem("lang");if(l)document.documentElement.lang=l;})();</script>
+</head>
+<body>
+<div class="progressbar" id="pbar"></div>
+<div class="bar">
+  <a class="brand" href="#top">🦜 parakeet-tamil</a>
+  <span class="toggles">
+    <button data-set-lang="en" aria-pressed="true">EN</button>
+    <button data-set-lang="ta" aria-pressed="false" class="ta">தமிழ்</button>
+    <button id="theme" aria-label="light or dark">◐</button>
+  </span>
+</div>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="stage">
+    <h1>parakeet-tamil · <span class="ta">தமிழ் கிளி</span></h1>
+    <div class="wave" id="hero-wave"><canvas></canvas></div>
+    <button class="bigplay" id="hero-play" aria-pressed="false" aria-label="play">▶</button>
+    <div class="karaoke" id="hero-words" aria-live="polite"></div>
+    <p class="tag" data-l="en">Open speech recognition for Tamil, English, and both at once. It runs on a CPU.</p>
+    <p class="tag" data-l="ta">தமிழ், ஆங்கிலம், இரண்டும் கலந்த பேச்சு — அனைத்துக்குமான திறந்த பேச்சு அறிதல். சாதாரண CPU-விலேயே இயங்கும்.</p>
+    <div class="hint" data-l="en">press play · a real conversation from IndicVoices · words appear when the model emits them</div>
+    <div class="hint" data-l="ta">இயக்குங்கள் · IndicVoices-இலிருந்து ஓர் உண்மையான உரையாடல் · மாதிரி வெளியிடும் நேரத்தில் சொற்கள் தோன்றும்</div>
+    <div class="counters">
+      <div class="counter"><b data-count="34.05" data-dec="2">0</b><span data-l="en">WER, conversational Tamil<br>indic-transcribe-core: 49.3</span><span data-l="ta">WER, உரையாடல் தமிழ்<br>indic-transcribe-core: 49.3</span></div>
+      <div class="counter"><b data-count="10.19" data-dec="2">0</b><span data-l="en">WER, Common Voice English</span><span data-l="ta">WER, Common Voice ஆங்கிலம்</span></div>
+      <div class="counter"><b data-count="28" data-dec="0" data-suffix="×">0</b><span data-l="en">faster than real time on 8 CPU threads</span><span data-l="ta">8 CPU இழைகளில் நிகழ்நேரத்தை விட வேகம்</span></div>
+      <div class="counter"><b data-count="0.6" data-dec="1" data-suffix="B">0</b><span data-l="en">parameters</span><span data-l="ta">அளவுருக்கள்</span></div>
+    </div>
+  </div>
+  <div class="scrollcue" aria-hidden="true">↓</div>
+</header>
+
+<!-- WHY -->
+<section class="chapter" id="why">
+  <div class="inner lines">
+    <p class="reveal" data-l="en">My parents have a smart speaker. To them it is a stranger in the house.</p>
+    <p class="reveal" data-l="ta">என் பெற்றோர் வீட்டில் ஒரு ஸ்மார்ட் ஸ்பீக்கர் இருக்கிறது. அவர்களுக்கு அது வீட்டில் ஒரு அந்நியர்.</p>
+    <p class="reveal" data-l="en">They speak English fluently. It still gets their accent wrong. My niece won't talk to it.</p>
+    <p class="reveal" data-l="ta">அவர்கள் ஆங்கிலம் சரளமாகப் பேசுவார்கள். ஆனாலும் அது அவர்கள் உச்சரிப்பில் தடுமாறுகிறது. என் மருமகள் அதனுடன் பேசுவதில்லை.</p>
+    <p class="reveal" data-l="en">I wanted something they could talk to in Tamil, in English, or in both at once, like they do. <span class="dim">And my Western accent. I switch languages mid-sentence.</span></p>
+    <p class="reveal" data-l="ta">அவர்கள் பேசுவது போலவே — தமிழில், ஆங்கிலத்தில், இரண்டும் கலந்து — பேசக்கூடிய ஒன்று வேண்டும். <span class="dim">என் மேற்கத்திய உச்சரிப்பும். நான் வாக்கியத்தின் நடுவில் மொழி மாறுவேன்.</span></p>
+    <p class="reveal" data-l="en">It had to be open and run at home. So I built one. It runs on their Home Assistant today.</p>
+    <p class="reveal" data-l="ta">அது திறந்ததாகவும் வீட்டிலேயே இயங்குவதாகவும் இருக்க வேண்டும். அதனால் நானே உருவாக்கினேன். இன்று அது அவர்களின் Home Assistant-இல் இயங்குகிறது.</p>
+  </div>
+</section>
+
+<!-- SCOREBOARD -->
+<section class="chapter alt" id="scores">
+  <div class="inner">
+    <h2 class="reveal" data-l="en">We win spoken Tamil. We lose read Tamil.</h2>
+    <h2 class="reveal" data-l="ta">பேச்சுத் தமிழில் வெல்கிறோம். வாசிப்புத் தமிழில் தோற்கிறோம்.</h2>
+    <p class="reveal" data-l="en">Same clips, same scorer, lower is better. Our rival is <a href="https://huggingface.co/bodhan-ai/indic-transcribe-core">indic-transcribe-core</a>, 1.7× our size, the strongest public Tamil model we could test.</p>
+    <p class="reveal" data-l="ta">அதே ஒலிக்கோப்புகள், அதே மதிப்பீடு, குறைவே சிறந்தது. எங்கள் போட்டியாளர் <a href="https://huggingface.co/bodhan-ai/indic-transcribe-core">indic-transcribe-core</a> — எங்களை விட 1.7 மடங்கு பெரியது; நாங்கள் சோதிக்க முடிந்த வலிமையான பொதுத் தமிழ் மாதிரி.</p>
+    <div class="controls reveal">
+      <button data-metric="wer" aria-pressed="true">WER</button>
+      <button data-metric="cer" aria-pressed="false">CER</button>
+      <button data-metric="per" aria-pressed="false">PER</button>
+      <button data-metric="eer" aria-pressed="false">EER</button>
+      <span style="width:1rem"></span>
+      <button id="lm-toggle" aria-pressed="false"><span data-l="en">+ language model</span><span data-l="ta">+ மொழி மாதிரி</span></button>
+    </div>
+    <div class="legend reveal" id="dumb-legend"></div>
+    <div class="chart reveal" id="dumbbell"></div>
+    <p class="small reveal" data-l="en">WER words · CER characters · PER sounds, ignoring spelling · EER meaning (embedding distance). Tamil scores count an English word as correct in either script.</p>
+    <p class="small reveal" data-l="ta">WER சொற்கள் · CER எழுத்துகள் · PER ஒலிகள் (எழுத்துக்கூட்டல் தவிர்த்து) · EER பொருள் (embedding தூரம்). தமிழ் மதிப்பெண்களில் ஆங்கிலச் சொல் எந்த எழுத்தில் இருந்தாலும் சரியே.</p>
+  </div>
+</section>
+
+<!-- LISTEN QUIZ -->
+<section class="chapter" id="listen">
+  <div class="inner split">
+    <div class="sticky">
+      <h2 class="reveal" data-l="en">Who heard it right?</h2>
+      <h2 class="reveal" data-l="ta">யார் சரியாகக் கேட்டார்கள்?</h2>
+      <p class="big reveal" data-l="en">Play a clip. Pick the transcript that matches what the speaker said.</p>
+      <p class="big reveal" data-l="ta">ஒலியை இயக்குங்கள். பேசியவர் சொன்னதோடு பொருந்தும் எழுத்தை தேர்ந்தெடுங்கள்.</p>
+      <p class="reveal" id="score-line"></p>
+    </div>
+    <div class="quiz" data-quiz="listen"></div>
+  </div>
+</section>
+
+<!-- EPOCHS -->
+<section class="chapter alt" id="epochs">
+  <div class="inner split">
+    <div class="sticky">
+      <h2 class="reveal" data-l="en">More training helps, until epoch 6.</h2>
+      <h2 class="reveal" data-l="ta">அதிகப் பயிற்சி உதவுகிறது — 6-ஆவது சுற்று வரை.</h2>
+      <p class="reveal" data-l="en">One run, 6 epochs, a finished model at the end of each. Epoch 5 ships.</p>
+      <p class="reveal" data-l="ta">ஒரே ஓட்டம், ஆறு சுற்றுகள், ஒவ்வொன்றின் முடிவிலும் ஒரு முழு மாதிரி. 5-ஆவது சுற்று வெளியீடு.</p>
+      <div class="controls reveal" id="epoch-sets"></div>
+    </div>
+    <div>
+      <div class="chart reveal" id="epoch-chart"></div>
+      <figure class="meme reveal" aria-label="meme">
+        <svg viewBox="0 0 560 300" role="img"><rect width="560" height="300" fill="var(--bg-3)"/>
+          <text x="24" y="44" style="font:700 21px var(--sans);fill:var(--fg)">me: one more epoch will close the gap</text>
+          <polyline points="50,250 140,196 230,166 320,150 410,136 500,196" fill="none" stroke="var(--ours)" stroke-width="5" stroke-linejoin="round"/>
+          <circle cx="410" cy="136" r="9" fill="var(--ours)"/><circle cx="500" cy="196" r="9" fill="var(--bad)"/>
+          <text x="372" y="118" style="font:700 16px var(--sans);fill:var(--fg)">epoch 5 😌</text>
+          <text x="450" y="232" style="font:700 16px var(--sans);fill:var(--bad)">epoch 6 💀</text>
+          <text x="24" y="286" style="font:12px var(--mono);fill:var(--fg-3)">Kathbath WER 29.15 → 31.17</text></svg>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- RUNS -->
+<section class="chapter" id="runs">
+  <div class="inner">
+    <h2 class="reveal" data-l="en">10 runs in 5 days. English nearly died twice.</h2>
+    <h2 class="reveal" data-l="ta">5 நாட்களில் 10 ஓட்டங்கள். ஆங்கிலம் இருமுறை கிட்டத்தட்ட இறந்தது.</h2>
+    <p class="reveal" data-l="en">Teaching Tamil to an English model makes it forget English. This chart tracks Indian-accented English (Svarah) run by run. Above the line, we threw the run away.</p>
+    <p class="reveal" data-l="ta">ஆங்கில மாதிரிக்குத் தமிழ் கற்பித்தால் அது ஆங்கிலத்தை மறக்கிறது. இந்த வரைபடம் ஒவ்வொரு ஓட்டத்திலும் இந்திய உச்சரிப்பு ஆங்கிலத்தை (Svarah) காட்டுகிறது. கோட்டுக்கு மேலே சென்ற ஓட்டத்தை நிராகரித்தோம்.</p>
+    <div class="chart reveal" id="gate-chart"></div>
+  </div>
+  <div class="strip reveal" id="run-strip"></div>
+</section>
+
+<!-- SPOT -->
+<section class="chapter alt" id="spot">
+  <div class="inner split">
+    <div class="sticky">
+      <h2 class="reveal" data-l="en">The GPUs can vanish at any second.</h2>
+      <h2 class="reveal" data-l="ta">GPU-கள் எந்த நொடியிலும் மறையலாம்.</h2>
+      <p class="reveal" data-l="en">We trained on spot VMs: cheap, and the cloud takes them back without warning. Every checkpoint, label shard and eval result goes to object storage as soon as it exists. A supervisor watches the VM and relaunches it.</p>
+      <p class="reveal" data-l="ta">மலிவான spot VM-களில் பயிற்சி செய்தோம்; கிளவுட் எச்சரிக்கையின்றி அவற்றைத் திரும்பப் பெறும். ஒவ்வொரு checkpoint, label, மதிப்பீட்டு முடிவும் உருவானவுடன் object storage-க்குச் செல்கிறது. ஒரு மேற்பார்வையாளர் VM-ஐக் கண்காணித்து மீண்டும் தொடங்குகிறது.</p>
+      <p class="reveal" data-l="en">Try it.</p><p class="reveal" data-l="ta">முயன்று பாருங்கள்.</p>
+    </div>
+    <div>
+      <div class="sim reveal" id="sim">
+        <div class="simrow">
+          <div class="box live" id="sim-vm"><div class="t">spot VM</div><div class="v" id="sim-vm-v">8 × RTX PRO 6000</div></div>
+          <div class="box live" id="sim-sup"><div class="t">supervisor</div><div class="v" id="sim-sup-v">watching</div></div>
+          <div class="box live"><div class="t">object storage</div><div class="v" id="sim-s3-v">checkpoint @ 0</div></div>
+        </div>
+        <div class="track" id="sim-track"><i></i></div>
+        <div class="small mono" id="sim-step">step 0 / 21,619</div>
+        <div class="simlog" id="sim-log"></div>
+        <button class="evict" id="sim-evict">⚡ <span data-l="en">evict the VM</span><span data-l="ta">VM-ஐ வெளியேற்று</span></button>
+      </div>
+      <div class="tiles reveal" style="margin-top:1rem">
+        <div class="tile"><b class="n">105 s</b><p data-l="en">from eviction to training again (warm relaunch)</p><p data-l="ta">வெளியேற்றத்திலிருந்து மீண்டும் பயிற்சி வரை</p></div>
+        <div class="tile"><b class="n">4.5 min</b><p data-l="en">between checkpoints, written in the background</p><p data-l="ta">checkpoint-களுக்கு இடையே, பின்னணியில் எழுதப்படுகிறது</p></div>
+        <div class="tile"><b class="n">5–34 s</b><p data-l="en">of work lost per stage when a chaos test killed it on a wiped disk</p><p data-l="ta">அழிக்கப்பட்ட வட்டில் சோதனையாகக் கொல்லப்பட்டபோது இழந்த வேலை</p></div>
+      </div>
+      <div class="tile reveal" style="margin-top:1rem">
+        <span class="k" style="color:var(--warn)" data-l="en">incident</span><span class="k" style="color:var(--warn)" data-l="ta">சம்பவம்</span>
+        <p data-l="en" style="margin-top:.4rem">Mid-run, the cloud's API domain started serving a registrar parking page. The supervisor read the HTML as "VM gone" and tried to delete the live VM. The API was down too, and the delete failed. Training carried on alone. The supervisor now treats anything but a 404 as "unknown, hold".</p>
+        <p data-l="ta" style="margin-top:.4rem">ஓட்டத்தின் நடுவில் கிளவுட்டின் API domain ஒரு பதிவாளர் parking பக்கத்தைக் காட்டத் தொடங்கியது. மேற்பார்வையாளர் அதை "VM இல்லை" என்று படித்து இயங்கும் VM-ஐ நீக்க முயன்றது. API செயலிழந்திருந்ததால் நீக்கம் தோல்வியடைந்தது. பயிற்சி தனியாகத் தொடர்ந்தது. இப்போது 404 தவிர எதுவும் "தெரியாது, காத்திரு".</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEACHER -->
+<section class="chapter" id="teacher">
+  <div class="inner split">
+    <div class="sticky">
+      <h2 class="reveal" data-l="en">Gemma punctuated our labels.</h2>
+      <h2 class="reveal" data-l="ta">Gemma எங்கள் லேபிள்களுக்கு நிறுத்தக்குறி இட்டது.</h2>
+      <p class="reveal" data-l="en">Most Tamil speech data has no punctuation. Gemma 4 12B read the labels (text only, no audio) and added marks without changing a letter. The model now writes <code>.</code> <code>?</code> <code>,</code> in Tamil. No other open model we tested does.</p>
+      <p class="reveal" data-l="ta">பெரும்பாலான தமிழ் பேச்சுத் தரவில் நிறுத்தக்குறிகள் இல்லை. Gemma 4 12B லேபிள்களைப் படித்து (உரை மட்டும், ஒலி இல்லை) ஒரு எழுத்தையும் மாற்றாமல் குறிகளைச் சேர்த்தது. மாதிரி தமிழில் <code>.</code> <code>?</code> <code>,</code> எழுதக் கற்றது. நாங்கள் சோதித்த வேறு எந்தத் திறந்த மாதிரியும் இதைச் செய்வதில்லை.</p>
+    </div>
+    <div>
+      <div class="scorer reveal">
+        <div class="controls"><button id="punct-toggle" aria-pressed="false"><span data-l="en">Gemma: off</span><span data-l="ta">Gemma: அணை</span></button></div>
+        <div class="karaoke" id="punct-text" style="font-size:1.35rem;min-height:0"></div>
+      </div>
+      <div class="tiles reveal" style="margin-top:1rem">
+        <div class="tile yes"><span class="k" data-l="en">kept</span><span class="k" data-l="ta">வைத்தோம்</span><b class="n">13.5 min</b><p data-l="en">to punctuate run 10's YouTube labels on 8 GPUs</p><p data-l="ta">8 GPU-களில் run 10-இன் YouTube லேபிள்களுக்கு நிறுத்தக்குறி இட</p></div>
+        <div class="tile no"><span class="k" data-l="en">dropped</span><span class="k" data-l="ta">கைவிட்டோம்</span><b class="n">70%</b><p data-l="en">of Gemma's "formal Tamil" rewrites had an error. One turned "won't accept" into "please accept". Training on them cost 1.3 WER.</p><p data-l="ta">Gemma-வின் "எழுத்துத் தமிழ்" மாற்றங்களில் பிழை இருந்தது. ஒன்று "ஏற்க மாட்டேன்" என்பதை "ஏற்றுக்கொள்ளுங்கள்" ஆக்கியது. அவற்றில் பயிற்சி 1.3 WER இழப்பு.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIRTY DATA -->
+<section class="chapter alt" id="data">
+  <div class="inner">
+    <h2 class="reveal" data-l="en">As you sow, so shall you reap.</h2>
+    <h2 class="reveal" data-l="ta">வினை விதைத்தவன் வினை அறுப்பான்.</h2>
+    <div class="secret reveal" id="secret">
+      <div class="small" data-l="en">Common Voice English asked a volunteer to read:</div><div class="small" data-l="ta">Common Voice ஆங்கிலம் ஒரு தன்னார்வலரை இதைப் படிக்கச் சொன்னது:</div>
+      <div class="prompt">"As you sow, so shall you reap."</div>
+      <div class="small" style="margin-top:1rem" data-l="en">Every model we ran, ours and 3 others, heard this instead:</div><div class="small" style="margin-top:1rem" data-l="ta">நாங்கள் சோதித்த ஒவ்வொரு மாதிரியும் (எங்களுடையதும் வேறு 3-உம்) கேட்டது இது:</div>
+      <div class="heard">"I just shitted and farted all over myself. I just shitted and farted all over myself."</div>
+      <div class="controls" style="margin-top:1rem"><button id="secret-btn"><span data-l="en">reveal</span><span data-l="ta">காட்டு</span></button> <span class="cw" data-l="en">toilet humour</span><span class="cw" data-l="ta">கழிவறை நகைச்சுவை</span></div>
+      <div class="small" data-l="en">The label says "As you sow". Every model gets marked wrong.</div><div class="small" data-l="ta">லேபிள் "As you sow" என்கிறது. ஒவ்வொரு மாதிரியும் தவறு எனக் குறிக்கப்படுகிறது.</div>
+    </div>
+    <p class="big reveal" style="margin-top:3rem" data-l="en">Speech labels are full of this. Tap a card.</p>
+    <p class="big reveal" style="margin-top:3rem" data-l="ta">பேச்சுத் தரவு லேபிள்கள் இப்படிப் பலவற்றால் நிறைந்தவை. அட்டையைத் தொடுங்கள்.</p>
+    <div class="flips reveal" id="dirty-cards"></div>
+  </div>
+</section>
+
+<!-- MEASURE -->
+<section class="chapter" id="measure">
+  <div class="inner split">
+    <div class="sticky">
+      <h2 class="reveal" data-l="en">Scoring Tamil is a minefield.</h2>
+      <h2 class="reveal" data-l="ta">தமிழை மதிப்பிடுவது ஒரு கண்ணிவெடிக் களம்.</h2>
+      <p class="reveal" data-l="en">The same word has several correct spellings, English words come in either script, and numbers come as digits or words. A naive scorer counts each of these as an error. Toggle the rules.</p>
+      <p class="reveal" data-l="ta">ஒரே சொல்லுக்குப் பல சரியான எழுத்துக்கூட்டல்கள்; ஆங்கிலச் சொற்கள் எந்த எழுத்திலும்; எண்கள் இலக்கமாகவோ சொல்லாகவோ. எளிய மதிப்பீடு இவை ஒவ்வொன்றையும் பிழையாக எண்ணுகிறது. விதிகளை மாற்றிப் பாருங்கள்.</p>
+    </div>
+    <div>
+      <div class="scorer reveal" id="scorer">
+        <div class="controls" id="fold-btns"></div>
+        <div class="pair" id="fold-pair"></div>
+        <div class="meter"><b id="fold-wer">–</b><span class="dim">WER</span></div>
+      </div>
+      <div class="tiles reveal" style="margin-top:1rem">
+        <div class="tile"><span class="k">WER</span><p data-l="en">Did every word match? One wrong letter fails the whole word, and Tamil words are long.</p><p data-l="ta">ஒவ்வொரு சொல்லும் பொருந்தியதா? ஒரு எழுத்துப் பிழை முழுச் சொல்லையும் தவறாக்கும்; தமிழ்ச் சொற்கள் நீளமானவை.</p></div>
+        <div class="tile"><span class="k">CER</span><p data-l="en">How many letters differ?</p><p data-l="ta">எத்தனை எழுத்துகள் வேறுபடுகின்றன?</p></div>
+        <div class="tile"><span class="k" style="color:var(--ours-2)">PER</span><p data-l="en">Did it hear the right sounds? Our own metric, explained below.</p><p data-l="ta">சரியான ஒலிகளைக் கேட்டதா? எங்கள் சொந்த அளவீடு, கீழே விளக்கம்.</p></div>
+        <div class="tile"><span class="k" style="color:var(--ours-2)">EER</span><p data-l="en">Did the meaning change? Explained below.</p><p data-l="ta">பொருள் மாறியதா? கீழே விளக்கம்.</p></div>
+      </div>
+      <div class="scorer reveal" style="margin-top:2.5rem">
+        <h3 style="margin:0 0 .4rem;font-size:1.4rem" data-l="en">PER: how close are the sounds?</h3>
+        <h3 style="margin:0 0 .4rem;font-size:1.4rem" data-l="ta">PER: எழுத்துக்கூட்டலை அல்ல, ஒலியை மதிப்பிடு</h3>
+        <p data-l="en">Both texts become Tamil phonemes and the spaces go. Each substitution costs by how close the 2 sounds are: sounds that speakers merge (ல/ள/ழ, ண/ந/ன, ர/ற, short and long vowels) cost 0.25, neighbours 0.5, anything else 1. PER tells "misheard" apart from "misspelled". We have not seen a weighted phoneme error rate like this used for Tamil ASR before.</p>
+        <p data-l="ta">இரண்டு உரைகளும் தமிழ் ஒலியன்களாக மாற்றப்படுகின்றன; இடைவெளிகள் நீக்கப்படுகின்றன. ஒவ்வொரு மாற்றத்தின் செலவும் இரு ஒலிகளின் நெருக்கத்தைப் பொறுத்தது: பேசுபவர்கள் ஒன்றாக்கும் ஒலிகள் (ல/ள/ழ, ண/ந/ன, ர/ற, குறில்/நெடில்) 0.25, அண்டை ஒலிகள் 0.5, மற்றவை 1. PER "தவறாகக் கேட்டது" என்பதையும் "தவறாக எழுதியது" என்பதையும் பிரிக்கிறது. தமிழ் ASR-க்கு இப்படி எடையிட்ட ஒலியன் பிழை விகிதத்தை முன்பு நாங்கள் பார்த்ததில்லை.</p>
+        <div id="per-demo"></div>
+      </div>
+      <div class="scorer reveal" style="margin-top:1rem">
+        <h3 style="margin:0 0 .4rem;font-size:1.4rem" data-l="en">EER: how much did the meaning change?</h3>
+        <h3 style="margin:0 0 .4rem;font-size:1.4rem" data-l="ta">EER: பொருள் நகர்ந்ததா?</h3>
+        <p data-l="en">PER scores மழை → மலை as a near miss (6%). Rain became a hill. EmbeddingGemma 2 turns the label and the transcript into vectors, and EER is 1 − cosine, averaged over a test set. It is close to SemDist (Kim et al., 2021). We checked it against 3 blind Claude judges who rated meaning on 5,232 Kathbath sentences: AUC 0.88.</p>
+        <p data-l="ta">PER-க்கு மழை → மலை ஒரு சிறு தவறு (6%). ஆனால் அது மழைக்கும் மலைக்கும் உள்ள வேறுபாடு. EmbeddingGemma 2 லேபிளையும் உரையையும் திசையன்களாக மாற்றுகிறது; EER = 1 − cosine, ஒரு சோதனைத் தொகுப்பின் சராசரி. இது SemDist (Kim et al., 2021) போன்றது. 5,232 Kathbath வாக்கியங்களில் பொருளை மதிப்பிட்ட 3 மறைமுக Claude நடுவர்களுடன் ஒப்பிட்டோம்: AUC 0.88.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SPEED -->
+<section class="chapter alt" id="speed">
+  <div class="inner">
+    <h2 class="reveal" data-l="en">Small enough to live at home.</h2>
+    <h2 class="reveal" data-l="ta">வீட்டில் வாழும் அளவுக்குச் சிறியது.</h2>
+    <p class="reveal" data-l="en">Transcribe <b><span class="hours-v">1</span> h</b> of audio:</p>
+    <p class="reveal" data-l="ta"><b><span class="hours-v">1</span> மணி</b> நேர ஒலியை எழுத்தாக்க:</p>
+    <input class="reveal" type="range" id="hours" min="1" max="100" value="1" aria-label="hours" style="width:min(520px,100%);accent-color:var(--ours)">
+    <div class="reveal" id="race"></div>
+    <div class="controls reveal"><button id="race-go">▶ <span data-l="en">race</span><span data-l="ta">போட்டி</span></button></div>
+    <div class="tiles reveal" style="margin-top:2rem">
+      <div class="tile"><b class="n">0.25 s</b><p data-l="en">median time from end of speech to text, on the home server's CPU</p><p data-l="ta">பேச்சு முடிந்ததிலிருந்து உரை வரை, வீட்டு சர்வரின் CPU-வில் (நடுநிலை)</p></div>
+      <div class="tile"><b class="n">2.8 GB</b><p data-l="en">peak memory, int8 ONNX Runtime on the CPU, without PyTorch</p><p data-l="ta">அதிகபட்ச நினைவகம், int8 ONNX, GPU இல்லை, PyTorch இல்லை</p></div>
+      <div class="tile"><b class="n">2.54×</b><p data-l="en">faster training from hand-written Triton kernels, each tested for exact output</p><p data-l="ta">கையால் எழுதிய Triton kernel-களால் பயிற்சி வேகம்; ஒவ்வொன்றும் துல்லியத்துக்குச் சோதிக்கப்பட்டது</p></div>
+    </div>
+    <div class="chart reveal" id="ladder" style="margin-top:2rem"></div>
+  </div>
+</section>
+
+<!-- LOSE -->
+<section class="chapter" id="lose">
+  <div class="inner split">
+    <div class="sticky">
+      <h2 class="reveal" data-l="en">Where we lose: spelling by ear.</h2>
+      <h2 class="reveal" data-l="ta">நாம் தோற்கும் இடம்: காதால் எழுதுவது.</h2>
+      <p class="reveal" data-l="en">On read Tamil, 69% of the words indic-transcribe-core gets and we miss are common words. The model writes them the way they sound. In spoken Tamil, ல, ள and ழ often sound alike. Context decides which one is meant, and our model doesn't use enough of it yet.</p>
+      <p class="reveal" data-l="ta">வாசிப்புத் தமிழில் indic-transcribe-core சரியாகப் பெற்று நாம் தவறவிடும் சொற்களில் 69% பொதுவான சொற்கள். மாதிரி அவற்றை ஒலிப்படி எழுதுகிறது. பேச்சில் ல, ள, ழ பெரும்பாலும் ஒன்றுபோல் ஒலிக்கின்றன. எது என்பதைச் சூழல் தீர்மானிக்கிறது; எங்கள் மாதிரி இன்னும் அதைப் போதுமான அளவு பயன்படுத்தவில்லை.</p>
+      <div class="flips reveal" id="homophones" style="grid-template-columns:repeat(2,1fr)"></div>
+    </div>
+    <div>
+      <div class="quiz" data-quiz="lose"></div>
+      <div class="chart reveal" id="gap-chart" style="margin-top:2rem"></div>
+    </div>
+  </div>
+</section>
+
+<!-- CLAUDE -->
+<section class="chapter alt" id="claude">
+  <div class="inner">
+    <h2 class="reveal" data-l="en">Made with Claude.</h2>
+    <h2 class="reveal" data-l="ta">Claude உடன் உருவாக்கப்பட்டது.</h2>
+    <p class="big reveal" data-l="en">I built this with Claude (Claude Code) working beside me the whole way: writing and debugging code, running the cloud jobs, auditing data and checking its own work. It would not exist without it. I made the decisions, and I am responsible for the code and the weights.</p>
+    <p class="big reveal" data-l="ta">இதை உருவாக்கும் முழு வழியிலும் Claude (Claude Code) என்னுடன் இருந்தது: நிரல் எழுதுவது, பிழை திருத்துவது, கிளவுட் வேலைகளை இயக்குவது, தரவைத் தணிக்கை செய்வது, தன் வேலையைத் தானே சரிபார்ப்பது. அது இல்லாமல் இது இருந்திருக்காது. முடிவுகள் என்னுடையவை; நிரலுக்கும் எடைகளுக்கும் நானே பொறுப்பு.</p>
+    <div class="tiles reveal">
+      <div class="tile"><b class="n">707</b><p data-l="en">commits</p><p data-l="ta">commit-கள்</p></div>
+      <div class="tile"><b class="n">~$400</b><p data-l="en">of cloud GPUs, all spot</p><p data-l="ta">கிளவுட் GPU செலவு, அனைத்தும் spot</p></div>
+      <div class="tile"><b class="n">1</b><p data-l="en">human</p><p data-l="ta">மனிதர்</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- USE -->
+<section class="chapter" id="use">
+  <div class="inner">
+    <h2 class="reveal" data-l="en">Use it.</h2>
+    <h2 class="reveal" data-l="ta">பயன்படுத்துங்கள்.</h2>
+    <p class="reveal" data-l="en">The weights are coming to Hugging Face under CC BY-SA 4.0, with the code on GitHub. Use it for anything, commercial included. If you change the weights and share them, keep them CC BY-SA. Transcripts and other outputs are not covered by the licence: use them however you like, including to train other models. Others can push this further with cleaner data and a bigger budget.</p>
+    <p class="reveal" data-l="ta">எடைகள் CC BY-SA 4.0 உரிமத்தில் Hugging Face-க்கும், நிரல் GitHub-க்கும் வருகின்றன. வணிகப் பயன்பாடு உட்பட எதற்கும் பயன்படுத்தலாம். எடைகளை மாற்றிப் பகிர்ந்தால் அவை CC BY-SA ஆகவே இருக்க வேண்டும். எழுத்துப்படிகளும் பிற வெளியீடுகளும் உரிமத்துக்கு உட்பட்டவை அல்ல: மற்ற மாதிரிகளைப் பயிற்றுவிப்பது உட்பட விருப்பம்போல் பயன்படுத்தலாம். தூய்மையான தரவும் பெரிய செலவும் உள்ளவர்கள் இதை இன்னும் முன்னேற்றலாம்.</p>
+    <div class="tabs reveal" id="use-tabs">
+      <button data-tab="nemo" aria-pressed="true">NeMo (GPU)</button>
+      <button data-tab="onnx" aria-pressed="false">ONNX (CPU)</button>
+      <button data-tab="ha" aria-pressed="false">Home Assistant</button>
+    </div>
+    <pre class="reveal" id="use-code"></pre>
+  </div>
+</section>
+
+<footer>
+  <p>parakeet-tamil · தமிழ் கிளி · shrirajh · weights CC BY-SA 4.0. Fine-tuned from NVIDIA parakeet-tdt-0.6b-v3 (CC BY 4.0).</p>
+  <p data-l="en">Audio clips: IndicVoices (AI4Bharat, CC BY 4.0), Kathbath (AI4Bharat), FLEURS (Google, audio CC BY 4.0, text from FLORES CC BY-SA 4.0). Scores use the public test sets listed in the repository. indic-transcribe-core was used only as a benchmark.</p>
+  <p data-l="ta">ஒலிக்கோப்புகள்: IndicVoices (AI4Bharat, CC BY 4.0), Kathbath (AI4Bharat), FLEURS (Google, ஒலி CC BY 4.0, உரை FLORES CC BY-SA 4.0). indic-transcribe-core ஒப்பீட்டுக்கு மட்டுமே பயன்படுத்தப்பட்டது.</p>
+</footer>
+<script src="assets/app.js"></script>
+</body>
+</html>
