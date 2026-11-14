@@ -340,3 +340,14 @@ h2.sents .s, h3.sents .s { margin-bottom: 0; }
 
 .augbox { margin: 1rem 0 1.4rem; }
 #aug .controls + .controls { margin-top: .8rem; }
+
+.vmap-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 1.4rem; align-items: center; }
+@media (max-width: 860px) { .vmap-grid { grid-template-columns: 1fr; } }
+#vdial { width: 100%; accent-color: var(--ours); margin-top: .5rem; }
+.vticks { display: flex; justify-content: space-between; font: .75rem var(--mono); color: var(--fg-3); padding: 0 .2rem; }
+.vlist { padding-left: 1.3rem; display: grid; gap: 1rem; max-width: 46rem; }
+.vlist li { color: var(--fg-2); }
+.vlist li > b { display: block; color: var(--fg); font-size: 1.05rem; margin-bottom: .2rem; }
+.vlist li > span { display: block; }
+
+#vdial-chart + p.small { margin-top: 1rem; }

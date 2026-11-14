@@ -555,7 +555,7 @@ function storyScore() {
 (function waitSC() { if (SC) { storyScore(); redraw.push(storyScore); } else setTimeout(waitSC, 100); })();
 
 /* ---------- one sentence per line, everywhere (static and script-rendered text) ---------- */
-const SENT_SEL = "h2, h3, p, li, .okmstat span, .verdict, .flip .g, .small, .tile p, .hint, .tag, figcaption";
+const SENT_SEL = "h2, h3, p, li, .vlist li > span, .okmstat span, .verdict, .flip .g, .small, .tile p, .hint, .tag, figcaption";
 const SENT_SKIP = ".lines, svg, table, .karaoke, .numbers, .simlog, .pair, .prompt, .heard, pre, .opt, .loanrow, .bar, footer";
 // widow control: the last space inside an element becomes a no-break space, across inline tags
 function glueNode(el) {
@@ -570,7 +570,7 @@ function glueNode(el) {
 function splitSentences(root = document) {
   const els = [...(root.matches?.(SENT_SEL) ? [root] : []), ...root.querySelectorAll(SENT_SEL)];
   els.forEach((p) => {
-    if (p.dataset.split === "1" || p.closest(SENT_SKIP) || p.querySelector(".s")) return;
+    if (p.dataset.split === "1" || p.closest(SENT_SKIP) || p.querySelector(".s") || (p.tagName === "LI" && p.querySelector(":scope > span, :scope > b"))) return;
     const html = p.innerHTML.trim();
     const parts = html.split(/(?<=[.?!…])\s+(?=(?:<[^>]+>)*["“(]?[A-Z0-9஀-௿])/);
     p.dataset.split = "1";
@@ -583,12 +583,33 @@ function splitSentences(root = document) {
 }
 splitSentences();
 new MutationObserver((ms) => { for (const m of ms) m.addedNodes.forEach((n) => { if (n.nodeType === 1) splitSentences(n); }); }).observe(document.body, { childList: true, subtree: true });
-/* ---------- voice range dial: pitch of a synthetic voice vs real Tamil speakers ---------- */
+/* ---------- voice map: stepped dial, infographic, real clip with synced caption ---------- */
+let VD = null, vdAudio = null, vdI = 2;
+const vdA = [-1, -0.5, 0, 0.5, 1];
+function vmap() {
+  const W = 560, H = 320, cx = 330, cy = 150, dx = 0.82, dy = -0.57, Lh = 140;
+  // illustrative: 20 built-in voices as a cluster on the left; the random voice v far from all of them; d = the pitch axis
+  let rnd = 7; const r = () => ((rnd = (rnd * 16807) % 2147483647) / 2147483647);
+  let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="voice map">`;
+  for (let i = 0; i < 20; i++) { const x = 70 + r() * 120, y = 90 + r() * 150; g += `<circle cx="${x}" cy="${y}" r="6" fill="var(--fg-3)" opacity=".55"/>`; }
+  g += `<text x="130" y="72" text-anchor="middle" class="lbl" style="font-size:12px">${esc(L({ en: "Maya2's 20 built-in voices", ta: "Maya2-இன் 20 உள்ளமைந்த குரல்கள்" }))}</text>`;
+  const p = (a) => [cx + a * Lh * dx, cy + a * Lh * dy];
+  const [x0, y0] = p(-1.15), [x1, y1] = p(1.15);
+  g += `<defs><marker id="vm-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--ours-2)"/></marker></defs>`;
+  g += `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="var(--ours-2)" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#vm-arr)"/>`;
+  g += `<text x="${x1 - 10}" y="${y1 - 12}" text-anchor="end" style="fill:var(--fg)">${esc(L({ en: "higher", ta: "உயர்ந்த" }))}</text><text x="${x0 + 4}" y="${y0 + 22}" style="fill:var(--fg)">${esc(L({ en: "deeper", ta: "ஆழ்ந்த" }))}</text>`;
+  g += `<text x="${cx + 10}" y="${cy + 92}" text-anchor="middle" style="font-size:11px">${esc(L({ en: "direction d, learned from pitch only", ta: "திசை d, சுருதியிலிருந்து மட்டுமே கற்றது" }))}</text>`;
+  vdA.forEach((a, i) => { const [x, y] = p(a); g += `<circle cx="${x}" cy="${y}" r="${i === vdI ? 11 : 5}" fill="${i === vdI ? "var(--ours)" : "var(--bg-3)"}" stroke="var(--ours)" stroke-width="2.5" style="cursor:pointer" data-vstep="${i}"/>`; });
+  const [vx, vy] = p(0);
+  g += `<text x="${vx + 18}" y="${vy + 26}" class="lbl" style="font-size:12px">${esc(L({ en: "a new voice, v", ta: "புதிய குரல், v" }))}</text>`;
+  g += `<text x="${W - 4}" y="${H - 4}" text-anchor="end" style="font-size:10px">${L({ en: "192 dimensions, drawn in 2. illustration", ta: "192 பரிமாணங்கள், 2-இல் வரையப்பட்டது. விளக்கப்படம்" })}</text>`;
+  $("#vmap").innerHTML = g + "</svg>";
+  $$("#vmap [data-vstep]").forEach((c) => c.addEventListener("click", () => vdSet(+c.dataset.vstep, true)));
+}
 function vdial() {
-  const A = [-1, -0.5, 0, 0.5, 1], HZ = [112, 117, 169, 232, 271];
-  const a = +$("#vdial").value; let i = 0; while (i < 3 && a > A[i + 1]) i++;
-  const hz = HZ[i] + ((HZ[i + 1] - HZ[i]) * (a - A[i])) / (A[i + 1] - A[i]);
-  $("#vdial-hz").textContent = `${Math.round(hz)} Hz`;
+  if (!VD) return;
+  const st = VD.steps[vdI], hz = st.f0;
+  $("#vdial").value = vdI; $("#vdial-hz").textContent = `${hz} Hz`;
   const W = 1000, H = 120, lo = 80, hi = 300, x = (v) => 40 + ((v - lo) / (hi - lo)) * (W - 80);
   let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="voice pitch">`;
   g += `<rect x="${x(104)}" y="44" width="${x(266) - x(104)}" height="22" rx="11" fill="var(--fg-3)" opacity=".28"/>`;
@@ -598,10 +619,32 @@ function vdial() {
   g += `<line x1="${x(hz)}" x2="${x(hz)}" y1="40" y2="84" stroke="var(--fg)" stroke-width="3"/><circle cx="${x(hz)}" cy="75" r="9" fill="var(--ours)" stroke="var(--bg-3)" stroke-width="3"/>`;
   [100, 150, 200, 250, 300].forEach((v) => (g += `<text x="${x(v)}" y="${H - 2}" text-anchor="middle" style="font-size:11px">${v}</text>`));
   $("#vdial-chart").innerHTML = g + "</svg>";
+  $("#vdial-words").innerHTML = st.words.map(([w, t]) => `<span data-t="${t}">${esc(w)}</span>`).join(" ");
+  $("#vdial-words").classList.add("idle");
+  vmap();
 }
-$("#vdial").addEventListener("input", vdial);
-$("#vdial-rand").addEventListener("click", () => { $("#vdial").value = (Math.random() * 2 - 1).toFixed(2); vdial(); });
-vdial(); redraw.push(vdial);
+function vdSet(i, play) {
+  vdI = i; if (vdAudio) vdAudio.pause(); vdAudio = null;
+  const b = $("#vdial-play"); b.textContent = "▶"; b.setAttribute("aria-pressed", "false");
+  vdial(); if (play) vdPlay();
+}
+function vdPlay() {
+  const st = VD.steps[vdI], b = $("#vdial-play");
+  if (vdAudio && !vdAudio.paused) { vdAudio.pause(); return; }
+  if (current && current !== vdAudio) current.pause();
+  vdAudio = new Audio(st.audio); current = vdAudio;
+  const ws = $$("#vdial-words span"), box = $("#vdial-words");
+  vdAudio.addEventListener("play", () => { b.textContent = "❚❚"; b.setAttribute("aria-pressed", "true"); box.classList.remove("idle"); });
+  vdAudio.addEventListener("pause", () => { b.textContent = "▶"; b.setAttribute("aria-pressed", "false"); });
+  vdAudio.addEventListener("ended", () => box.classList.add("idle"));
+  const tick = () => { if (!vdAudio) return; const tm = vdAudio.currentTime; ws.forEach((x, k) => { const on = +x.dataset.t <= tm + 0.05; x.classList.toggle("on", on); x.classList.toggle("now", on && (!ws[k + 1] || +ws[k + 1].dataset.t > tm + 0.05)); }); if (!vdAudio.paused) requestAnimationFrame(tick); };
+  vdAudio.addEventListener("play", tick); vdAudio.play();
+}
+$("#vdial").addEventListener("input", (e) => vdSet(+e.target.value, false));
+$("#vdial").addEventListener("change", (e) => vdSet(+e.target.value, true));
+$("#vdial-play").addEventListener("click", vdPlay);
+$("#vdial-rand").addEventListener("click", () => { let k; do k = Math.floor(Math.random() * 5); while (k === vdI); vdSet(k, true); });
+(async () => { VD = await J("data/vdial.json"); vdial(); redraw.push(vdial); })();
 
 /* ---------- language model chapter ---------- */
 const LMX = [
