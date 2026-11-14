@@ -3,6 +3,9 @@
 The leading open speech recognition model for conversational Tamil, including Tamil mixed with English. It is
 fast (about 28× real time on 8 CPU threads) and competitive on read Tamil.
 A 0.6B FastConformer-TDT fine-tuned from [NVIDIA parakeet-tdt-0.6b-v3](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3).
+We chose a transducer because it writes as it listens, frame by frame, which pushes it to write Tamil as it is
+spoken (pronunciation, fillers, repetitions, backchannels) rather than as it would be written; it also gives
+word timestamps.
 
 - **Write-up** (interactive, English and Tamil): https://shrirajh.github.io/parakeet-tamil-kili/
 - **Try it in your browser** (CPU, nothing leaves your device): https://shrirajh.github.io/parakeet-tamil-kili/try/
@@ -18,6 +21,7 @@ decoding; "+ LM" is the gated beam-4 decode with the Sangraha 5-gram. Up to 2,00
 | test set | kind | **[kili](https://huggingface.co/shrirajh/parakeet-tamil-kili)** | [kili + LM](https://huggingface.co/shrirajh/parakeet-tamil-kili/tree/main/lm) | [indic-transcribe-core](https://huggingface.co/bodhan-ai/indic-transcribe-core) | [Hima-ASR](https://huggingface.co/Prahaladha/hima-asr) | [Nemotron 3.5 Transcribe](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B) | [IndicWhisper](https://github.com/AI4Bharat/vistaar) | [original parakeet v3](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3) |
 |---|---|---|---|---|---|---|---|---|
 | *parameters* | | *0.63B* | *0.63B + LM* | *1.22B* | *0.46B* | *33.7B (4.3B active)* | *0.77B* | *0.63B* |
+| *word timestamps* | | *yes, natively* | *no* | *no* | *no* | *yes, natively* | *approximately* | *yes, natively* |
 | IndicVoices | conversational | **9.44** | 9.89 | 11.52 | 12.39 | 14.08 | 23.83 | 65.59 |
 | Long recordings (2–5 min) | long-form | **7.39** | – | 7.67 | 7.55 | 15.43 | – | – |
 | Kathbath | read | 2.41 | 2.17 | **1.33** | 1.46 | 1.62 | 1.57 | 33.50 |
@@ -50,7 +54,8 @@ Tamil, kili is at 1.4–2.5 and the best model on each set at 0.5–1.6.
 \* Nemotron 3.5 Transcribe's training data includes Common Voice and FLEURS, so these scores may include recordings
 it trained on; they are not counted as best. Its OpenSLR-65 score is also unusually low. Hima-ASR's model card does
 not say what it was trained on. Both were run with their own code at fixed versions (Hima-ASR told the language,
-Nemotron with the prompts from its model card). Long recordings are cut into pieces of up to 30 s for every model;
+Nemotron with the prompts from its model card). Word timestamps: indic-transcribe-core's vocabulary has timestamp tokens, but its released code turns them
+off; IndicWhisper's come from Whisper's attention alignment; kili + LM's beam decode does not return them. Long recordings are cut into pieces of up to 30 s for every model;
 given whole recordings, Nemotron wrote 8 of the 20 in romanised Tamil.
 
 What this says:
@@ -59,6 +64,10 @@ What this says:
   18% fewer sound errors than the next best on IndicVoices (PER 9.4 vs 11.5) and the best PER on long recordings.
 - **Read Tamil** (news, prompts) is competitive: 0.7 to 1.8 PER points behind the best. The gap is mostly spelling, not
   hearing: PER (sounds) differs far less than WER (spellings).
+- **It writes what was said, and does not editorialise.** In 2,000 everyday recordings the three strongest other
+  models rewrote spoken Tamil as written Tamil about half the time (நாங்க → நாங்கள், இல்ல → இல்லை: 53–54% of
+  976 cases); kili did it 0 times, and it keeps the most fillers, backchannels and repetitions. Use it for formal
+  speech too: turning a transcript into formal Tamil, a summary or a translation is a text model's job.
 - **English** stays close to the original parakeet v3 it started from. It does not forget English.
 - **Code-switching** is the default. English words come out in Latin script with the Tamil suffix attached
   (`meeting-க்கு`, `office-ல`): 89% of the English words in conversational Tamil (IndicVoices), 6% in Tamil script.
@@ -102,6 +111,7 @@ uv sync --extra wyoming   # Home Assistant server
 
 ```bash
 uv run python -m kili.infer.transcribe --model shrirajh/parakeet-tamil-kili clip.wav
+uv run python -m kili.infer.transcribe --model shrirajh/parakeet-tamil-kili clip.wav --timestamps   # word start / end times
 ```
 
 ```python

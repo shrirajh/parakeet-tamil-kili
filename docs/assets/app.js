@@ -505,13 +505,14 @@ const MAP = {
     measure: [580, 370, { en: "Marking a Tamil test", ta: "தமிழ்த் தேர்வு திருத்தம்" }],
     listen: [770, 110, { en: "Who heard it right?", ta: "எது சரியாகக் கேட்டது?" }],
     scores: [770, 260, { en: "Scoreboard", ta: "மதிப்பெண் பலகை" }],
+    verbatim: [770, 330, { en: "What you said", ta: "நீங்கள் சொன்னது" }],
     lose: [770, 400, { en: "Where it struggles", ta: "தடுமாறும் இடங்கள்" }],
     lm: [770, 480, { en: "A second opinion", ta: "இன்னொரு கருத்து" }],
     claude: [935, 170, { en: "Made with Claude", ta: "Claude-இன் துணையோடு" }],
     use: [935, 350, { en: "Use it", ta: "பயன்படுத்துங்கள்" }],
   },
   edges: [["why", "hard"], ["hard", "recipe"], ["hard", "data"], ["hard", "lose"], ["recipe", "epochs"], ["recipe", "runs"], ["why", "listen"], ["why", "speed"], ["why", "runs"], ["runs", "epochs"], ["runs", "spot"], ["runs", "two-tamils"], ["spot", "kernels"], ["kernels", "runs"], ["kernels", "speed"], ["teacher", "two-tamils"], ["teacher", "data"],
-    ["two-tamils", "listen"], ["data", "measure"], ["data", "scores"], ["measure", "scores"], ["measure", "lose"], ["scores", "listen"], ["scores", "lose"], ["epochs", "scores"], ["lose", "use"], ["lose", "lm"], ["loans", "runs"], ["loans", "measure"], ["loans", "data"], ["hard", "loans"], ["lm", "use"], ["lm", "scores"], ["claude", "runs"], ["speed", "use"]],
+    ["two-tamils", "listen"], ["data", "measure"], ["data", "scores"], ["measure", "scores"], ["measure", "lose"], ["scores", "listen"], ["scores", "verbatim"], ["verbatim", "lose"], ["two-tamils", "verbatim"], ["verbatim", "lm"], ["epochs", "scores"], ["lose", "use"], ["lose", "lm"], ["loans", "runs"], ["loans", "measure"], ["loans", "data"], ["hard", "loans"], ["lm", "use"], ["lm", "scores"], ["claude", "runs"], ["speed", "use"]],
 };
 function mapDraw() {
   const W = 1020, H = 520, N = MAP.nodes;
@@ -542,7 +543,7 @@ const TOC = [
   [null, [["top", { en: "Start", ta: "தொடக்கம்" }], ["map", { en: "The map", ta: "வரைபடம்" }]]],
   [MAP.stages[0][1], ["why", "hard"]],
   [MAP.stages[1][1], ["recipe", "data", "loans", "teacher", "two-tamils", "spot", "kernels", "runs", "epochs"]],
-  [MAP.stages[2][1], ["measure", "listen", "scores"]],
+  [MAP.stages[2][1], ["measure", "listen", "scores", "verbatim"]],
   [MAP.stages[3][1], ["lose", "lm", "speed"]],
   [MAP.stages[4][1], ["claude", "use"]],
 ];
@@ -691,6 +692,9 @@ let OPEN = {};
 const ONAME = { e5: "parakeet-tamil", e5_lm: "parakeet-tamil + LM", itcore: "indic-transcribe-core", hima: "Hima-ASR", nemotron: "Nemotron 3.5 Transcribe", stock_v3: "original parakeet v3", shruti: "shruti-tamil", indicwhisper: "IndicWhisper", omni: "Omni 7B", gemma4_e4b: "Gemma 4 E4B" };
 const OCOLS = ["e5", "e5_lm", "itcore", "hima", "nemotron", "stock_v3", "shruti", "indicwhisper", "omni", "gemma4_e4b"];
 // parameters, from each model's published weights; LM = the 5-gram language model
+const TSY = { en: "yes, natively", ta: "ஆம், நேரடியாக" }, TSA = { en: "approximately", ta: "தோராயமாக" }, TSN = { en: "no", ta: "இல்லை" };
+// word timestamps: native (TDT / Nemotron's aligner), approximate (Whisper attention), or none in the released code
+const OTS = { e5: TSY, e5_lm: TSN, itcore: TSN, hima: TSN, nemotron: TSY, stock_v3: TSY, shruti: TSN, indicwhisper: TSA, omni: TSN, gemma4_e4b: TSN };
 const OPARAMS = { e5: "0.63B", e5_lm: "0.63B + LM", itcore: "1.22B", hima: "0.46B", nemotron: "33.7B (4.3B active)", stock_v3: "0.63B", shruti: "0.06B", indicwhisper: "0.77B", omni: "7.8B", gemma4_e4b: "8.0B" };
 // may include clips the model trained on (its training data lists Common Voice and FLEURS): marked *, never "best"
 const OFLAG = { nemotron: ["eval_cv_ta", "eval_fleurs_ta", "eval_cv_en"] };
@@ -701,6 +705,7 @@ function openTable() {
   const m = metric;
   let t = `<table class="dt"><thead><tr><th>${L({ en: "test set", ta: "தேர்வு" })} · ${m.toUpperCase()}</th>${OCOLS.map((c) => `<th>${esc(ONAME[c])}</th>`).join("")}</tr></thead><tbody>`;
   t += `<tr class="params"><td>${L({ en: "parameters", ta: "அளவுருக்கள்" })}</td>${OCOLS.map((c) => `<td>${esc(OPARAMS[c] || "")}</td>`).join("")}</tr>`;
+  t += `<tr class="params"><td>${L({ en: "word timestamps", ta: "சொல் நேரங்கள்" })}</td>${OCOLS.map((c) => `<td>${esc(L(OTS[c]))}</td>`).join("")}</tr>`;
   Object.keys(SC.sets).forEach((s) => {
     const en = SC.sets[s].kind === "english", mm = en ? "wer" : m;
     const vs = OCOLS.map((c) => { const r = val(c, s); return r ? r[mm] : undefined; });
