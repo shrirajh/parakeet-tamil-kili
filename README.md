@@ -1,11 +1,10 @@
 # parakeet-tamil-kili · தமிழ் கிளி
 
-The leading open speech recognition model for conversational Tamil, including Tamil mixed with English. It is
-fast (about 28× real time on 8 CPU threads) and competitive on read Tamil.
-A 0.6B FastConformer-TDT fine-tuned from [NVIDIA parakeet-tdt-0.6b-v3](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3).
-We chose a transducer because it writes as it listens, frame by frame, which pushes it to write Tamil as it is
-spoken (pronunciation, fillers, repetitions, backchannels) rather than as it would be written; it also gives
-word timestamps.
+The leading open speech recognition model for conversational Tamil, including Tamil mixed with English. It writes
+what was said, as it was said: spoken forms, fillers, backchannels and repetitions, with word timestamps. It is fast
+(about 28× real time on 8 CPU threads) and competitive on read Tamil.
+A 0.6B FastConformer-TDT fine-tuned from [NVIDIA parakeet-tdt-0.6b-v3](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3):
+a transducer writes as it listens, frame by frame, which is why it keeps what was said and knows when each word was said.
 
 - **Write-up** (interactive, English and Tamil): https://shrirajh.github.io/parakeet-tamil-kili/
 - **Try it in your browser** (CPU, nothing leaves your device): https://shrirajh.github.io/parakeet-tamil-kili/try/
@@ -22,6 +21,7 @@ decoding; "+ LM" is the gated beam-4 decode with the Sangraha 5-gram. Up to 2,00
 |---|---|---|---|---|---|---|---|---|
 | *parameters* | | *0.63B* | *0.63B + LM* | *1.22B* | *0.46B* | *33.7B (4.3B active)* | *0.77B* | *0.63B* |
 | *word timestamps* | | *yes, natively* | *no* | *no* | *no* | *yes, natively* | *approximately* | *yes, natively* |
+| *timestamps on Tamil: within 0.2 s / put in silence* | | ***94% / 1.1%*** | – | – | – | *24% / 0.3%* | *90% / 7.5%* | – |
 | IndicVoices | conversational | **9.44** | 9.89 | 11.52 | 12.39 | 14.08 | 23.83 | 65.59 |
 | Long recordings (2–5 min) | long-form | **7.39** | – | 7.67 | 7.55 | 15.43 | – | – |
 | Kathbath | read | 2.41 | 2.17 | **1.33** | 1.46 | 1.62 | 1.57 | 33.50 |
@@ -55,7 +55,11 @@ Tamil, kili is at 1.4–2.5 and the best model on each set at 0.5–1.6.
 it trained on; they are not counted as best. Its OpenSLR-65 score is also unusually low. Hima-ASR's model card does
 not say what it was trained on. Both were run with their own code at fixed versions (Hima-ASR told the language,
 Nemotron with the prompts from its model card). Word timestamps: indic-transcribe-core's vocabulary has timestamp tokens, but its released code turns them
-off; IndicWhisper's come from Whisper's attention alignment; kili + LM's beam decode does not return them. Long recordings are cut into pieces of up to 30 s for every model;
+off; IndicWhisper's come from Whisper's attention alignment; kili + LM's beam decode does not return them. Timestamp accuracy: 120 recordings, each 3 real Tamil clips
+(Kathbath, IndicVoices) joined by 1 s of digital silence; word starts of correctly heard words compared with an
+independent forced aligner (Meta MMS), and the share of words placed inside the inserted silence. Nemotron's
+timestamps (its Transformers implementation) are precise when its aligner works, but in 66 of 94 recordings the
+words were misplaced by more than 0.5 s; IndicWhisper's are tight inside speech but 0.5 s off at its edges. Long recordings are cut into pieces of up to 30 s for every model;
 given whole recordings, Nemotron wrote 8 of the 20 in romanised Tamil.
 
 What this says:

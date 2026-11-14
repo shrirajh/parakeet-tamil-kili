@@ -695,6 +695,8 @@ const OCOLS = ["e5", "e5_lm", "itcore", "hima", "nemotron", "stock_v3", "shruti"
 const TSY = { en: "yes, natively", ta: "ஆம், நேரடியாக" }, TSA = { en: "approximately", ta: "தோராயமாக" }, TSN = { en: "no", ta: "இல்லை" };
 // word timestamps: native (TDT / Nemotron's aligner), approximate (Whisper attention), or none in the released code
 const OTS = { e5: TSY, e5_lm: TSN, itcore: TSN, hima: TSN, nemotron: TSY, stock_v3: TSY, shruti: TSN, indicwhisper: TSA, omni: TSN, gemma4_e4b: TSN };
+// word timestamps on Tamil: share of word starts within 0.2 s of an independent aligner / share of words put in silence
+const OTSACC = { e5: "94% / 1.1%", nemotron: "24% / 0.3%", indicwhisper: "90% / 7.5%" };
 const OPARAMS = { e5: "0.63B", e5_lm: "0.63B + LM", itcore: "1.22B", hima: "0.46B", nemotron: "33.7B (4.3B active)", stock_v3: "0.63B", shruti: "0.06B", indicwhisper: "0.77B", omni: "7.8B", gemma4_e4b: "8.0B" };
 // may include clips the model trained on (its training data lists Common Voice and FLEURS): marked *, never "best"
 const OFLAG = { nemotron: ["eval_cv_ta", "eval_fleurs_ta", "eval_cv_en"] };
@@ -706,6 +708,7 @@ function openTable() {
   let t = `<table class="dt"><thead><tr><th>${L({ en: "test set", ta: "தேர்வு" })} · ${m.toUpperCase()}</th>${OCOLS.map((c) => `<th>${esc(ONAME[c])}</th>`).join("")}</tr></thead><tbody>`;
   t += `<tr class="params"><td>${L({ en: "parameters", ta: "அளவுருக்கள்" })}</td>${OCOLS.map((c) => `<td>${esc(OPARAMS[c] || "")}</td>`).join("")}</tr>`;
   t += `<tr class="params"><td>${L({ en: "word timestamps", ta: "சொல் நேரங்கள்" })}</td>${OCOLS.map((c) => `<td>${esc(L(OTS[c]))}</td>`).join("")}</tr>`;
+  t += `<tr class="params"><td>${L({ en: "on Tamil: within 0.2 s / in silence", ta: "தமிழில்: 0.2 வினாடிக்குள் / அமைதியில்" })}</td>${OCOLS.map((c) => `<td>${esc(OTSACC[c] || "–")}</td>`).join("")}</tr>`;
   Object.keys(SC.sets).forEach((s) => {
     const en = SC.sets[s].kind === "english", mm = en ? "wer" : m;
     const vs = OCOLS.map((c) => { const r = val(c, s); return r ? r[mm] : undefined; });
@@ -746,7 +749,7 @@ function storyScore() {
 
 /* ---------- one sentence per line, everywhere (static and script-rendered text) ---------- */
 const SENT_SEL = "h2, h3, p, li, .vlist li > span, .okmstat span, .verdict, .flip .g, .small, .tile p, .hint, .tag, figcaption";
-const SENT_SKIP = ".lines, svg, table, .karaoke, .numbers, .simlog, .pair, .prompt, .heard, pre, .opt, .loanrow, .bar, footer";
+const SENT_SKIP = ".lines, svg, table, .karaoke, .numbers, .simlog, .pair, .prompt, .heard, pre, .opt, .loanrow, .bar, footer, .techdlg";
 // widow control: the last space inside an element becomes a no-break space, across inline tags
 function glueNode(el) {
   const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), nodes = [];
@@ -1188,3 +1191,65 @@ new MutationObserver((ms) => {
   });
 }).observe(document.body, { childList: true, subtree: true });
 if (isoOn) setIso(true);
+
+/* ---------- "it writes what you said": real clips, model tabs, 976 dots, then tidy ---------- */
+let VB = null, vbClip = 0, vbModel = "itcore", vbDotModel = "itcore", vbPlayer = null;
+const VBM = [["kili", { en: "ours", ta: "எங்களுடையது" }], ["itcore", { en: "indic-transcribe-core", ta: "indic-transcribe-core" }], ["hima", { en: "Hima-ASR", ta: "Hima-ASR" }], ["nemotron", { en: "Nemotron 3.5", ta: "Nemotron 3.5" }]];
+function vbTabs(box, cur, onPick) {
+  box.innerHTML = VBM.map(([k, n]) => `<button role="tab" data-k="${k}" aria-pressed="${k === cur}">${esc(L(n))}</button>`).join("");
+  $$("button", box).forEach((b) => b.addEventListener("click", () => onPick(b.dataset.k)));
+}
+function vbRefTimes(c) {  // reference word i -> start time of the matching word in our transcript
+  const ref = c.ref.split(" "), out = Array(ref.length).fill(null); let ri = 0, hi = 0;
+  c.models.kili.forEach((x) => { if ("=wx".includes(x.k)) { out[ri++] = c.kili_words[hi++][1]; } else if (x.k === "-") ri++; else hi++; });
+  for (let i = 0; i < out.length; i++) if (out[i] == null) out[i] = i ? out[i - 1] : 0;
+  return out;
+}
+function vbOut(toks) {
+  return toks.map((x) => {
+    if (x.k === "=") return x.f ? `<span class="vb-f">${esc(x.t)}</span>` : esc(x.t);
+    if (x.k === "w") return `<span class="vb-w"><s>${esc(x.r)}</s>${esc(x.t)}</span>`;
+    if (x.k === "x") return latin(x.t) !== latin(x.r) ? `<span class="w-fold" title="${esc(x.r)}">${esc(x.t)}</span>` : `<span class="w-sub" title="${esc(x.r)}">${esc(x.t)}</span>`;
+    if (x.k === "-") return `<span class="w-del">${esc(x.t)}</span>`;
+    return `<span class="w-ins">${esc(x.t)}</span>`;
+  }).join(" ");
+}
+function vbDraw() {
+  if (!VB) return;
+  const root = $("#vb-player"), c = VB.clips[vbClip];
+  $(".vb-clips", root).innerHTML = VB.clips.map((x, i) => `<button role="tab" data-i="${i}" aria-pressed="${i === vbClip}">${esc(L(x.label))}</button>`).join("");
+  $$(".vb-clips button", root).forEach((b) => b.addEventListener("click", () => { vbClip = +b.dataset.i; vbPlayer?.audio.pause(); vbPlayer = null; vbDraw(); }));
+  if (!vbPlayer) {
+    const head = $(".qhead", root);
+    head.innerHTML = `<button class="qplay" aria-pressed="false" aria-label="play">▶</button><div class="mini"><canvas></canvas></div><span class="qsrc">${esc(c.source)}</span>`;
+    const times = vbRefTimes(c);
+    vbPlayer = wirePlayer({ url: c.audio, button: $(".qplay", head), canvas: $("canvas", head), onTime: (tt) => {
+      const sp = $$(".vb-ref span", root); let last = -1;
+      const end = tt >= 1e8;
+      sp.forEach((s, i) => { const on = end || times[i] <= tt + 0.05; s.classList.toggle("on", on); if (on) last = i; });
+      sp.forEach((s, i) => s.classList.toggle("now", !end && i === last));
+    } });
+  }
+  $(".vb-ref", root).innerHTML = c.ref.split(" ").map((w) => `<span>${esc(w)}</span>`).join(" ");
+  vbTabs($(".vb-models", root), vbModel, (k) => { vbModel = k; vbDraw(); });
+  const toks = c.models[vbModel];
+  $(".vb-out", root).innerHTML = `<span class="vb-lab">${esc(L(VBM.find((m) => m[0] === vbModel)[1]))}</span>${vbOut(toks)}`;
+  const w = toks.filter((x) => x.k === "w").length, mis = toks.filter((x) => (x.k === "x" && latin(x.t) === latin(x.r)) || x.k === "-" || x.k === "+").length;
+  $(".vb-count", root).textContent = L({ en: `${w} spoken ${w === 1 ? "word" : "words"} rewritten as written Tamil · ${mis} misheard`, ta: `${w} பேச்சுச் சொற்கள் எழுத்துத் தமிழாக மாற்றப்பட்டன · ${mis} தவறாகக் கேட்டவை` });
+  // dots
+  const D = $("#vb-dots"), s = VB.dots[vbDotModel];
+  vbTabs($(".vb-models", D), vbDotModel, (k) => { vbDotModel = k; vbDraw(); });
+  const g = $(".vb-grid", D);
+  if (g.children.length !== s.length) g.innerHTML = Array.from(s, (_, i) => `<i style="transition-delay:${(i % 48) * 7}ms"></i>`).join("");
+  Array.from(g.children).forEach((el, i) => { el.className = s[i]; });
+  const n = (ch) => s.split(ch).length - 1;
+  $(".vb-dotkey", D).innerHTML = `<span><i style="background:var(--itcore)"></i><b>${n("w")}</b>${L({ en: "rewritten as written Tamil", ta: "எழுத்துத் தமிழாக மாற்றப்பட்டவை" })}</span><span><i style="background:var(--fg-2);opacity:.55"></i><b>${n("k")}</b>${L({ en: "kept as said", ta: "சொன்னபடியே" })}</span><span><i style="box-shadow:inset 0 0 0 1.5px var(--fg-3)"></i><b>${n("o")}</b>${L({ en: "misheard or missed", ta: "தவறாகக் கேட்டவை, விடுபட்டவை" })}</span>`;
+  // then tidy
+  const P = $("#vb-pipe");
+  $(".vb-p0", P).textContent = c.kili_words.map((x) => x[0]).join(" ");
+  $(".vb-p1", P).textContent = c.tidy.formal;
+  $(".vb-p2", P).textContent = c.tidy.english;
+}
+(async () => { try { VB = await J("data/verbatim.json"); vbDraw(); redraw.push(vbDraw); } catch (e) { console.warn(e); } })();
+$$("[data-dialog]").forEach((b) => b.addEventListener("click", (e) => { e.preventDefault(); $("#" + b.dataset.dialog).showModal(); }));
+$$(".techdlg").forEach((d) => { $(".techclose", d).addEventListener("click", () => d.close()); d.addEventListener("click", (e) => { if (e.target === d) d.close(); }); });
