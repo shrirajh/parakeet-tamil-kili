@@ -291,3 +291,8 @@ p.plain.sents .s:first-child { font-weight: 650; }
 #mix-table table.dt th, #mix-table table.dt td { white-space: normal; } #mix-table table.dt td:nth-child(n+5), #mix-table table.dt th:nth-child(n+5) { white-space: nowrap; }
 #mix-table table.dt th { white-space: normal !important; vertical-align: bottom; } #mix-table table.dt td:first-child { min-width: 9rem; }
 #open-table table.dt th { white-space: normal; vertical-align: bottom; }
+
+.voices { margin-top: 3rem; }
+.dial input[type=range] { width: min(320px, 60vw); accent-color: var(--ours); }
+.dial .lbl { font: .75rem var(--mono); color: var(--fg-3); }
+.voices .dial + p.small { margin-top: 1rem; }

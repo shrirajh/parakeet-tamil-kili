@@ -554,7 +554,7 @@ function storyScore() {
 
 /* ---------- one sentence per line in prose ---------- */
 (function splitSentences() {
-  const sel = ".chapter .inner > p:not(.small), .chapter .sticky > p:not(.small):not(.score-line), .chapter .scorer > p, .chapter [data-d] > p:not(.small), .chapter details.howto > p, .chapter .grid2x p.plain";
+  const sel = ".chapter .inner > p:not(.small), .chapter .sticky > p:not(.small):not(.score-line), .chapter .scorer > p, .chapter [data-d] > p:not(.small), .chapter details.howto > p, .chapter .grid2x p.plain, .chapter .voices > p:not(.small)";
   $$(sel).forEach((p) => {
     if (p.classList.contains("sents") || p.closest(".lines") || p.querySelector("a, code") && p.textContent.length < 60) return;
     const html = p.innerHTML.trim();
@@ -564,3 +564,23 @@ function storyScore() {
     p.classList.add("sents");
   });
 })();
+
+/* ---------- voice range dial: pitch of a synthetic voice vs real Tamil speakers ---------- */
+function vdial() {
+  const A = [-1, -0.5, 0, 0.5, 1], HZ = [112, 117, 169, 232, 271];
+  const a = +$("#vdial").value; let i = 0; while (i < 3 && a > A[i + 1]) i++;
+  const hz = HZ[i] + ((HZ[i + 1] - HZ[i]) * (a - A[i])) / (A[i + 1] - A[i]);
+  $("#vdial-hz").textContent = `${Math.round(hz)} Hz`;
+  const W = 1000, H = 120, lo = 80, hi = 300, x = (v) => 40 + ((v - lo) / (hi - lo)) * (W - 80);
+  let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="voice pitch">`;
+  g += `<rect x="${x(104)}" y="44" width="${x(266) - x(104)}" height="22" rx="11" fill="var(--fg-3)" opacity=".28"/>`;
+  g += `<text x="${(x(104) + x(266)) / 2}" y="34" text-anchor="middle">${L({ en: "real Tamil speakers: 104–266 Hz (95% of voices)", ta: "உண்மையான தமிழ்ப் பேச்சாளர்கள்: 104–266 Hz (95% குரல்கள்)" })}</text>`;
+  g += `<rect x="${x(112)}" y="72" width="${x(271) - x(112)}" height="6" rx="3" fill="var(--ours)" opacity=".5"/>`;
+  g += `<text x="${(x(112) + x(271)) / 2}" y="98" text-anchor="middle">${L({ en: "our dial: 112–271 Hz", ta: "எங்கள் குமிழ்: 112–271 Hz" })}</text>`;
+  g += `<line x1="${x(hz)}" x2="${x(hz)}" y1="40" y2="84" stroke="var(--fg)" stroke-width="3"/><circle cx="${x(hz)}" cy="75" r="9" fill="var(--ours)" stroke="var(--bg-3)" stroke-width="3"/>`;
+  [100, 150, 200, 250, 300].forEach((v) => (g += `<text x="${x(v)}" y="${H - 2}" text-anchor="middle" style="font-size:11px">${v}</text>`));
+  $("#vdial-chart").innerHTML = g + "</svg>";
+}
+$("#vdial").addEventListener("input", vdial);
+$("#vdial-rand").addEventListener("click", () => { $("#vdial").value = (Math.random() * 2 - 1).toFixed(2); vdial(); });
+vdial(); redraw.push(vdial);
