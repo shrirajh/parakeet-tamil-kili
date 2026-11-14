@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Try parakeet-tamil in your browser · தமிழ் கிளி</title>
+<meta name="description" content="Tamil and English speech recognition running entirely in your browser, on your CPU.">
+<link rel="stylesheet" href="../assets/style.css?v=36">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦜</text></svg>">
+<script>(function(){var d=document.documentElement,t=localStorage.getItem("theme"),l=localStorage.getItem("lang");if(t)d.dataset.theme=t;if(l)d.lang=l;})();</script>
+<style>
+  main { max-width: 980px; margin: 0 auto; padding: 5.5rem 1.4rem 4rem; }
+  h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 0 0 .6rem; line-height: 1.15; }
+  .lede { color: var(--fg-2); font-size: 1.05rem; max-width: 62ch; }
+  .box { background: var(--bg-3); border: 1px solid var(--rule); border-radius: 18px; padding: 1.2rem 1.4rem; margin: 1.4rem 0; }
+  .box h2 { font-size: 1.05rem; margin: 0 0 .8rem; letter-spacing: 0; max-width: none; }
+  .track { height: 10px; border-radius: 6px; background: var(--bg-2); overflow: hidden; }
+  .track > i { display: block; height: 100%; width: 0; background: var(--ours); transition: width .2s; }
+  .prow { display: flex; gap: 1rem; flex-wrap: wrap; font: .85rem var(--mono); color: var(--fg-2); margin: .5rem 0 .8rem; }
+  .frow { display: grid; grid-template-columns: minmax(0, 1fr) 6rem 6rem; gap: .5rem; font-size: .8rem; padding: .2rem 0; border-bottom: 1px solid var(--rule); }
+  .frow span:nth-child(2), .frow span:nth-child(3) { text-align: right; color: var(--fg-2); }
+  .fst[data-state="ok"], .fst[data-state="cached"] { color: var(--good) !important; }
+  .row { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
+  .row + .row { margin-top: .8rem; }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  #out { font-family: var(--ta); font-size: 1.3rem; line-height: 1.7; min-height: 3.4em; white-space: pre-wrap; }
+  #src { font-size: .8rem; color: var(--fg-3); margin-bottom: .4rem; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: .6rem; }
+  .stats div { background: var(--bg-2); border-radius: 10px; padding: .5rem .7rem; }
+  .stats b { display: block; font: 700 1.05rem var(--mono); }
+  .stats span { font-size: .72rem; color: var(--fg-3); }
+  .err { border: 1px solid var(--bad); border-radius: 12px; padding: .7rem .9rem; margin: .5rem 0; font-size: .9rem; }
+  .err b { color: var(--bad); font-family: var(--mono); text-transform: uppercase; font-size: .75rem; margin-right: .4rem; }
+  .err .hint { margin: .4rem 0 0; color: var(--fg-2); }
+  .err pre { font-size: .72rem; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--fg-3); }
+  .cfg { display: flex; gap: 1rem; flex-wrap: wrap; font-size: .8rem; color: var(--fg-2); align-items: center; }
+  .cfg input { width: 4.2rem; font: inherit; background: var(--bg-2); color: var(--fg); border: 1px solid var(--rule); border-radius: 8px; padding: .2rem .4rem; }
+  .lvl { width: 120px; }
+  .note { font-size: .82rem; color: var(--fg-3); }
+  #model.ready #load { display: none; }
+  .file-btn { position: relative; overflow: hidden; }
+  .file-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <a class="brand" href="../">🦜 <span data-l="en">parakeet-tamil</span><span data-l="ta" class="ta">தமிழ் கிளி</span></a>
+  <span class="toggles">
+    <a href="../" class="maplink"><span data-l="en">← write-up</span><span data-l="ta">← கட்டுரை</span></a>
+    <span class="sep"></span>
+    <button data-set-lang="en" aria-pressed="true">EN</button>
+    <button data-set-lang="ta" aria-pressed="false" class="ta">தமிழ்</button>
+  </span>
+</div>
+<main>
+  <h1><span data-l="en">Try it in your browser</span><span data-l="ta">உங்கள் உலாவியிலேயே முயன்று பாருங்கள்</span></h1>
+  <p class="lede" data-l="en">The model runs on your own computer's processor, inside this page. Your audio never leaves your device. The first time, the page downloads the model once (about 1 GB) and keeps it for next time.</p>
+  <p class="lede" data-l="ta">மாதிரி உங்கள் கணினியின் செயலியிலேயே, இந்தப் பக்கத்துக்குள் இயங்குகிறது. உங்கள் ஒலி உங்கள் கருவியை விட்டு வெளியே போகாது. முதல் முறை, பக்கம் மாதிரியை ஒருமுறை பதிவிறக்கும் (சுமார் 1 GB); அடுத்த முறைக்காக அதைச் சேமித்து வைக்கும்.</p>
+
+  <section class="box" id="model">
+    <h2><span data-l="en">1 · Model</span><span data-l="ta">1 · மாதிரி</span> <small class="note" id="cache-state"></small></h2>
+    <div class="row"><button id="load"><span data-l="en">Download and start</span><span data-l="ta">பதிவிறக்கித் தொடங்கு</span> (<span id="total"></span>)</button>
+      <span class="mono note" id="stage"></span></div>
+    <div class="prow"><span id="pbytes"></span><span id="pspeed"></span><span id="peta"></span></div>
+    <div class="track"><i id="dlbar"></i></div>
+    <div id="files" style="margin-top:.8rem"></div>
+    <p class="note"><span data-l="en">From</span><span data-l="ta">மூலம்</span>: <span class="mono" id="base"></span> · <span data-l="en">every file is checked against its SHA-256</span><span data-l="ta">ஒவ்வொரு கோப்பும் SHA-256 மூலம் சரிபார்க்கப்படுகிறது</span> · <button id="clear" style="font-size:.75rem;padding:.15rem .6rem"><span data-l="en">delete the saved model</span><span data-l="ta">சேமித்த மாதிரியை நீக்கு</span></button></p>
+  </section>
+
+  <section class="box">
+    <h2><span data-l="en">2 · Audio</span><span data-l="ta">2 · ஒலி</span></h2>
+    <div class="row">
+      <button id="rec" data-needs-model aria-pressed="false">● <span data-l="en">record, then transcribe</span><span data-l="ta">பதிவுசெய்து, பிறகு எழுது</span></button>
+      <button id="live" data-needs-model aria-pressed="false">◉ <span data-l="en">live</span><span data-l="ta">நேரடி</span></button>
+      <span class="track lvl"><i id="lvl"></i></span><span class="mono note" id="rtime"></span>
+      <label class="file-btn"><button data-needs-model tabindex="-1">⇪ <span data-l="en">upload a file</span><span data-l="ta">கோப்பைப் பதிவேற்று</span></button><input type="file" id="file" accept="audio/*,video/*" data-needs-model></label>
+    </div>
+    <div class="row cfg">
+      <span data-l="en">live mode, seconds:</span><span data-l="ta">நேரடி முறை, வினாடிகள்:</span>
+      <label><span data-l="en">chunk</span><span data-l="ta">துண்டு</span> <input id="chunk" type="number" value="2" min="0.5" max="10" step="0.5"></label>
+      <label><span data-l="en">past context</span><span data-l="ta">முன் சூழல்</span> <input id="left" type="number" value="10" min="0" max="30" step="1"></label>
+      <label><span data-l="en">lookahead</span><span data-l="ta">முன்னோக்கு</span> <input id="right" type="number" value="2" min="0" max="10" step="0.5"></label>
+    </div>
+    <p class="note" data-l="en">Live mode writes each chunk once the lookahead after it has arrived, so text appears about chunk + lookahead seconds behind your voice, plus computing time. 2 s chunks with 10 s of past context and 2 s of lookahead matched one-pass accuracy in our CPU tests. Smaller windows are faster but less accurate.</p>
+    <p class="note" data-l="ta">நேரடி முறையில், ஒவ்வொரு துண்டுக்குப் பின் வரும் முன்னோக்குப் பகுதியும் வந்த பிறகே அந்தத் துண்டு எழுதப்படும். அதனால் உங்கள் குரலுக்குச் சுமார் துண்டு + முன்னோக்கு வினாடிகள் பின்னால், கணக்கிடும் நேரத்தையும் சேர்த்து, உரை தோன்றும். 2 வினாடித் துண்டுகள், 10 வினாடி முன் சூழல், 2 வினாடி முன்னோக்கு: எங்கள் CPU சோதனைகளில் இது ஒரே மூச்சில் எழுதுவதன் துல்லியத்துக்குச் சமமாக இருந்தது. சிறிய அளவுகள் வேகமானவை, ஆனால் துல்லியம் குறைவு.</p>
+    <p class="note" id="lagwarn" hidden><span data-l="en">This device is falling behind live audio: try a smaller past context or a larger chunk.</span><span data-l="ta">இந்தக் கருவி நேரடி ஒலிக்குப் பின்தங்குகிறது: முன் சூழலைக் குறையுங்கள், அல்லது துண்டைப் பெரிதாக்குங்கள்.</span></p>
+    <div class="row" style="margin-top:1rem"><span class="note"><span data-l="en">or try a clip from the write-up:</span><span data-l="ta">அல்லது கட்டுரையில் உள்ள ஒரு பதிவை முயலுங்கள்:</span></span></div>
+    <div class="row" id="presets" style="margin-top:.5rem"></div>
+  </section>
+
+  <section class="box">
+    <h2><span data-l="en">3 · What it heard</span><span data-l="ta">3 · அது கேட்டது</span></h2>
+    <div id="src"></div>
+    <div id="out"></div>
+  </section>
+
+  <section class="box">
+    <h2><span data-l="en">Live stats</span><span data-l="ta">நேரடிப் புள்ளிவிவரம்</span></h2>
+    <div class="stats">
+      <div><b id="s-rtfx">–</b><span data-l="en">× faster than real time (RTFx)</span><span data-l="ta">நிகழ்நேரத்தைவிட மடங்கு வேகம் (RTFx)</span></div>
+      <div><b id="s-audio">–</b><span data-l="en">audio</span><span data-l="ta">ஒலி நீளம்</span></div>
+      <div><b id="s-total">–</b><span data-l="en">total time</span><span data-l="ta">மொத்த நேரம்</span></div>
+      <div><b id="s-front">–</b><span data-l="en">features</span><span data-l="ta">அம்சங்கள்</span></div>
+      <div><b id="s-enc">–</b><span data-l="en">encoder</span><span data-l="ta">குறியாக்கி</span></div>
+      <div><b id="s-dec">–</b><span data-l="en">decoder</span><span data-l="ta">குறிவிலக்கி</span></div>
+      <div><b id="s-tok">–</b><span data-l="en">tokens / decode steps</span><span data-l="ta">token / படிகள்</span></div>
+      <div><b id="s-lag">–</b><span data-l="en">live: behind your voice</span><span data-l="ta">நேரடி: குரலுக்குப் பின்னால்</span></div>
+      <div><b id="s-win">–</b><span data-l="en">live: last window</span><span data-l="ta">நேரடி: கடைசிச் சாளரம்</span></div>
+      <div><b id="s-threads">–</b><span data-l="en">CPU threads</span><span data-l="ta">CPU இழைகள்</span></div>
+      <div><b id="s-iso">–</b><span data-l="en">cross-origin isolated</span><span data-l="ta">cross-origin isolated</span></div>
+      <div><b id="s-dl">–</b><span data-l="en">download</span><span data-l="ta">பதிவிறக்கம்</span></div>
+      <div><b id="s-load">–</b><span data-l="en">model start</span><span data-l="ta">மாதிரி தொடக்கம்</span></div>
+      <div><b id="s-mem">–</b><span data-l="en">JS memory</span><span data-l="ta">JS நினைவகம்</span></div>
+    </div>
+    <p class="note" data-l="en">ONNX Runtime Web (WebAssembly, CPU only) runs the int8 encoder and the fp32 prediction network and joint. The front end and the greedy TDT decoding are this page's JavaScript, the same steps as kili.infer.onnx_run. One pass handles up to 2 minutes; longer files go in 60 s chunks with 20 s of context each side.</p>
+    <p class="note" data-l="ta">ONNX Runtime Web (WebAssembly, CPU மட்டும்) int8 குறியாக்கியையும், fp32 prediction network, joint ஆகியவற்றையும் இயக்குகிறது. ஒலியிலிருந்து அம்சங்களைப் பிரிப்பதும், greedy TDT குறிவிலக்கலும் இந்தப் பக்கத்தின் JavaScript; kili.infer.onnx_run-இல் உள்ள அதே படிகள். 2 நிமிடம் வரை ஒரே மூச்சில்; அதைவிட நீளமான கோப்புகள் 60 வினாடித் துண்டுகளாக, இருபுறமும் 20 வினாடிச் சூழலுடன்.</p>
+  </section>
+
+  <section class="box" id="errors" hidden>
+    <h2><span data-l="en">Errors</span><span data-l="ta">பிழைகள்</span></h2>
+  </section>
+</main>
+<script src="try.js?v=2"></script>
+</body>
+</html>

@@ -32,3 +32,6 @@ onnx*/
 Thumbs.db
 .env
 .env.*
+
+# local model mirror for testing the browser demo
+docs/try/_local/

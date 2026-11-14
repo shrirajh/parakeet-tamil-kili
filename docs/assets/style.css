@@ -428,3 +428,6 @@ html[lang="ta"] .lick { font: 700 .9rem var(--ta); text-transform: none; letter-
 
 /* gradual light/dark switch (View Transitions cross-fade) */
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .7s; animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
+
+.licask { padding: 1rem 0 .2rem; border-bottom: 1px solid var(--rule); }
+.licask p { margin: 0; color: var(--fg); font-size: 1rem; line-height: 1.55; }

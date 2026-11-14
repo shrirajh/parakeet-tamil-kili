@@ -4,6 +4,7 @@ Speech recognition for Tamil, English, and the two mixed together, small enough 
 A 0.6B FastConformer-TDT fine-tuned from [NVIDIA parakeet-tdt-0.6b-v3](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3).
 
 - **Write-up** (interactive, English and Tamil): https://shrirajh.github.io/parakeet-tamil-kili/
+- **Try it in your browser** (CPU, nothing leaves your device): https://shrirajh.github.io/parakeet-tamil-kili/try/
 - **Model**: https://huggingface.co/shrirajh/parakeet-tamil-kili
 - **Code**: https://github.com/shrirajh/parakeet-tamil-kili
 
@@ -170,6 +171,9 @@ model with `KILI_TEST_MODEL`, `KILI_ONNX_DIR`, `KILI_TEST_LM` and `KILI_TEST_AUD
 - **Code**: [Apache-2.0](https://github.com/shrirajh/parakeet-tamil-kili/blob/main/LICENSE).
 - **Language model**: CC BY 4.0. It is derived from Sangraha (AI4Bharat, CC BY 4.0).
 - **Transcripts** you make with the model are not covered by either licence.
+
+**One request** (not a licence condition). Use it for anything. In return, all I ask is that you give something
+back: share what you learn, keep knowledge open, teach someone, and don't use it to harm people.
 
 Training data: IndicVoices, Shrutilipi, SPRING-INX (CC BY 4.0); Kathbath; YODAS and Granary (CC BY 3.0); synthetic
 speech from Maya2 (Apache-2.0) with Kyutai Mimi (CC BY 4.0) on text from Tanglish-Corpus-185k (CC BY 4.0). The
