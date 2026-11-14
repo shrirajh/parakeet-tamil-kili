@@ -431,3 +431,41 @@ html[lang="ta"] .lick { font: 700 .9rem var(--ta); text-transform: none; letter-
 
 .licask { padding: 1rem 0 .2rem; border-bottom: 1px solid var(--rule); }
 .licask p { margin: 0; color: var(--fg); font-size: 1rem; line-height: 1.55; }
+
+/* table of contents */
+.barleft { display: flex; align-items: center; gap: .6rem; margin-right: auto; }
+#tocbtn { display: none; width: 2.2rem; height: 2.2rem; padding: 0; border-radius: 50%; font-size: 1rem; line-height: 1;
+  background: color-mix(in srgb, var(--bg) 70%, transparent); backdrop-filter: blur(10px); }
+.toc { position: fixed; left: 12px; top: 50%; z-index: 15; width: clamp(128px, calc((100vw - 1100px) / 2 - 34px), 230px); max-height: calc(100vh - 150px); overflow-y: auto; scrollbar-width: none;
+  transform-origin: left center; transform: translateY(-50%) perspective(900px) rotateY(16deg) translateZ(-40px) scale(.96);
+  opacity: 0; pointer-events: none; transition: opacity .4s, transform .4s cubic-bezier(.2, .7, .2, 1); font-size: .76rem; }
+.toc.on { opacity: .4; pointer-events: auto; }
+.toc.on:hover, .toc.on:focus-within { opacity: 1; transform: translateY(-50%) perspective(900px) rotateY(0) translateZ(0) scale(1); }
+.toc a, .tocpanel a { display: block; position: relative; color: var(--fg-2); text-decoration: none; line-height: 1.3;
+  padding: .17rem 0 .17rem .95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.toc a::before, .tocpanel a::before { content: ""; position: absolute; left: .15rem; top: .62em; width: 5px; height: 5px; border-radius: 50%; background: var(--fg-3); opacity: .45; }
+.toc a:hover, .tocpanel a:hover { color: var(--fg); }
+.toc a[aria-current="true"], .tocpanel a[aria-current="true"] { color: var(--fg); font-weight: 700; }
+.toc a[aria-current="true"]::before, .tocpanel a[aria-current="true"]::before { background: var(--ours); opacity: 1; width: 7px; height: 7px; left: .05rem; top: .55em; }
+.toc .stg, .tocpanel .stg { font: .6rem var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--fg-3); margin: .75rem 0 .2rem .95rem; }
+html[lang="ta"] .toc .stg, html[lang="ta"] .tocpanel .stg { font-family: var(--ta); text-transform: none; letter-spacing: 0; font-size: .7rem; }
+html[lang="ta"] .toc a { font-size: .72rem; }
+.toc a { white-space: normal; text-overflow: clip; }
+.tocpanel { position: fixed; inset: 0 auto 0 0; width: min(330px, 86vw); z-index: 30; overflow-y: auto; padding: 1.2rem 1.3rem 2rem;
+  background: var(--bg-3); border-right: 1px solid var(--rule); transform: translateX(-104%); transition: transform .3s cubic-bezier(.2, .7, .2, 1); font-size: 1rem; }
+.tocpanel.open { transform: none; }
+.tocpanel a { padding: .45rem 0 .45rem 1.1rem; white-space: normal; }
+.tocpanel a::before { top: .95em; }
+.tocpanel a[aria-current="true"]::before { top: .9em; }
+.tocpanel .tochead { font-weight: 700; margin-bottom: .4rem; }
+.tocscrim { position: fixed; inset: 0; z-index: 29; background: rgba(0, 0, 0, .45); opacity: 0; pointer-events: none; transition: opacity .3s; }
+.tocscrim.open { opacity: 1; pointer-events: auto; }
+@media (max-width: 1439px) { .toc { display: none; } #tocbtn { display: inline-flex; align-items: center; justify-content: center; } }
+@media (prefers-reduced-motion: reduce) { .toc, .tocpanel { transition: none; } }
+
+.toc::-webkit-scrollbar { display: none; }
+html[lang="ta"] .toc a { padding-top: .12rem; padding-bottom: .12rem; }
+@media (max-width: 760px) {
+  #tocbtn { position: fixed; left: 14px; bottom: 16px; z-index: 28; width: 2.9rem; height: 2.9rem; font-size: 1.15rem;
+    background: var(--bg-3); border: 1px solid var(--rule); box-shadow: 0 6px 22px rgba(0, 0, 0, .35); }
+}

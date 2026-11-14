@@ -518,6 +518,55 @@ function mapDraw() {
 }
 mapDraw(); redraw.push(mapDraw);
 
+/* ---------- table of contents: recessed sidebar on wide screens, slide-in panel elsewhere ---------- */
+// Short names come from the chapter map, grouped under its stages, in page order.
+const TOC = [
+  [null, [["top", { en: "Start", ta: "தொடக்கம்" }], ["map", { en: "The map", ta: "வரைபடம்" }]]],
+  [MAP.stages[0][1], ["why", "hard"]],
+  [MAP.stages[1][1], ["recipe", "data", "loans", "teacher", "two-tamils", "spot", "runs", "epochs"]],
+  [MAP.stages[2][1], ["measure", "listen", "scores"]],
+  [MAP.stages[3][1], ["lose", "lm", "speed"]],
+  [MAP.stages[4][1], ["claude", "use"]],
+];
+const tocIds = TOC.flatMap(([, ids]) => ids.map((x) => (Array.isArray(x) ? x[0] : x)));
+function tocDraw() {
+  const html = TOC.map(([stage, ids]) => (stage ? `<div class="stg">${esc(L(stage))}</div>` : "") + ids.map((x) => {
+    const [id, label] = Array.isArray(x) ? x : [x, MAP.nodes[x][2]];
+    return `<a href="#${id}" data-toc="${id}">${esc(L(label))}</a>`;
+  }).join("")).join("");
+  $("#toc").innerHTML = html;
+  $("#tocpanel").innerHTML = `<div class="tochead">${L({ en: "Contents", ta: "உள்ளடக்கம்" })}</div>` + html;
+  tocSpy(true);
+}
+let tocCur = null;
+function tocSpy(force) {
+  const y = innerHeight * 0.35;
+  let cur = "top";
+  for (const id of tocIds) { const el = document.getElementById(id); if (el && el.getBoundingClientRect().top <= y) cur = id; }
+  $("#toc").classList.toggle("on", scrollY > innerHeight * 0.6);
+  if (cur === tocCur && !force) return;
+  tocCur = cur;
+  $$("[data-toc]").forEach((a) => (a.dataset.toc === cur ? a.setAttribute("aria-current", "true") : a.removeAttribute("aria-current")));
+  const box = $("#toc"), it = box.querySelector("[aria-current]");  // keep the current entry visible inside the sidebar
+  if (it && box.scrollHeight > box.clientHeight) {
+    const top = it.offsetTop - box.clientHeight / 2 + it.offsetHeight / 2;
+    box.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+  }
+}
+let tocTick = false;
+addEventListener("scroll", () => { if (!tocTick) { tocTick = true; requestAnimationFrame(() => { tocTick = false; tocSpy(); }); } }, { passive: true });
+addEventListener("resize", () => tocSpy(true));
+function tocOpen(open) {
+  $("#tocpanel").classList.toggle("open", open); $("#tocscrim").classList.toggle("open", open);
+  $("#tocbtn").setAttribute("aria-expanded", String(open));
+  if (open) $("#tocpanel [aria-current]")?.scrollIntoView({ block: "center" });
+}
+$("#tocbtn").addEventListener("click", () => tocOpen(!$("#tocpanel").classList.contains("open")));
+$("#tocscrim").addEventListener("click", () => tocOpen(false));
+$("#tocpanel").addEventListener("click", (e) => { if (e.target.closest("a")) tocOpen(false); });
+addEventListener("keydown", (e) => { if (e.key === "Escape") tocOpen(false); });
+tocDraw(); redraw.push(tocDraw);
+
 /* ---------- "a computer can't hear": the voice as numbers ---------- */
 let numTimer = null;
 async function numbersStrip(url) {
