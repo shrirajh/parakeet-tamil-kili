@@ -529,10 +529,22 @@ const TOC = [
   [MAP.stages[4][1], ["claude", "use"]],
 ];
 const tocIds = TOC.flatMap(([, ids]) => ids.map((x) => (Array.isArray(x) ? x[0] : x)));
+const plain = (el) => { const c = el.cloneNode(true); c.querySelectorAll("rt").forEach((r) => r.remove()); return c.textContent.replace(/\s+/g, " ").trim(); };
+const tocSub = {};  // chapter id -> [{en, ta}] of its visible subheadings (h3 pairs)
+function tocSubs(id) {
+  const sec = document.getElementById(id);
+  if (!sec || sec.tagName !== "SECTION") return [];
+  const detail = document.documentElement.dataset.depth === "detail";
+  const shown = (el) => [...ancestors(el)].every((a) => !a.dataset || !a.dataset.d || (a.dataset.d === "d") === detail);
+  return [...sec.querySelectorAll('h3[data-l="en"]')].filter(shown).map((en) => ({ en, ta: langPartner(en) || en }));
+}
+function* ancestors(el) { for (let e = el; e && e !== document.body; e = e.parentElement) yield e; }
 function tocDraw() {
   const html = TOC.map(([stage, ids]) => (stage ? `<div class="stg">${esc(L(stage))}</div>` : "") + ids.map((x) => {
     const [id, label] = Array.isArray(x) ? x : [x, MAP.nodes[x][2]];
-    return `<a href="#${id}" data-toc="${id}">${esc(L(label))}</a>`;
+    const subs = (tocSub[id] = tocSubs(id));
+    const sub = subs.length ? `<div class="subs" data-subs="${id}">${subs.map((p, i) => `<a href="#${id}" class="sub" data-sub="${id}:${i}">${esc(L({ en: plain(p.en), ta: plain(p.ta) }))}</a>`).join("")}</div>` : "";
+    return `<a href="#${id}" data-toc="${id}">${esc(L(label))}</a>${sub}`;
   }).join("")).join("");
   $("#toc").innerHTML = html;
   $("#tocpanel").innerHTML = `<div class="tochead">${L({ en: "Contents", ta: "உள்ளடக்கம்" })}</div>` + html;
@@ -544,9 +556,13 @@ function tocSpy(force) {
   let cur = "top";
   for (const id of tocIds) { const el = document.getElementById(id); if (el && el.getBoundingClientRect().top <= y) cur = id; }
   $("#toc").classList.toggle("on", scrollY > innerHeight * 0.6);
+  let sub = null;
+  (tocSub[cur] || []).forEach((p, i) => { const el = lang() === "ta" ? p.ta : p.en; if (el.getBoundingClientRect().top <= y) sub = `${cur}:${i}`; });
+  $$("[data-sub]").forEach((a) => (a.dataset.sub === sub ? a.setAttribute("aria-current", "true") : a.removeAttribute("aria-current")));
   if (cur === tocCur && !force) return;
   tocCur = cur;
   $$("[data-toc]").forEach((a) => (a.dataset.toc === cur ? a.setAttribute("aria-current", "true") : a.removeAttribute("aria-current")));
+  $$("#toc [data-subs]").forEach((d) => d.classList.toggle("open", d.dataset.subs === cur));
   const box = $("#toc"), it = box.querySelector("[aria-current]");  // keep the current entry visible inside the sidebar
   if (it && box.scrollHeight > box.clientHeight) {
     const top = it.offsetTop - box.clientHeight / 2 + it.offsetHeight / 2;
@@ -564,8 +580,17 @@ function tocOpen(open) {
 $("#tocbtn").addEventListener("click", () => tocOpen(!$("#tocpanel").classList.contains("open")));
 $("#tocscrim").addEventListener("click", () => tocOpen(false));
 $("#tocpanel").addEventListener("click", (e) => { if (e.target.closest("a")) tocOpen(false); });
+document.addEventListener("click", (e) => {
+  const a = e.target.closest("[data-sub]");
+  if (!a) return;
+  e.preventDefault();
+  const [id, i] = a.dataset.sub.split(":"), p = tocSub[id][+i], el = lang() === "ta" ? p.ta : p.en;
+  scrollTo({ top: el.getBoundingClientRect().top + scrollY - 90, behavior: "smooth" });
+});
 addEventListener("keydown", (e) => { if (e.key === "Escape") tocOpen(false); });
 tocDraw(); redraw.push(tocDraw);
+let hintT = setTimeout(() => scrollY < 40 && $("#scrollhint").classList.add("on"), 1400);
+addEventListener("scroll", () => { if (scrollY > 40) { clearTimeout(hintT); $("#scrollhint").classList.remove("on"); } }, { passive: true });
 
 /* ---------- "a computer can't hear": the voice as numbers ---------- */
 let numTimer = null;

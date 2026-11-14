@@ -469,3 +469,22 @@ html[lang="ta"] .toc a { padding-top: .12rem; padding-bottom: .12rem; }
   #tocbtn { position: fixed; left: 14px; bottom: 16px; z-index: 28; width: 2.9rem; height: 2.9rem; font-size: 1.15rem;
     background: var(--bg-3); border: 1px solid var(--rule); box-shadow: 0 6px 22px rgba(0, 0, 0, .35); }
 }
+
+/* contents: subheadings */
+.toc .subs { display: none; }
+.toc .subs.open { display: block; }
+.toc a.sub, .tocpanel a.sub { padding-left: 1.7rem; font-size: .92em; color: var(--fg-3); }
+.toc a.sub::before, .tocpanel a.sub::before { left: 1rem; width: 3px; height: 3px; top: .7em; opacity: .5; }
+.tocpanel a.sub::before { top: 1.05em; }
+.toc a.sub[aria-current="true"], .tocpanel a.sub[aria-current="true"] { color: var(--fg); font-weight: 600; }
+.toc a.sub[aria-current="true"]::before, .tocpanel a.sub[aria-current="true"]::before { background: var(--ours); opacity: 1; width: 5px; height: 5px; left: .95rem; }
+.tocpanel a.sub { padding-top: .3rem; padding-bottom: .3rem; }
+/* "scroll down for the write-up" prompt at the top of the page */
+.scrollhint { position: fixed; left: 50%; bottom: 26px; z-index: 18; transform: translate(-50%, 12px); opacity: 0; pointer-events: none;
+  display: inline-flex; gap: .55rem; align-items: center; padding: .6rem 1.1rem; border-radius: 999px; text-decoration: none;
+  color: var(--fg); background: color-mix(in srgb, var(--bg-3) 88%, transparent); backdrop-filter: blur(10px);
+  border: 1px solid var(--rule); box-shadow: 0 8px 28px rgba(0, 0, 0, .3); font-size: .92rem; transition: opacity .5s, transform .5s; white-space: nowrap; }
+.scrollhint.on { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.scrollhint b { display: inline-block; animation: bob 2s infinite; }
+@media (prefers-reduced-motion: reduce) { .scrollhint, .scrollhint b { transition: none; animation: none; } }
+@media (max-width: 760px) { .scrollhint { bottom: 82px; font-size: .85rem; } }
