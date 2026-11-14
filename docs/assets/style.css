@@ -288,3 +288,4 @@ p.plain.sents .s:first-child { font-weight: 650; }
 .howto { margin-top: 1.5rem; background: var(--bg-3); border: 1px solid var(--rule); border-radius: 14px; padding: .9rem 1.1rem; }
 .howto summary { cursor: pointer; font-weight: 600; color: var(--fg); }
 .howto p { margin-top: .8rem; }
+#mix-table table.dt th, #mix-table table.dt td { white-space: normal; } #mix-table table.dt td:nth-child(n+5), #mix-table table.dt th:nth-child(n+5) { white-space: nowrap; }
