@@ -217,7 +217,7 @@ const RUNS = [
   { k: "run 3", d: "10 Nov", s: 30.5, t: { en: "extra heads", ta: "கூடுதல் பகுதிகள் (heads)" }, p: { en: "Phoneme and language-ID heads, English distillation.", ta: "ஒலியன்களையும், பேசும் மொழியையும் கண்டறியும் கூடுதல் பகுதிகள். அசல் மாதிரியிடமிருந்து ஆங்கிலத்தைக் கற்றல் (distillation)." } },
   { k: "run 4", d: "10 Nov", s: 45.4, t: { en: "synthetic Tanglish", ta: "கணினிக் குரலில் Tanglish" }, p: { en: "Read Tamil up, English down again.", ta: "வாசித்த தமிழ் மேம்பட்டது. ஆங்கிலம் மீண்டும் சரிந்தது." } },
   { k: "run 5", d: "11 Nov", s: 12.4, t: { en: "one spelling rule", ta: "ஒரே ஒரு எழுத்து விதி" }, p: { en: "English loanwords in English letters (meeting-க்கு). English came back.", ta: "ஆங்கிலக் கடன் சொற்கள் ஆங்கில எழுத்தில் (meeting-க்கு). ஆங்கிலம் மீண்டு வந்தது." } },
-  { k: "run 6", d: "11 Nov", s: 13.5, t: { en: "noise and phones", ta: "இரைச்சல், தொலைபேசி" }, p: { en: "Noise, reverb, phone codecs, babble, long audio.", ta: "இரைச்சல், எதிரொலி, தொலைபேசி ஒலித்தரம், பலர் பேசும் சத்தம், நீண்ட பதிவுகள்." } },
+  { k: "run 6", d: "11 Nov", s: 13.5, t: { en: "noise and phones", ta: "பின்னணிச் சத்தம், தொலைபேசி" }, p: { en: "Noise, reverb, phone codecs, babble, long audio.", ta: "பின்னணிச் சத்தம், எதிரொலி, தொலைபேசி ஒலித்தரம், பலர் பேசும் சத்தம், நீண்ட பதிவுகள்." } },
   { k: "run 7", d: "11 Nov", s: 11.5, t: { en: "evicted at 91%", ta: "91%-இல் கணினி பறிபோனது" }, p: { en: "1,400 h of world English. Finished on a single GPU after the eviction.", ta: "உலகெங்கிலுமிருந்து 1,400 மணி நேர ஆங்கிலம். கணினி பறிபோன பிறகு, ஒரே GPU-வில் பயிற்சி முடிந்தது." } },
   { k: "run 8", d: "12 Nov", s: 12.07, t: { en: "punctuation", ta: "நிறுத்தக்குறிகள்" }, p: { en: "Gemma punctuation, 30,895 bad clips dropped.", ta: "Gemma இட்ட நிறுத்தக்குறிகள். 30,895 மோசமான பதிவுகள் நீக்கப்பட்டன." } },
   { k: "run 9", d: "13 Nov", s: null, t: { en: "formal Tamil targets", ta: "எழுத்துத் தமிழ் இலக்கு" }, p: { en: "Spoken Tamil got worse. Dropped.", ta: "பேச்சுத் தமிழில் தவறுகள் கூடின. கைவிட்டோம்." } },
@@ -478,7 +478,7 @@ function hardCharts() {
 
 /* ---------- what it learned from ---------- */
 let MIX = null;
-const KIND = { spoken: { en: "conversations", ta: "உரையாடல்கள்" }, read: { en: "read aloud", ta: "உரக்க வாசித்தவை" }, youtube: { en: "YouTube", ta: "YouTube" }, synthetic: { en: "computer voices, Tamil + English", ta: "கணினிக் குரல்கள், தமிழ் + ஆங்கிலம்" }, english: { en: "English", ta: "ஆங்கிலம்" }, negatives: { en: "silence and noise", ta: "அமைதியும் இரைச்சலும்" } };
+const KIND = { spoken: { en: "conversations", ta: "உரையாடல்கள்" }, read: { en: "read aloud", ta: "உரக்க வாசித்தவை" }, youtube: { en: "YouTube", ta: "YouTube" }, synthetic: { en: "computer voices, Tamil + English", ta: "கணினிக் குரல்கள், தமிழ் + ஆங்கிலம்" }, english: { en: "English", ta: "ஆங்கிலம்" }, negatives: { en: "silence and noise", ta: "பேச்சு இல்லாத ஒலிகள்" } };
 const KORDER = ["youtube", "spoken", "read", "english", "synthetic", "negatives"];
 function recipe() {
   if (!MIX) return;
@@ -707,7 +707,7 @@ document.addEventListener("click", (e) => { const f = e.target.closest(".flip");
 
 /* ---------- augmentation demo: WebAudio effects on a real clip ---------- */
 const AUG = [
-  ["noise", { en: "background noise", ta: "பின்னணி இரைச்சல்" }],
+  ["noise", { en: "background noise", ta: "பின்னணிச் சத்தம்" }],
   ["echo", { en: "echo", ta: "எதிரொலி" }],
   ["phone", { en: "phone line", ta: "தொலைபேசி இணைப்பு" }],
   ["babble", { en: "other people talking", ta: "மற்றவர்கள் பேசும் சத்தம்" }],
