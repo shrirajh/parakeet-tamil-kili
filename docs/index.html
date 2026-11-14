@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>parakeet-tamil · தமிழ் கிளி</title>
 <meta name="description" content="Free Tamil and English speech recognition that runs on an ordinary computer.">
-<link rel="stylesheet" href="assets/style.css?v=5">
+<link rel="stylesheet" href="assets/style.css?v=6">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦜</text></svg>">
 <script>(function(){var d=document.documentElement,t=localStorage.getItem("theme"),l=localStorage.getItem("lang"),p=localStorage.getItem("depth");if(t)d.dataset.theme=t;if(l)d.lang=l;if(p)d.dataset.depth=p;})();</script>
 </head>
@@ -457,6 +457,35 @@
   </div>
 </section>
 
+<!-- LM -->
+<section class="chapter" id="lm">
+  <div class="inner">
+    <h2 class="reveal" data-l="en">A second opinion that has read the Tamil internet</h2>
+    <h2 class="reveal" data-l="ta">தமிழ் இணையத்தைப் படித்த இரண்டாவது கருத்து</h2>
+    <p class="plain reveal" data-l="en">Our model writes what it hears. A language model knows what Tamil text usually looks like: it has read 8 million sentences from the Tamil web, plus all our transcripts. When the speech model is torn between 2 spellings, the language model nudges it toward the one Tamil writers actually use. It switches itself off when the speech is English, so English is untouched.</p>
+    <p class="plain reveal" data-l="ta">எங்கள் மாதிரி கேட்பதை எழுதுகிறது. ஒரு மொழி மாதிரிக்குத் தமிழ் உரை பொதுவாக எப்படி இருக்கும் என்று தெரியும்: அது தமிழ் இணையத்திலிருந்து 80 லட்சம் வாக்கியங்களையும் எங்கள் எல்லா உரைப்படிகளையும் படித்திருக்கிறது. பேச்சு மாதிரி 2 எழுத்துக்கூட்டல்களுக்கு இடையே தயங்கும்போது, தமிழ் எழுத்தாளர்கள் உண்மையில் பயன்படுத்துவதை நோக்கி மொழி மாதிரி தள்ளுகிறது. பேச்சு ஆங்கிலமாக இருந்தால் அது தானே அணைந்துவிடும்; ஆங்கிலம் மாறாது.</p>
+    <div class="grid2x reveal" style="margin-top:2rem">
+      <div class="scorer">
+        <div class="small" data-l="en">what the speech model heard, and what the language model chose. Tap through.</div>
+        <div class="small" data-l="ta">பேச்சு மாதிரி கேட்டதும், மொழி மாதிரி தேர்ந்ததும். அழுத்திப் பாருங்கள்.</div>
+        <div id="lm-card" style="margin-top:.8rem"></div>
+        <div class="controls" style="margin-top:1rem"><button id="lm-next">→ <span data-l="en">next</span><span data-l="ta">அடுத்தது</span></button></div>
+      </div>
+      <div class="scorer"><div id="lm-chart"></div></div>
+    </div>
+    <div class="tiles reveal" style="margin-top:1rem">
+      <div class="tile"><b class="n">6–17%</b><p data-l="en">fewer word mistakes on read Tamil, depending on the test</p><p data-l="ta">வாசிப்புத் தமிழில் குறைவான சொல் தவறுகள், தேர்வைப் பொறுத்து</p></div>
+      <div class="tile"><b class="n" data-l="en">0</b><b class="n" data-l="ta">0</b><p data-l="en">change to English: the language model stays off for English speech</p><p data-l="ta">ஆங்கிலத்தில் மாற்றம்: ஆங்கிலப் பேச்சுக்கு மொழி மாதிரி அணைந்திருக்கும்</p></div>
+      <div class="tile"><b class="n">2.3 GB</b><p data-l="en">on disk, and decoding is slower. Optional: the model works without it.</p><p data-l="ta">வட்டில் இடம்; வேகமும் குறைகிறது. விருப்பத்தேர்வு: அது இல்லாமலும் மாதிரி இயங்கும்.</p></div>
+    </div>
+    <div data-d="d" class="reveal" style="margin-top:2rem">
+      <p data-l="en">A Kneser-Ney 5-gram over the model's own tokens, trained on our transcripts (weight 2) and 8 million Sangraha web sentences (CC BY 4.0), fused into a 4-wide beam search at weight 0.2, chosen on held-out dev clips. A clip whose greedy output is more than half Latin letters keeps the greedy output. The LM fixes spelling, not hearing: PER barely moves, while WER, CER and EER drop. It closes 30–45% of the read-Tamil gap to indic-transcribe-core. Leakage: 1,445 test sentences were removed from the web text before training; MILE was missed and 10 of its test sentences remain (≤ 0.08 WER effect). The release LM will be rebuilt with every test set excluded. Gains are as large on test sets whose training text the LM never saw, so it is not memorising benchmarks. It also writes fewer commas, because web text has few.</p>
+      <p data-l="ta">மாதிரியின் சொந்த token-களின் மீது Kneser-Ney 5-gram; எங்கள் உரைப்படிகள் (எடை 2) மற்றும் 80 லட்சம் Sangraha இணைய வாக்கியங்கள் (CC BY 4.0); 4-அகல beam search-இல் எடை 0.2 (dev-இல் தேர்வு). பாதிக்கு மேல் லத்தீன் எழுத்துகள் உள்ள வெளியீடு மாறாது. மொழி மாதிரி எழுத்துக்கூட்டலைச் சரிசெய்கிறது, கேட்டலை அல்ல: PER அதிகம் மாறவில்லை; WER, CER, EER குறைகின்றன. வெளியீட்டுக்கு முன் எல்லாச் சோதனைத் தொகுப்புகளையும் நீக்கி மீண்டும் உருவாக்கப்படும் (இப்போது MILE-இன் 10 வாக்கியங்கள் உள்ளன; விளைவு ≤ 0.08 WER).</p>
+      <div class="tablewrap" id="lm-table"></div>
+    </div>
+  </div>
+</section>
+
 <!-- CLAUDE -->
 <section class="chapter" id="claude">
   <div class="inner">
@@ -521,6 +550,6 @@
   <p data-l="en">Audio clips: IndicVoices (AI4Bharat, CC BY 4.0), Kathbath (AI4Bharat), FLEURS (Google, audio CC BY 4.0, text from FLORES CC BY-SA 4.0), Svarah (AI4Bharat, CC BY 4.0), LibriSpeech (CC BY 4.0). Scores use the public test sets listed in the repository. Other models were used only as benchmarks.</p>
   <p data-l="ta">ஒலிக்கோப்புகள்: IndicVoices (AI4Bharat, CC BY 4.0), Kathbath (AI4Bharat), FLEURS (Google, ஒலி CC BY 4.0, உரை FLORES CC BY-SA 4.0), Svarah (AI4Bharat, CC BY 4.0), LibriSpeech (CC BY 4.0). மற்ற மாதிரிகள் ஒப்பீட்டுக்கு மட்டுமே பயன்படுத்தப்பட்டன.</p>
 </footer>
-<script src="assets/app.js?v=4"></script>
+<script src="assets/app.js?v=7"></script>
 </body>
 </html>

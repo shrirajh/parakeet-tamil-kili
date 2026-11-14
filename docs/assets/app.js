@@ -424,12 +424,13 @@ const MAP = {
     measure: [580, 370, { en: "Marking a Tamil test", ta: "தமிழ்த் தேர்வு திருத்தம்" }],
     listen: [770, 110, { en: "Who heard it right?", ta: "யார் சரியாகக் கேட்டார்கள்?" }],
     scores: [770, 260, { en: "Scoreboard", ta: "மதிப்பெண் பலகை" }],
-    lose: [770, 410, { en: "Where it struggles", ta: "தடுமாறும் இடம்" }],
+    lose: [770, 400, { en: "Where it struggles", ta: "தடுமாறும் இடம்" }],
+    lm: [770, 480, { en: "A second opinion", ta: "இரண்டாவது கருத்து" }],
     claude: [935, 170, { en: "Made with Claude", ta: "Claude உடன்" }],
     use: [935, 350, { en: "Use it", ta: "பயன்படுத்துங்கள்" }],
   },
   edges: [["why", "hard"], ["hard", "recipe"], ["hard", "data"], ["hard", "lose"], ["recipe", "epochs"], ["recipe", "runs"], ["why", "listen"], ["why", "speed"], ["why", "runs"], ["runs", "epochs"], ["runs", "spot"], ["runs", "two-tamils"], ["spot", "speed"], ["teacher", "two-tamils"], ["teacher", "data"],
-    ["two-tamils", "listen"], ["data", "measure"], ["data", "scores"], ["measure", "scores"], ["measure", "lose"], ["scores", "listen"], ["scores", "lose"], ["epochs", "scores"], ["lose", "use"], ["claude", "runs"], ["speed", "use"]],
+    ["two-tamils", "listen"], ["data", "measure"], ["data", "scores"], ["measure", "scores"], ["measure", "lose"], ["scores", "listen"], ["scores", "lose"], ["epochs", "scores"], ["lose", "use"], ["lose", "lm"], ["lm", "use"], ["lm", "scores"], ["claude", "runs"], ["speed", "use"]],
 };
 function mapDraw() {
   const W = 1020, H = 520, N = MAP.nodes;
@@ -554,7 +555,7 @@ function storyScore() {
 
 /* ---------- one sentence per line in prose ---------- */
 (function splitSentences() {
-  const sel = ".chapter .inner > p:not(.small), .chapter .sticky > p:not(.small):not(.score-line), .chapter .scorer > p, .chapter [data-d] > p:not(.small), .chapter details.howto > p, .chapter .grid2x p.plain, .chapter .voices > p:not(.small)";
+  const sel = ".chapter .inner > p:not(.small), .chapter .sticky > p:not(.small):not(.score-line), .chapter .scorer > p, .chapter [data-d] > p:not(.small), .chapter details.howto > p, .chapter .grid2x p.plain, .chapter .voices > p:not(.small), #lm [data-d] > p";
   $$(sel).forEach((p) => {
     if (p.classList.contains("sents") || p.closest(".lines") || p.querySelector("a, code") && p.textContent.length < 60) return;
     const html = p.innerHTML.trim();
@@ -584,3 +585,43 @@ function vdial() {
 $("#vdial").addEventListener("input", vdial);
 $("#vdial-rand").addEventListener("click", () => { $("#vdial").value = (Math.random() * 2 - 1).toFixed(2); vdial(); });
 vdial(); redraw.push(vdial);
+
+/* ---------- language model chapter ---------- */
+const LMX = [
+  ["தொலைக்காட்சியில் ஒலிபரப்பப்பட்ட", "தொலைக்காட்சியில் ஒளிபரப்பப்பட்ட", { en: "\"on television\": a TV broadcast is ஒளிபரப்பு (light), radio is ஒலிபரப்பு (sound). Both are real words. Only the context decides.", ta: "\"தொலைக்காட்சியில்\": தொலைக்காட்சி ஒளிபரப்பு, வானொலி ஒலிபரப்பு. இரண்டும் உண்மையான சொற்கள்; சூழல்தான் தீர்மானிக்கிறது." }],
+  ["கருவரை வாயிலிலே", "கருவறை வாயிலிலே", { en: "the sanctum of a temple is கருவறை.", ta: "கோயிலின் உட்பகுதி கருவறை." }],
+  ["அந்த அரக்கட்டளை", "அந்த அறக்கட்டளை", { en: "a charitable trust is அறக்கட்டளை (அறம், virtue).", ta: "அறக்கட்டளை (அறம்)." }],
+  ["தேசிய தனிக்கை", "தேசிய தணிக்கை", { en: "an audit is தணிக்கை.", ta: "தணிக்கை." }],
+  ["நிளம் சமூகத்திலிருந்து", "நிலம் சமூகத்திலிருந்து", { en: "land is நிலம்; நிளம் is not a word.", ta: "நிலம்; நிளம் என்று ஒரு சொல் இல்லை." }],
+];
+let lmI = 0;
+const hl = (x, y, c) => { const yw = y.split(" "); return x.split(" ").map((w, i) => (w === yw[i] ? esc(w) : `<b style="color:var(${c})">${esc(w)}</b>`)).join(" "); };
+function lmCard() {
+  const [a, b, g] = LMX[lmI];
+  $("#lm-card").innerHTML = `<div class="pair" style="font-size:1.35rem;grid-template-columns:7rem 1fr"><span class="who">${L({ en: "heard", ta: "கேட்டது" })}</span><span>${hl(a, b, "--bad")}</span><span class="who">${L({ en: "with LM", ta: "மொழி மாதிரியுடன்" })}</span><span>${hl(b, a, "--good")}</span></div><p style="margin:0">${esc(L(g))}</p><div class="small mono" style="margin-top:.6rem">${lmI + 1} / ${LMX.length}</div>`;
+}
+$("#lm-next").addEventListener("click", () => { lmI = (lmI + 1) % LMX.length; lmCard(); });
+lmCard(); redraw.push(lmCard);
+function lmChart() {
+  if (!SC) return;
+  const S = SC.scores, READ = ["eval_kathbath", "eval_mile_ta", "eval_fleurs_ta", "eval_cv_ta", "eval_openslr65"], av = (m, k) => READ.reduce((a, s) => a + S[m][s][k], 0) / READ.length;
+  const rows = [
+    [{ en: "Sounds misheard, reading aloud", ta: "தவறாகக் கேட்ட ஒலிகள், வாசிப்பு" }, av("e5", "per"), av("e5_lm", "per")],
+    [{ en: "Meaning drift, reading aloud", ta: "பொருள் விலகல், வாசிப்பு" }, av("e5", "eer"), av("e5_lm", "eer")],
+    [{ en: "Meaning drift, conversation", ta: "பொருள் விலகல், உரையாடல்" }, S.e5.eval_indicvoices.eer, S.e5_lm.eval_indicvoices.eer],
+  ];
+  const W = 520, rh = 76, H = rows.length * rh + 10, mx = Math.max(...rows.flatMap((r) => [r[1], r[2]])) * 1.2, x = (v) => (v / mx) * (W - 170);
+  let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="effect of the language model">`;
+  rows.forEach(([n, a, b], i) => {
+    const y = i * rh + 4;
+    g += `<text x="0" y="${y + 14}" class="lbl">${esc(L(n))}</text>`;
+    g += `<text x="0" y="${y + 36}">${L({ en: "without", ta: "இல்லாமல்" })}</text><rect x="110" y="${y + 24}" width="${x(a)}" height="16" rx="4" fill="var(--ours)" opacity=".55"/><text x="${116 + x(a)}" y="${y + 37}" style="fill:var(--fg);font-weight:700">${a.toFixed(2)}</text>`;
+    g += `<text x="0" y="${y + 58}">${L({ en: "with LM", ta: "உடன்" })}</text><rect x="110" y="${y + 46}" width="${x(b)}" height="16" rx="4" fill="var(--ours)"/><text x="${116 + x(b)}" y="${y + 59}" style="fill:var(--fg);font-weight:700">${b.toFixed(2)}</text>`;
+  });
+  $("#lm-chart").innerHTML = `<div class="small" style="margin-bottom:.4rem">${L({ en: "It fixes spelling and meaning, not hearing. Lower is better.", ta: "அது எழுத்துக்கூட்டலையும் பொருளையும் சரிசெய்கிறது, கேட்டலை அல்ல. குறைவே சிறந்தது." })}</div><div class="chart">${g}</svg></div>`;
+  const sets = Object.keys(SC.sets).filter((s) => SC.sets[s].kind !== "english");
+  let t = `<table class="dt"><thead><tr><th style="text-align:left">${L({ en: "test set", ta: "தேர்வு" })}</th>${["WER", "CER", "PER", "EER"].map((m) => `<th>${m}</th><th>${m} + LM</th>`).join("")}</tr></thead><tbody>`;
+  sets.forEach((s) => { t += `<tr><td>${esc(L(SC.sets[s]))}</td>${["wer", "cer", "per", "eer"].map((m) => { const a = S.e5[s][m], b = S.e5_lm[s][m]; return `<td>${a.toFixed(2)}</td><td class="${b < a ? "best" : ""}">${b.toFixed(2)}</td>`; }).join("")}</tr>`; });
+  $("#lm-table").innerHTML = t + "</tbody></table>";
+}
+(function waitLM() { if (SC) { lmChart(); redraw.push(lmChart); } else setTimeout(waitLM, 100); })();
