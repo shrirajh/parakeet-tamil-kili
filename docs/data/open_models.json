@@ -1,1 +1,124 @@
-{}
+{
+ "indicwhisper": {
+  "eval_cv_ta": {
+   "cer": 5.2,
+   "n": 2000,
+   "per": 2.33,
+   "wer": 29.73
+  },
+  "eval_fleurs_ta": {
+   "cer": 7.85,
+   "n": 580,
+   "per": 5.58,
+   "wer": 23.25
+  },
+  "eval_indicvoices": {
+   "cer": 31.5,
+   "n": 2000,
+   "per": 23.83,
+   "wer": 68.84
+  },
+  "eval_kathbath": {
+   "cer": 3.82,
+   "n": 2000,
+   "per": 1.57,
+   "wer": 21.77
+  },
+  "eval_mile_ta": {
+   "cer": 3.18,
+   "n": 1333,
+   "per": 1.41,
+   "wer": 19.61
+  },
+  "eval_openslr65": {
+   "cer": 14.78,
+   "n": 2000,
+   "per": 13.24,
+   "wer": 24.43
+  }
+ },
+ "shruti": {
+  "eval_cv_ta": {
+   "cer": 32.98,
+   "n": 2000,
+   "per": 12.69,
+   "wer": 70.17
+  },
+  "eval_fleurs_ta": {
+   "cer": 12.52,
+   "n": 580,
+   "per": 8.33,
+   "wer": 37.1
+  },
+  "eval_kathbath": {
+   "cer": 6.83,
+   "n": 2000,
+   "per": 3.31,
+   "wer": 32.75
+  },
+  "eval_openslr65": {
+   "cer": 7.8,
+   "n": 2000,
+   "per": 2.95,
+   "wer": 31.08
+  }
+ },
+ "stock_v3": {
+  "eval_cv_en": {
+   "n": 2000,
+   "ta_script": 0.0,
+   "wer": 9.25
+  },
+  "eval_cv_ta": {
+   "cer": 56.23,
+   "n": 2000,
+   "per": 27.91,
+   "wer": 111.26
+  },
+  "eval_fleurs_ta": {
+   "cer": 61.83,
+   "n": 580,
+   "per": 37.0,
+   "wer": 114.78
+  },
+  "eval_indicvoices": {
+   "cer": 80.43,
+   "n": 2000,
+   "per": 65.59,
+   "wer": 103.92
+  },
+  "eval_kathbath": {
+   "cer": 60.46,
+   "n": 2000,
+   "per": 33.5,
+   "wer": 117.16
+  },
+  "eval_ls_clean": {
+   "n": 2000,
+   "ta_script": 0.0,
+   "wer": 2.17
+  },
+  "eval_ls_other": {
+   "n": 2000,
+   "ta_script": 0.0,
+   "wer": 3.5
+  },
+  "eval_mile_ta": {
+   "cer": 59.76,
+   "n": 1333,
+   "per": 32.21,
+   "wer": 114.87
+  },
+  "eval_openslr65": {
+   "cer": 58.36,
+   "n": 2000,
+   "per": 29.0,
+   "wer": 114.76
+  },
+  "eval_svarah": {
+   "n": 2000,
+   "ta_script": 0.0,
+   "wer": 9.62
+  }
+ }
+}
