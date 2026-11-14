@@ -337,3 +337,6 @@ h2.sents .s, h3.sents .s { margin-bottom: 0; }
 @media (max-width: 760px) { .okmpoint { grid-template-columns: 1fr; gap: 1.2rem; } }
 
 .sync.idle span { color: var(--fg); background: none; }
+
+.augbox { margin: 1rem 0 1.4rem; }
+#aug .controls + .controls { margin-top: .8rem; }

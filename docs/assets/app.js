@@ -704,3 +704,36 @@ document.addEventListener("click", (e) => { const f = e.target.closest(".flip");
   wirePlayer({ url: "audio/spring_okay_mam.mp3", button: $("#okm-play"), canvas: $("#okm-canvas"),
     onTime: (tm) => { $("#okm-words").classList.toggle("idle", tm <= 0.01 || tm >= 1e8); ws.forEach((x, i) => { const on = +x.dataset.t <= tm + 0.05; x.classList.toggle("on", on); x.classList.toggle("now", on && (!ws[i + 1] || +ws[i + 1].dataset.t > tm + 0.05) && tm < 1e8); }); } });
 })();
+
+/* ---------- augmentation demo: WebAudio effects on a real clip ---------- */
+const AUG = [
+  ["noise", { en: "background noise", ta: "பின்னணி இரைச்சல்" }],
+  ["echo", { en: "echo", ta: "எதிரொலி" }],
+  ["phone", { en: "phone line", ta: "தொலைபேசி" }],
+  ["babble", { en: "other people talking", ta: "மற்றவர்கள் பேச்சு" }],
+  ["fast", { en: "10% faster", ta: "10% வேகம்" }],
+  ["slow", { en: "10% slower", ta: "10% மெதுவு" }],
+];
+const augOn = new Set();
+let augCtx = null, augNodes = [];
+async function augBuf(url) { augCtx ||= new (window.AudioContext || window.webkitAudioContext)(); const b = await (await fetch(url)).arrayBuffer(); return augCtx.decodeAudioData(b); }
+function augRender() {
+  $("#aug-btns").innerHTML = AUG.map(([k, l]) => `<button data-aug="${k}" aria-pressed="${augOn.has(k)}">${esc(L(l))}</button>`).join("");
+  $$("[data-aug]").forEach((b) => b.addEventListener("click", () => { const k = b.dataset.aug; if (augOn.has(k)) augOn.delete(k); else { augOn.add(k); if (k === "fast") augOn.delete("slow"); if (k === "slow") augOn.delete("fast"); } augRender(); }));
+  $("#aug-desc").textContent = augOn.size ? L({ en: `${augOn.size} effect${augOn.size > 1 ? "s" : ""} on`, ta: `${augOn.size} விளைவு இயக்கத்தில்` }) : L({ en: "clean recording", ta: "சுத்தமான பதிவு" });
+}
+async function augPlay() {
+  augNodes.forEach((n) => { try { n.stop(); } catch {} }); augNodes = [];
+  const main = await augBuf("audio/eval_indicvoices_0000_01_00082.mp3"), ctx = augCtx; await ctx.resume();
+  const src = ctx.createBufferSource(); src.buffer = main; src.playbackRate.value = augOn.has("fast") ? 1.1 : augOn.has("slow") ? 0.9 : 1;
+  let node = src, out = ctx.createGain(); out.connect(ctx.destination);
+  if (augOn.has("phone")) { const hp = ctx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 300; const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 3400; node.connect(hp); hp.connect(lp); node = lp; }
+  if (augOn.has("echo")) { const n = Math.floor(ctx.sampleRate * 0.9), ir = ctx.createBuffer(1, n, ctx.sampleRate), d = ir.getChannelData(0); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-6 * i / n); d[0] = 1; const cv = ctx.createConvolver(); cv.buffer = ir; const dry = ctx.createGain(); dry.gain.value = 0.5; node.connect(cv); node.connect(dry); const mix = ctx.createGain(); mix.gain.value = 0.6; cv.connect(mix); mix.connect(out); dry.connect(out); }
+  else node.connect(out);
+  const dur = main.duration / src.playbackRate.value;
+  if (augOn.has("noise")) { const n = Math.floor(ctx.sampleRate * dur), nb = ctx.createBuffer(1, n, ctx.sampleRate), d = nb.getChannelData(0); let b = 0; for (let i = 0; i < n; i++) { b = 0.97 * b + 0.03 * (Math.random() * 2 - 1); d[i] = b * 2.2; } const ns = ctx.createBufferSource(); ns.buffer = nb; const g = ctx.createGain(); g.gain.value = 0.35; ns.connect(g); g.connect(ctx.destination); ns.start(); augNodes.push(ns); }
+  if (augOn.has("babble")) { const bb = await augBuf("audio/eval_indicvoices_0000_00_00698.mp3"); const bs = ctx.createBufferSource(); bs.buffer = bb; const g = ctx.createGain(); g.gain.value = 0.3; bs.connect(g); g.connect(ctx.destination); bs.start(ctx.currentTime + 0.4); augNodes.push(bs); }
+  src.start(); augNodes.push(src);
+}
+$("#aug-play").addEventListener("click", augPlay);
+augRender(); redraw.push(augRender);

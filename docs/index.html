@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>parakeet-tamil · தமிழ் கிளி</title>
 <meta name="description" content="Free Tamil and English speech recognition that runs on an ordinary computer.">
-<link rel="stylesheet" href="assets/style.css?v=16">
+<link rel="stylesheet" href="assets/style.css?v=17">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦜</text></svg>">
 <script>(function(){var d=document.documentElement,t=localStorage.getItem("theme"),l=localStorage.getItem("lang"),p=localStorage.getItem("depth");if(t)d.dataset.theme=t;if(l)d.lang=l;if(p)d.dataset.depth=p;})();</script>
 </head>
@@ -162,6 +162,28 @@
       </div>
       <p class="small" data-d="d" data-l="en">Maya2 TTS in speaker-vector mode: a random unit ECAPA-192 vector per clip, no reference audio (largest cosine to any of its 20 preset voices: 0.47). The range direction d is a label-free ridge regression of log-F0 on output ECAPA, fitted on synthetic audio only (cross-validated R² 0.68); each clip uses unit(v + a·0.47·d) with a ~ Uniform[−1, 1], and only a is stored. Checked afterwards on real speakers (246 Tamil, 100 Indian-English): d orders real voices by pitch at Spearman 0.77. Intelligibility holds across the dial (round-trip PER ≤ 1.8%). A uniform dial gives a flat pitch spread, with more in-between voices than real speech, on purpose.</p>
       <p class="small" data-d="d" data-l="ta">Maya2 TTS, speaker-vector முறை: ஒவ்வொரு கோப்புக்கும் தற்செயல் ECAPA-192 அலகு திசையன், மாதிரிக் குரல் இல்லை (20 உள்ளமைந்த குரல்களுடன் அதிகபட்ச cosine 0.47). வீச்சுத் திசை d: செயற்கை ஒலியில் மட்டும், லேபிள் இல்லாமல், log-F0 மீது ridge regression (CV R² 0.68); ஒவ்வொரு கோப்பும் unit(v + a·0.47·d), a ~ Uniform[−1, 1]; a மட்டுமே சேமிக்கப்படுகிறது. பின்னர் உண்மையான பேச்சாளர்களிடம் சோதித்தோம் (246 தமிழ், 100 இந்திய ஆங்கிலம்): d உண்மையான குரல்களைச் சுருதிப்படி Spearman 0.77-இல் வரிசைப்படுத்துகிறது. குமிழ் முழுவதும் தெளிவு நிலைக்கிறது (PER ≤ 1.8%).</p>
+    </div>
+    <div class="voices reveal" id="aug">
+      <h3 class="subhead" data-l="en">Making it harder on purpose</h3>
+      <h3 class="subhead" data-l="ta">வேண்டுமென்றே கடினமாக்குதல்</h3>
+      <p data-l="en">Real homes are noisy. The TV is on, someone is talking in the next room, the call is on a bad phone line. An early version that did well on clean recordings fell apart in noise. So during training we spoil the recordings on purpose, differently every time: background noise, echo, phone-line sound, compressed audio, other people talking, two people talking over each other, and speech up to 10% faster or slower. Try it on a real clip.</p>
+      <p data-l="ta">உண்மையான வீடுகள் இரைச்சலானவை. தொலைக்காட்சி ஓடுகிறது, அடுத்த அறையில் யாரோ பேசுகிறார்கள், அழைப்பு மோசமான தொலைபேசி இணைப்பில். சுத்தமான பதிவுகளில் நன்றாகச் செயல்பட்ட ஒரு முந்தைய பதிப்பு இரைச்சலில் தடுமாறியது. அதனால் பயிற்சியின்போது பதிவுகளை வேண்டுமென்றே, ஒவ்வொரு முறையும் வேறு விதமாகக் கெடுக்கிறோம்: பின்னணி இரைச்சல், எதிரொலி, தொலைபேசி ஒலி, சுருக்கப்பட்ட ஒலி, மற்றவர்கள் பேசுவது, இருவர் ஒரே நேரத்தில் பேசுவது, 10% வரை வேகமாக அல்லது மெதுவாக. ஓர் உண்மையான பதிவில் முயன்று பாருங்கள்.</p>
+      <div class="scorer augbox">
+        <div class="controls" id="aug-btns"></div>
+        <div class="controls"><button id="aug-play">▶ <span data-l="en">play</span><span data-l="ta">கேளுங்கள்</span></button><span class="small" id="aug-desc"></span></div>
+      </div>
+      <p data-l="en">One thing we do not train on is volume. The model went deaf on very quiet recordings, so instead it evens out the volume before it listens. That costs nothing on normal recordings.</p>
+      <p data-l="ta">ஒலியளவில் மட்டும் நாங்கள் பயிற்சி செய்வதில்லை. மிகக் குறைந்த ஒலிப் பதிவுகளில் மாதிரி காது கேளாததுபோல் ஆனது; அதனால் கேட்பதற்கு முன் ஒலியளவைச் சமப்படுத்துகிறது. சாதாரணப் பதிவுகளில் இதனால் இழப்பு இல்லை.</p>
+      <div class="tablewrap" data-d="d" style="margin-top:1rem"><table class="dt"><thead><tr><th style="text-align:left">augmentation</th><th style="text-align:left">how</th><th>share of clips</th></tr></thead><tbody>
+        <tr><td>background noise</td><td style="text-align:left">our own room-tone recordings, SNR 0–20 dB</td><td>30%</td></tr>
+        <tr><td>echo (reverb)</td><td style="text-align:left">synthetic rooms, RT60 0.2–1.0 s, on the GPU</td><td>30%</td></tr>
+        <tr><td>phone band</td><td style="text-align:left">low-pass 3.4–8 kHz</td><td>10%</td></tr>
+        <tr><td>codecs</td><td style="text-align:left">Opus, MP3, GSM</td><td>10%</td></tr>
+        <tr><td>other voices</td><td style="text-align:left">1–3 background talkers, SNR 3–20 dB</td><td>25%</td></tr>
+        <tr><td>overlapping turns</td><td style="text-align:left">0.2–1.5 s overlap at the turn change</td><td>30% of joined pairs</td></tr>
+        <tr><td>speed</td><td style="text-align:left">0.9–1.1×, pitch moves with it</td><td>50%</td></tr>
+        <tr><td>volume</td><td style="text-align:left">not augmented; loudness normalised at inference (±0.04 WER on normal clips)</td><td>–</td></tr>
+      </tbody></table><p class="small" style="margin-top:.6rem">Before this, run 5 went from Kathbath PER 3.2 on clean audio to 12.9 with 5 dB babble and 26.6 on a bad phone line.</p></div>
     </div>
     <div data-d="d" class="reveal">
       <div class="tablewrap" id="mix-table" style="margin-top:1.5rem"></div>
@@ -604,6 +626,6 @@
   <p data-l="en">Audio clips: IndicVoices (AI4Bharat, CC BY 4.0), Kathbath (AI4Bharat), FLEURS (Google, audio CC BY 4.0, text from FLORES CC BY-SA 4.0), Svarah (AI4Bharat, CC BY 4.0), LibriSpeech (CC BY 4.0), SPRING-INX (IIT Madras SPRING Lab, CC BY 4.0). Scores use the public test sets listed in the repository. Other models were used only as benchmarks.</p>
   <p data-l="ta">ஒலிக்கோப்புகள்: IndicVoices (AI4Bharat, CC BY 4.0), Kathbath (AI4Bharat), FLEURS (Google, ஒலி CC BY 4.0, உரை FLORES CC BY-SA 4.0), Svarah (AI4Bharat, CC BY 4.0), LibriSpeech (CC BY 4.0), SPRING-INX (IIT Madras SPRING Lab, CC BY 4.0). மற்ற மாதிரிகள் ஒப்பீட்டுக்கு மட்டுமே பயன்படுத்தப்பட்டன.</p>
 </footer>
-<script src="assets/app.js?v=24"></script>
+<script src="assets/app.js?v=25"></script>
 </body>
 </html>
