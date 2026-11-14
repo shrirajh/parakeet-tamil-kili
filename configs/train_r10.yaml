@@ -12,7 +12,7 @@
 # Hardware: 8 x RTX PRO 6000 Blackwell (96 GB), 1000 s of audio per GPU per step, no gradient accumulation, ~0.5 s/step.
 
 data_dir: ./data
-init_from: ${data_dir}/models/parakeet-tdt-0.6b-v3-tamil-tokens.nemo   # stock v3 + Tamil tokens (not released)
+init_from: ${data_dir}/native/base_native.nemo   # stock v3 + Tamil tokens: python -m kili.tokenizer.extend --corpus ta.txt --out ${data_dir}/native
 
 # ---------------------------------------------------------------------------------------------------- speed
 # kili.kernels.apply(model, **kernels): local attention [256, 256] + Triton kernels (2.54x per GPU vs NeMo's path,

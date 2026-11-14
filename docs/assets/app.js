@@ -722,7 +722,7 @@ function storyScore() {
     G.forEach(([gl, f], gi) => {
       const y0 = gi * (2 * rh + 34) + 4;
       g += `<text x="0" y="${y0 + 14}" class="lbl">${esc(L(gl))}</text>`;
-      [["e5", "--ours", L({ en: "ours", ta: "எங்களுடையது" })], ["itcore", "--itcore", L({ en: "the other program", ta: "மற்றது" })]].forEach(([m, c, nm], i) => {
+      [["e5", "--ours", L({ en: "ours", ta: "எங்களுடையது" })], ["itcore", "--itcore", L({ en: "the other model", ta: "மற்றது" })]].forEach(([m, c, nm], i) => {
         const v = f(m, q.k), y = y0 + 22 + i * rh, w = (v / mx) * (W - 190);
         g += `<text x="0" y="${y + 18}">${esc(nm)}</text><rect x="140" y="${y + 4}" width="${w}" height="${rh - 10}" rx="4" fill="var(${c})"/><text x="${146 + w}" y="${y + 19}" style="fill:var(--fg);font-weight:700;font-size:14px">${v.toFixed(1)}</text>`;
       });

@@ -1,6 +1,7 @@
 """kili: code for parakeet-tamil-kili (Tamil, English and code-switched ASR).
 
   kili.infer    NeMo inference, ONNX export, CPU runtime (no PyTorch), Home Assistant server
+  kili.tokenizer Tamil tokens for parakeet v3 (extension, surgery, sound-based warm start)
   kili.text     label normaliser, number words, convention folding, loanword engine
   kili.metrics  fold WER/CER, PER, EER
   kili.eval     short- and long-form evaluation

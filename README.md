@@ -111,7 +111,10 @@ uv run python -m kili.infer.transcribe --model shrirajh/parakeet-tamil-kili --lm
 
 ## Training
 
-- **Start**: parakeet-tdt-0.6b-v3, with its tokenizer extended to Tamil.
+- **Start**: parakeet-tdt-0.6b-v3, with 2,044 Tamil-script pieces appended to its 8,192 (`kili.tokenizer`). English
+  tokenisation and weights are unchanged, and a Tamil sentence takes 27 pieces instead of 57. Each new piece is
+  warm-started from the mean of v3's rows for its romanised spelling (க்கு starts as "kku"), so after the surgery
+  the model scores exactly like stock v3.
 - **Data**: 6,534 hours, of which:
   - Tamil: IndicVoices, Shrutilipi, Kathbath, SPRING-INX, YODAS v3 Tamil (relabelled), and 525 h of synthetic
     Tamil-English;
@@ -154,6 +157,7 @@ SHA256SUMS
 
 ```
 kili/infer     NeMo inference, ONNX export, CPU runtime (no PyTorch), Wyoming server
+kili/tokenizer Tamil tokens for parakeet v3: tokenizer extension, model surgery, sound-based warm start
 kili/text      label normaliser, Tamil and English number words, convention folding, loanword engine
 kili/metrics   fold WER/CER, PER, EER
 kili/eval      short- and long-form evaluation

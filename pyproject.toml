@@ -19,6 +19,8 @@ onnx = ["onnxruntime>=1.20", "soundfile>=0.12", "scipy"]
 wyoming = ["kili[onnx]", "wyoming>=1.5"]
 # embedding error rate (EmbeddingGemma 2)
 eer = ["torch>=2.6", "transformers>=4.56"]
+# Tamil tokenizer extension + model surgery
+tokenizer = ["kili[nemo]", "sentencepiece>=0.2"]
 # n-gram LM corpus + KN 5-gram build
 lm = ["sentencepiece>=0.2", "pyarrow", "huggingface_hub"]
 # Blackwell training kernels + training utilities
