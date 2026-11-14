@@ -421,7 +421,7 @@ const MAP = {
     teacher: [260, 400, { en: "Gemma adds full stops", ta: "Gemma இட்ட முற்றுப்புள்ளிகள்" }],
     "two-tamils": [410, 460, { en: "Two Tamils", ta: "இரண்டு தமிழ்" }],
     loans: [580, 470, { en: "English stays English", ta: "ஆங்கிலம் ஆங்கிலத்திலேயே" }],
-    data: [580, 190, { en: "As you sow", ta: "வினை விதைத்தவன்" }],
+    data: [580, 190, { en: "As you sow", ta: "நூலைப் போலச் சேலை" }],
     measure: [580, 370, { en: "Marking a Tamil test", ta: "தமிழ்த் தேர்வு திருத்தம்" }],
     listen: [770, 110, { en: "Who heard it right?", ta: "எது சரியாகக் கேட்டது?" }],
     scores: [770, 260, { en: "Scoreboard", ta: "மதிப்பெண் பலகை" }],
