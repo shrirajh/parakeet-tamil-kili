@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>parakeet-tamil · தமிழ் கிளி</title>
 <meta name="description" content="Free Tamil and English speech recognition that runs on an ordinary computer.">
-<link rel="stylesheet" href="assets/style.css?v=29">
+<link rel="stylesheet" href="assets/style.css?v=30">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦜</text></svg>">
 <script>(function(){var d=document.documentElement,t=localStorage.getItem("theme"),l=localStorage.getItem("lang"),p=localStorage.getItem("depth");if(t)d.dataset.theme=t;if(l)d.lang=l;if(p)d.dataset.depth=p;})();</script>
 </head>
@@ -14,6 +14,8 @@
 <div class="bar">
   <a class="brand" href="#top">🦜 parakeet-tamil</a>
   <span class="toggles">
+    <span class="holdtip" aria-hidden="true"><span data-l="en"><span class="lg">press &amp; hold text → </span><span class="sm">hold → </span><span class="ta">தமிழ்</span></span><span data-l="ta"><span class="lg">அழுத்திப் பிடித்தால் → </span><span class="sm">பிடி → </span>English</span></span>
+    <span class="sep"></span>
     <a href="#map" class="maplink"><span data-l="en">map</span><span data-l="ta">வரைபடம்</span></a>
     <span class="sep"></span>
     <button data-set-depth="simple" aria-pressed="true"><span data-l="en">story</span><span data-l="ta">கதை</span></button>
@@ -43,8 +45,6 @@
         <button data-set-depth="simple" aria-pressed="true"><b data-l="en">Just the story</b><b data-l="ta">கதை மட்டும்</b><small data-l="en">no technical knowledge needed</small><small data-l="ta">தொழில்நுட்ப அறிவு தேவையில்லை</small></button>
         <button data-set-depth="detail" aria-pressed="false"><b data-l="en">All the details</b><b data-l="ta">முழு விவரம்</b><small data-l="en">charts, numbers, methods</small><small data-l="ta">விளக்கப்படங்கள், எண்கள், எப்படிச் செய்தோம் என்பது</small></button>
       </div>
-      <div class="peektip" data-l="en">Tip: press and hold any paragraph to see it in Tamil.</div>
-      <div class="peektip" data-l="ta">குறிப்பு: எந்தப் பத்தியையும் அழுத்திப் பிடித்தால், அது ஆங்கிலத்தில் தெரியும்.</div>
     </div>
     <div class="counters" data-d="d">
       <div class="counter"><b data-count="34.05" data-dec="2">0</b><span data-l="en">WER on conversational Tamil<br>indic-transcribe-core: 49.28</span><span data-l="ta">தமிழ் உரையாடல்களில் WER<br>indic-transcribe-core: 49.28</span></div>

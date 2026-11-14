@@ -401,3 +401,7 @@ html[lang="ta"] .meme.photo .aigen { font-family: var(--ta); }
 .peek-show[data-l="en"] { font-family: var(--sans); }
 html.peeking, html.peeking * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .peektip { margin-top: 1rem; font-size: .85rem; color: var(--fg-3); }
+
+.holdtip { align-self: center; padding: 0 .4rem 0 .7rem; font-size: .78rem; color: var(--fg-3); white-space: nowrap; user-select: none; }
+.holdtip .sm { display: none; }
+@media (max-width: 760px) { .holdtip { padding: 0 .2rem 0 .5rem; font-size: .72rem; } .holdtip .lg { display: none; } .holdtip .sm { display: inline; } }
