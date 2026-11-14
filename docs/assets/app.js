@@ -554,7 +554,7 @@ function storyScore() {
 
 /* ---------- one sentence per line in prose ---------- */
 (function splitSentences() {
-  const sel = ".chapter .inner > p:not(.small), .chapter .sticky > p:not(.small):not(.score-line), .chapter .scorer > p, .chapter [data-d] > p:not(.small), .chapter details.howto > p";
+  const sel = ".chapter .inner > p:not(.small), .chapter .sticky > p:not(.small):not(.score-line), .chapter .scorer > p, .chapter [data-d] > p:not(.small), .chapter details.howto > p, .chapter .grid2x p.plain";
   $$(sel).forEach((p) => {
     if (p.classList.contains("sents") || p.closest(".lines") || p.querySelector("a, code") && p.textContent.length < 60) return;
     const html = p.innerHTML.trim();
