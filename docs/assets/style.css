@@ -310,3 +310,16 @@ html[lang="ta"] .loanhead { font-family: var(--ta); text-transform: none; letter
 #loan-traps .w { font-size: 1.15rem; }
 @media (max-width: 640px) { .loanhead, .loanrow { grid-template-columns: 1fr; } .loanrow .arr { display: none; } #loan-traps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .subhead { line-height: 1.2; }
+
+/* sentence-per-line everywhere; first-sentence emphasis only in prose paragraphs */
+.sents .s { display: block; margin-bottom: .45em; }
+.sents .s:last-child { margin-bottom: 0; }
+.tile .sents .s, .flip .sents .s, .small.sents .s, .verdict.sents .s, li.sents .s { margin-bottom: .2em; }
+.tile p.sents .s:first-child, .flip .sents .s:first-child, .small.sents .s:first-child, .verdict.sents .s:first-child, li.sents .s:first-child, .hint.sents .s:first-child, .tag.sents .s:first-child { font-weight: inherit; color: inherit; }
+p, li, .verdict, .small, .tile p, .flip .g { text-wrap: pretty; }
+h1, h2, h3, .subhead { text-wrap: balance; }
+
+h2.sents .s, h3.sents .s { margin-bottom: 0; }
+
+.tag, .hint, .chooser, h1, h2, h3, .subhead, .callnum, figcaption { text-wrap: balance; }
+.tag .s, .hint .s { text-wrap: balance; }

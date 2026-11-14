@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>parakeet-tamil · தமிழ் கிளி</title>
 <meta name="description" content="Free Tamil and English speech recognition that runs on an ordinary computer.">
-<link rel="stylesheet" href="assets/style.css?v=10">
+<link rel="stylesheet" href="assets/style.css?v=12">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦜</text></svg>">
 <script>(function(){var d=document.documentElement,t=localStorage.getItem("theme"),l=localStorage.getItem("lang"),p=localStorage.getItem("depth");if(t)d.dataset.theme=t;if(l)d.lang=l;if(p)d.dataset.depth=p;})();</script>
 </head>
@@ -138,70 +138,13 @@
   </div>
 </section>
 
-<!-- LISTEN QUIZ -->
-<section class="chapter" id="listen">
-  <div class="inner split">
-    <div class="sticky">
-      <h2 class="reveal" data-l="en">Who heard it right?</h2>
-      <h2 class="reveal" data-l="ta">யார் சரியாகக் கேட்டார்கள்?</h2>
-      <p class="big reveal" data-l="en">Listen to a real recording. Two programs wrote it down. Pick the one that matches what the person said.</p>
-      <p class="big reveal" data-l="ta">ஓர் உண்மையான பதிவைக் கேளுங்கள். இரண்டு மென்பொருள்கள் அதை எழுதின. அந்த நபர் சொன்னதோடு பொருந்துவதைத் தேர்ந்தெடுங்கள்.</p>
-      <p class="reveal" data-l="en">The other one is indic-transcribe-core, the strongest Tamil program we could find. It turns spoken Tamil into formal written Tamil. Ours writes what was actually said.</p>
-      <p class="reveal" data-l="ta">மற்றது indic-transcribe-core — நாங்கள் கண்டுபிடிக்க முடிந்த வலிமையான தமிழ் மென்பொருள். அது பேச்சுத் தமிழை எழுத்துத் தமிழாக மாற்றுகிறது. எங்களுடையது உண்மையில் சொன்னதை எழுதுகிறது.</p>
-      <p class="reveal score-line" id="score-line"></p>
-    </div>
-    <div class="quiz" data-quiz="listen"></div>
-  </div>
-</section>
-
-<!-- SCOREBOARD -->
-<section class="chapter" id="scores">
-  <div class="inner">
-    <h2 class="reveal" data-l="en">We win spoken Tamil. We lose read Tamil.</h2>
-    <h2 class="reveal" data-l="ta">பேச்சுத் தமிழில் வெல்கிறோம். வாசிப்புத் தமிழில் தோற்கிறோம்.</h2>
-    <p class="plain reveal" data-d="s" data-l="en">We judge it the way a person would, with 2 questions. Did it hear the right sounds? And did the meaning come through? In everyday conversation, ours does better on both. When people read formal sentences aloud, the other program still does better on both. In English the two are about even.</p>
-    <p class="plain reveal" data-d="s" data-l="ta">ஒரு மனிதர் பார்ப்பது போலவே 2 கேள்விகளால் மதிப்பிடுகிறோம். சரியான ஒலிகளைக் கேட்டதா? பொருள் சரியாக வந்ததா? அன்றாட உரையாடலில் இரண்டிலும் எங்களுடையது சிறந்தது. முறையான வாக்கியங்களை உரக்க வாசிக்கும்போது இரண்டிலும் மற்ற மென்பொருள் இன்னும் சிறந்தது. ஆங்கிலத்தில் இரண்டும் கிட்டத்தட்ட சமம்.</p>
-    <div class="grid2x reveal" data-d="s" id="story-score"></div>
-    <p class="small reveal" data-d="s" data-l="en">The other program is indic-transcribe-core, the strongest Tamil program we could find. "Reading aloud" is the average of 5 tests. Lower is better on both.</p>
-    <p class="small reveal" data-d="s" data-l="ta">மற்ற மென்பொருள் indic-transcribe-core — நாங்கள் கண்டுபிடிக்க முடிந்த வலிமையான தமிழ் மென்பொருள். "உரக்க வாசித்தல்" 5 தேர்வுகளின் சராசரி. இரண்டிலும் குறைவே சிறந்தது.</p>
-    <div class="controls reveal" data-d="d">
-      <button data-metric="per" aria-pressed="true">PER</button>
-      <button data-metric="eer" aria-pressed="false">EER</button>
-      <button data-metric="wer" aria-pressed="false">WER</button>
-      <button data-metric="cer" aria-pressed="false">CER</button>
-      <span style="width:1rem"></span>
-      <button id="lm-toggle" aria-pressed="false"><span data-l="en">+ language model</span><span data-l="ta">+ மொழி மாதிரி</span></button>
-    </div>
-    <div class="legend reveal" id="dumb-legend" data-d="d"></div>
-    <div class="chart reveal" id="dumbbell" data-d="d"></div>
-    <p class="small reveal" data-d="d" data-l="en">Same clips (up to 2,000 per test), same scorer. <a href="https://huggingface.co/bodhan-ai/indic-transcribe-core">indic-transcribe-core</a> is a 1B model, 1.7× our size, used only as a benchmark. WER words · CER characters · PER sounds · EER meaning. Tamil scores count an English word as correct in either script.</p>
-    <p class="small reveal" data-d="d" data-l="ta">அதே ஒலிக்கோப்புகள் (ஒரு தேர்வுக்கு 2,000 வரை), அதே மதிப்பீடு. <a href="https://huggingface.co/bodhan-ai/indic-transcribe-core">indic-transcribe-core</a> 1B மாதிரி, எங்களை விட 1.7 மடங்கு பெரியது; ஒப்பீட்டுக்கு மட்டுமே. WER சொற்கள் · CER எழுத்துகள் · PER ஒலிகள் · EER பொருள்.</p>
-    <div data-d="d" class="reveal" style="margin-top:3rem">
-      <h3 data-l="en">Every open model we scored, on the same clips</h3><h3 data-l="ta">நாங்கள் மதிப்பிட்ட கட்டற்ற மாதிரிகள் அனைத்தும், அதே ஒலிக்கோப்புகளில்</h3>
-      <div class="tablewrap" id="open-table"></div>
-    </div>
-  </div>
-</section>
-
-<!-- RUNS -->
-<section class="chapter" id="runs">
-  <div class="inner">
-    <h2 class="reveal" data-l="en">10 attempts in 5 days. English nearly died twice.</h2>
-    <h2 class="reveal" data-l="ta">5 நாட்களில் 10 முயற்சிகள். ஆங்கிலம் இருமுறை கிட்டத்தட்ட இறந்தது.</h2>
-    <p class="reveal" data-l="en">We started from a program that already understood English and other European languages, and taught it Tamil. Learning Tamil made it forget English. The chart shows how many English words in 100 it got wrong after each attempt. Above the red line, we threw that attempt away.</p>
-    <p class="reveal" data-l="ta">ஆங்கிலமும் ஐரோப்பிய மொழிகளும் ஏற்கெனவே புரிந்த ஒரு மென்பொருளிலிருந்து தொடங்கி, அதற்குத் தமிழ் கற்பித்தோம். தமிழ் கற்றதும் அது ஆங்கிலத்தை மறந்தது. ஒவ்வொரு முயற்சிக்குப் பிறகும் 100 ஆங்கிலச் சொற்களில் எத்தனையைத் தவறாக எழுதியது என்பதை வரைபடம் காட்டுகிறது. சிவப்புக் கோட்டுக்கு மேலே சென்ற முயற்சியை நிராகரித்தோம்.</p>
-    <div class="chart reveal" id="gate-chart"></div>
-  </div>
-  <div class="strip reveal" id="run-strip" data-d="d"></div>
-</section>
-
 <!-- RECIPE -->
 <section class="chapter" id="recipe">
   <div class="inner">
     <h2 class="reveal" data-l="en">What it learned from</h2>
     <h2 class="reveal" data-l="ta">அது எதிலிருந்து கற்றது</h2>
-    <p class="plain reveal" data-l="en">6,534 hours of recordings: news, conversations, YouTube, read sentences, and English. That is 9 months of nonstop listening. The final version heard most of it 5 times.</p>
-    <p class="plain reveal" data-l="ta">6,534 மணி நேரப் பதிவுகள்: செய்திகள், உரையாடல்கள், YouTube, வாசிக்கப்பட்ட வாக்கியங்கள், ஆங்கிலம். இடைவிடாமல் 9 மாதம் கேட்பதற்குச் சமம். இறுதிப் பதிப்பு பெரும்பகுதியை 5 முறை கேட்டது.</p>
+    <p class="plain reveal" data-l="en">First, we needed recordings of people speaking Tamil, with the words written down. 6,534 hours of recordings: news, conversations, YouTube, read sentences, and English. That is 9 months of nonstop listening. The final version heard most of it 5 times.</p>
+    <p class="plain reveal" data-l="ta">முதலில், தமிழ் பேசும் பதிவுகள் தேவை — சொல்லப்பட்ட சொற்கள் எழுதப்பட்டவையாக. 6,534 மணி நேரப் பதிவுகள்: செய்திகள், உரையாடல்கள், YouTube, வாசிக்கப்பட்ட வாக்கியங்கள், ஆங்கிலம். இடைவிடாமல் 9 மாதம் கேட்பதற்குச் சமம். இறுதிப் பதிப்பு பெரும்பகுதியை 5 முறை கேட்டது.</p>
     <div class="chart reveal" id="mix-bars"></div>
     <div class="voices reveal">
       <h3 class="subhead" data-l="en">Computer voices that belong to nobody</h3>
@@ -230,27 +173,109 @@
   </div>
 </section>
 
-<!-- EPOCHS -->
-<section class="chapter" id="epochs">
+<!-- DIRTY DATA -->
+<section class="chapter" id="data">
+  <div class="inner">
+    <h2 class="reveal" data-l="en">As you sow, so shall you reap.</h2>
+    <h2 class="reveal" data-l="ta">வினை விதைத்தவன் வினை அறுப்பான்.</h2>
+    <p class="plain reveal" data-l="en">Gathering recordings was the easy part. Every recording comes with the text of what was said, typed or prepared by people. That text is often wrong, and the computer learns the mistakes.</p>
+    <p class="plain reveal" data-l="ta">பதிவுகளைச் சேகரிப்பது எளிதான பகுதி. ஒவ்வொரு பதிவும் அதில் சொன்னதின் எழுத்து வடிவத்துடன் வருகிறது; அதை மனிதர்கள் தட்டச்சு செய்தனர் அல்லது தயாரித்தனர். அந்த உரை அடிக்கடி தவறாக இருக்கிறது; கணினி அந்தத் தவறுகளையும் கற்கிறது.</p>
+    <div class="secret reveal" id="secret">
+      <div class="small" data-l="en">Common Voice English clip <code>common_voice_en_17832183</code> (version 17, test split) asked a volunteer to read:</div>
+      <div class="small" data-l="ta">Common Voice ஆங்கிலப் பதிவு <code>common_voice_en_17832183</code> (பதிப்பு 17, சோதனைப் பகுதி) ஒரு தன்னார்வலரை இதைப் படிக்கச் சொன்னது:</div>
+      <div class="prompt">"As you sow, so shall you reap."</div>
+      <div class="small" style="margin-top:1rem" data-l="en">Every model we ran, ours and 3 others, heard this instead:</div><div class="small" style="margin-top:1rem" data-l="ta">நாங்கள் சோதித்த ஒவ்வொரு மாதிரியும் (எங்களுடையதும் வேறு 3-உம்) கேட்டது இது:</div>
+      <div class="heard">"I just shitted and farted all over myself. I just shitted and farted all over myself."</div>
+      <div class="controls" style="margin-top:1rem"><button id="secret-btn"><span data-l="en">reveal</span><span data-l="ta">காட்டு</span></button> <span class="cw" data-l="en">toilet humour</span><span class="cw" data-l="ta">கழிவறை நகைச்சுவை</span>
+        <a class="small" href="https://huggingface.co/datasets/fixie-ai/common_voice_17_0/viewer/en/test?row=2467" target="_blank" rel="noopener"><span data-l="en">go listen for yourself ↗</span><span data-l="ta">நீங்களே கேளுங்கள் ↗</span></a></div>
+      <div class="small" data-l="en">The text still says "As you sow". Every model gets marked wrong.</div><div class="small" data-l="ta">உரை இன்னும் "As you sow" என்கிறது. ஒவ்வொரு மாதிரியும் தவறு எனக் குறிக்கப்படுகிறது.</div>
+    </div>
+    <p class="big reveal" style="margin-top:3rem" data-l="en">More mistakes we found in the training text. Tap a card.</p>
+    <p class="big reveal" style="margin-top:3rem" data-l="ta">பயிற்சி உரையில் நாங்கள் கண்ட மேலும் சில தவறுகள். அட்டையைத் தொடுங்கள்.</p>
+    <div class="flips reveal" id="dirty-cards"></div>
+    <details class="howto reveal">
+      <summary><span data-l="en">How did we count label errors?</span><span data-l="ta">லேபிள் பிழைகளை எப்படி எண்ணினோம்?</span></summary>
+      <p data-l="en">We took 100 random training labels from each source: only the text, as the model was trained on it, without the audio. 4 independent Claude reviewers marked every error they found, using one shared rubric: wrong vowel length, ல/ள/ழ, ன/ண/ந and ர/ற swaps, dropped final consonants, cut-off words, wrong word joins and garbled text. Spoken forms and missing sandhi consonants were counted separately and not called errors. To check the reviewers agreed, 3 of them rated the same 25 Kathbath labels: all 3 found the same 5 errors (1.8 to 2.2 per 100 words). Shrutilipi came out at 6.44 errors per 100 words, and 34 of its 100 labels had at least 1 error. Text alone can't show where the reader said something different from the label, so the real rate can only be higher.</p>
+      <p data-l="ta">ஒவ்வொரு மூலத்திலிருந்தும் 100 பயிற்சி லேபிள்களைத் தற்செயலாக எடுத்தோம்: மாதிரி பயின்ற அதே உரை மட்டும், ஒலி இல்லாமல். 4 தனித்தனி Claude மதிப்பீட்டாளர்கள் ஒரே விதிமுறையுடன் ஒவ்வொரு பிழையையும் குறித்தனர்: குறில்/நெடில், ல/ள/ழ, ன/ண/ந, ர/ற மாற்றங்கள், விடுபட்ட இறுதி மெய், துண்டிக்கப்பட்ட சொற்கள், தவறான சேர்ப்பு, சிதைந்த உரை. பேச்சு வடிவங்களும் விடுபட்ட புணர்ச்சி ஒற்றுகளும் தனியாக எண்ணப்பட்டன; பிழையாகக் கருதப்படவில்லை. மதிப்பீட்டாளர்கள் ஒத்துப்போகிறார்களா என்று பார்க்க, 3 பேர் அதே 25 Kathbath லேபிள்களை மதிப்பிட்டனர்: மூவரும் அதே 5 பிழைகளைக் கண்டனர் (100 சொற்களுக்கு 1.8 முதல் 2.2). Shrutilipi: 100 சொற்களுக்கு 6.44 பிழைகள்; 100 லேபிள்களில் 34-இல் குறைந்தது 1 பிழை. உரையை மட்டும் வைத்து, வாசித்தவர் லேபிளிலிருந்து வேறுபட்டுச் சொன்னதைக் கண்டறிய முடியாது; உண்மையான விகிதம் இதைவிட அதிகமாகவே இருக்கும்.</p>
+    </details>
+  </div>
+</section>
+
+<!-- LOANS -->
+<section class="chapter" id="loans">
+  <div class="inner">
+    <h2 class="reveal" data-l="en">English words stay English.</h2>
+    <h2 class="reveal" data-l="ta">ஆங்கிலச் சொற்கள் ஆங்கிலத்திலேயே.</h2>
+    <p class="plain reveal" data-l="en">One kind of mistake was everywhere. Tamil speakers borrow English words all the time: meeting, office, bus. Most Tamil datasets write them in Tamil letters. That taught our early versions to write English in Tamil letters, even when someone was speaking English. So we made one rule: an English word is written in English, with the Tamil ending attached.</p>
+    <p class="plain reveal" data-l="ta">ஒரு வகைத் தவறு எங்கும் இருந்தது. தமிழ் பேசுபவர்கள் எப்போதும் ஆங்கிலச் சொற்களைக் கடன் வாங்குகிறார்கள்: meeting, office, bus. பெரும்பாலான தமிழ்த் தரவுகள் அவற்றைத் தமிழ் எழுத்தில் எழுதுகின்றன. அது எங்கள் முந்தைய பதிப்புகளுக்கு, ஒருவர் ஆங்கிலம் பேசும்போதும் ஆங்கிலத்தைத் தமிழ் எழுத்தில் எழுதக் கற்றுக்கொடுத்தது. அதனால் ஒரே விதி: ஆங்கிலச் சொல் ஆங்கிலத்தில், தமிழ் விகுதி இணைப்புடன்.</p>
+    <div class="scorer reveal loancmp" id="loan-lines"></div>
+    <p class="reveal" data-l="en" style="margin-top:1rem">With this rule, plus a few smaller fixes, English came back: errors on Indian-accented English fell from 45 to 12 per 100 words between the attempt before the rule and the one after.</p>
+    <p class="reveal" data-l="ta" style="margin-top:1rem">இந்த விதியாலும் சில சிறு திருத்தங்களாலும் ஆங்கிலம் திரும்பியது: இந்திய உச்சரிப்பு ஆங்கிலத்தில் 100 சொற்களுக்குத் தவறுகள், விதிக்கு முந்தைய முயற்சியில் 45, பிந்தையதில் 12.</p>
+    <div class="grid2x reveal" style="margin-top:3.5rem;align-items:start">
+      <div>
+        <h3 class="subhead" style="margin-top:0" data-l="en">The hard part: which words are English?</h3>
+        <h3 class="subhead" style="margin-top:0" data-l="ta">கடினமான பகுதி: எந்தச் சொற்கள் ஆங்கிலம்?</h3>
+        <p data-l="en">Many Tamil words look like English ones. We built a dictionary of 23,804 Tamil-script spellings of English words. An AI read each candidate inside several real sentences, without being told our guess, and we converted a word only when every sentence agreed. Gemma 4 helped check candidates when the dictionary grew. When unsure, it leaves the word alone: 99% of the words it converted were right in a hand-checked sample.</p>
+        <p data-l="ta">பல தமிழ்ச் சொற்கள் ஆங்கிலம் போல் தோன்றுகின்றன. ஆங்கிலச் சொற்களின் 23,804 தமிழ் எழுத்து வடிவங்களைக் கொண்ட அகராதியை உருவாக்கினோம். ஒவ்வொரு சொல்லையும் ஒரு AI பல உண்மையான வாக்கியங்களுக்குள் படித்தது — எங்கள் ஊகத்தைச் சொல்லாமல்; எல்லா வாக்கியங்களும் ஒப்புக்கொண்டால் மட்டுமே மாற்றினோம். அகராதி வளர்ந்தபோது Gemma 4 சரிபார்க்க உதவியது. உறுதியில்லையென்றால் சொல்லை விட்டுவிடும்: கையால் சரிபார்த்த மாதிரியில் மாற்றிய சொற்களில் 99% சரி.</p>
+      </div>
+      <div>
+        <div class="small" style="margin-bottom:.6rem" data-l="en">Look English, aren't. Tap a card.</div>
+        <div class="small" style="margin-bottom:.6rem" data-l="ta">ஆங்கிலம் போல் தோன்றும், ஆனால் அல்ல. அட்டையைத் தொடுங்கள்.</div>
+        <div class="flips" id="loan-traps"></div>
+      </div>
+    </div>
+      <div data-d="d" class="reveal" style="margin-top:1.5rem">
+        <p data-l="en">The dictionary has 2 routes: exact Tamil-script forms, and verified English stems plus a whitelisted Tamil suffix for forms never seen before. Native look-alikes are blocked. Names, Sanskrit-origin words and ambiguous words (கால் = leg or call) stay Tamil. Context rules handle sandhi (பேசிக் கொண்டு is "while speaking", not basic) and split compounds (ஸ்டார்ட் அப்புக்கு → startup-க்கு). Candidates: about 75,000 Tamil-script word types. A local AI model proposed English + suffix; each proposal had to match a mechanical split and the seed lexicon, then pass a blind check in up to 3 random transcript snippets. Precision 0.99 and recall 0.64 on 200 hand-checked transcripts. A later blind audit of changed words found bugs in the converter itself (sir-ஆ, police சாமியார்); they were fixed before run 10. The scorer folds both scripts, so writing an English word either way is never counted as an error.</p>
+        <p data-l="ta">அகராதிக்கு 2 வழிகள்: சரியான தமிழ் எழுத்து வடிவங்கள்; புதிய வடிவங்களுக்கு, சரிபார்த்த ஆங்கில வேர் + அனுமதிக்கப்பட்ட தமிழ் விகுதி. பெயர்கள், வடமொழிச் சொற்கள், இருபொருள் சொற்கள் (கால்) தமிழிலேயே. புணர்ச்சி, பிரிந்த கூட்டுச் சொற்களுக்குச் சூழல் விதிகள். சுமார் 75,000 சொல் வகைகள்; ஒவ்வொரு முன்மொழிவும் 3 தற்செயல் வாக்கியங்களில் மறைமுகமாகச் சோதிக்கப்பட்டது. 200 கையால் சரிபார்த்த உரைகளில் துல்லியம் 0.99, மீட்பு 0.64. மதிப்பீட்டில் இரு எழுத்துகளும் சரியே.</p>
+      </div>
+  </div>
+</section>
+
+<!-- TEACHER -->
+<section class="chapter" id="teacher">
   <div class="inner split">
     <div class="sticky">
-      <h2 class="reveal" data-l="en">Practice helps, up to a point.</h2>
-      <h2 class="reveal" data-l="ta">பயிற்சி உதவுகிறது, ஓர் அளவு வரை.</h2>
-      <p class="reveal" data-l="en">Each full pass through all the recordings is called an epoch. Mistakes went down with every pass until the 5th. The 6th made it worse, so we kept the 5th.</p>
-      <p class="reveal" data-l="ta">எல்லாப் பதிவுகளையும் ஒருமுறை முழுதாகக் கேட்பது ஒரு சுற்று (epoch). 5-ஆவது சுற்று வரை ஒவ்வொரு சுற்றிலும் தவறுகள் குறைந்தன. 6-ஆவது சுற்று மோசமாக்கியது; அதனால் 5-ஆவதை வைத்துக்கொண்டோம்.</p>
-      <div class="controls reveal" id="epoch-sets"></div>
+      <h2 class="reveal" data-l="en">Another AI added the full stops.</h2>
+      <h2 class="reveal" data-l="ta">இன்னொரு AI முற்றுப்புள்ளிகளைச் சேர்த்தது.</h2>
+      <p class="reveal" data-l="en">The text had another gap. Most Tamil recordings come with text that has no full stops or question marks. We asked another AI, Gemma 4 12B, to add them without changing a single letter. Now ours writes <code>.</code> <code>?</code> <code>,</code> in Tamil. No other free model we tested does.</p>
+      <p class="reveal" data-l="ta">உரையில் இன்னொரு குறையும் இருந்தது. பெரும்பாலான தமிழ்ப் பதிவுகளுடன் வரும் உரையில் முற்றுப்புள்ளிகளோ கேள்விக்குறிகளோ இல்லை. இன்னொரு AI-யான Gemma 4 12B-யிடம், ஒரு எழுத்தையும் மாற்றாமல் அவற்றைச் சேர்க்கச் சொன்னோம். இப்போது எங்களுடையது தமிழில் <code>.</code> <code>?</code> <code>,</code> எழுதுகிறது. நாங்கள் சோதித்த வேறு எந்தக் கட்டற்ற மாதிரியும் இதைச் செய்வதில்லை.</p>
     </div>
     <div>
-      <div class="chart reveal" id="epoch-chart"></div>
-      <figure class="meme reveal" aria-label="meme">
-        <svg viewBox="0 0 560 300" role="img"><rect width="560" height="300" fill="var(--bg-3)"/>
-          <text x="24" y="44" style="font:700 21px var(--sans);fill:var(--fg)">me: one more epoch will close the gap</text>
-          <polyline points="50,250 140,196 230,166 320,150 410,136 500,196" fill="none" stroke="var(--ours)" stroke-width="5" stroke-linejoin="round"/>
-          <circle cx="410" cy="136" r="9" fill="var(--ours)"/><circle cx="500" cy="196" r="9" fill="var(--bad)"/>
-          <text x="372" y="118" style="font:700 16px var(--sans);fill:var(--fg)">epoch 5 😌</text>
-          <text x="450" y="232" style="font:700 16px var(--sans);fill:var(--bad)">epoch 6 💀</text>
-          <text x="24" y="286" style="font:12px var(--mono);fill:var(--fg-3)">Kathbath WER 29.15 → 31.17</text></svg>
-      </figure>
+      <div class="scorer reveal">
+        <div class="controls"><button id="punct-toggle" aria-pressed="false">Gemma</button></div>
+        <div class="karaoke" id="punct-text" style="font-size:1.35rem;min-height:0"></div>
+      </div>
+      <div class="tiles reveal" style="margin-top:1rem">
+        <div class="tile yes"><span class="k" data-l="en">kept</span><span class="k" data-l="ta">வைத்தோம்</span><b class="n">13.5 min</b><p data-l="en">to add punctuation to all the YouTube text, on 8 rented GPUs</p><p data-l="ta">8 வாடகை GPU-களில் எல்லா YouTube உரைக்கும் நிறுத்தக்குறி இட</p></div>
+        <div class="tile no"><span class="k" data-l="en">dropped</span><span class="k" data-l="ta">கைவிட்டோம்</span><b class="n">70%</b><p data-l="en">of Gemma's formal-Tamil rewrites had an error. <a href="#two-tamils">Why we dropped them ↓</a></p><p data-l="ta">Gemma-வின் எழுத்துத் தமிழ் மாற்றங்களில் பிழை இருந்தது. <a href="#two-tamils">ஏன் கைவிட்டோம் ↓</a></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TWO TAMILS -->
+<section class="chapter" id="two-tamils">
+  <div class="inner split">
+    <div class="sticky">
+      <h2 class="reveal" data-l="en">Tamil is two languages. We tried to teach both.</h2>
+      <h2 class="reveal" data-l="ta">தமிழ் இரண்டு மொழிகள். இரண்டையும் கற்பிக்க முயன்றோம்.</h2>
+      <p class="reveal" data-l="en">If an AI could add full stops, could it also turn spoken Tamil into written Tamil? People speak one Tamil and write another. "I didn't accept it" is ஏத்துக்கல when spoken and ஏற்றுக்கொள்ளவில்லை when written. We wanted a switch: spoken Tamil by default, formal Tamil on request.</p>
+      <p class="reveal" data-l="ta">ஒரு AI முற்றுப்புள்ளி சேர்க்க முடிந்தால், பேச்சுத் தமிழை எழுத்துத் தமிழாகவும் மாற்ற முடியுமா? மக்கள் பேசுவது ஒரு தமிழ், எழுதுவது இன்னொரு தமிழ். பேச்சில் "ஏத்துக்கல", எழுத்தில் "ஏற்றுக்கொள்ளவில்லை". நாங்கள் ஒரு சுவிட்ச் விரும்பினோம்: இயல்பாகப் பேச்சுத் தமிழ், கேட்டால் எழுத்துத் தமிழ்.</p>
+      <p class="reveal" data-l="en">No recordings come with both. So Gemma rewrote 761,151 spoken sentences into formal Tamil, and we trained on both.</p>
+      <p class="reveal" data-l="ta">இரண்டும் உள்ள பதிவுகள் இல்லை. அதனால் Gemma 7,61,151 பேச்சு வாக்கியங்களை எழுத்துத் தமிழாக மாற்றியது; இரண்டிலும் பயிற்சி செய்தோம்.</p>
+    </div>
+    <div>
+      <div class="scorer reveal">
+        <div class="small" data-l="en">a spoken sentence, and Gemma's formal version. Tap through.</div>
+        <div class="small" data-l="ta">ஒரு பேச்சு வாக்கியம், அதன் Gemma எழுத்து வடிவம். அழுத்திப் பாருங்கள்.</div>
+        <div id="twin-card" style="margin-top:.8rem"></div>
+        <div class="controls" style="margin-top:1rem"><button id="twin-next">→ <span data-l="en">next</span><span data-l="ta">அடுத்தது</span></button></div>
+      </div>
+      <div class="tiles reveal" style="margin-top:1rem">
+        <div class="tile"><b class="n">70%</b><p data-l="en">of the rewrites had at least 1 error when we checked them blind.</p><p data-l="ta">மாற்றங்களில் குறைந்தது 1 பிழை இருந்தது (மறைமுகச் சோதனை).</p></div>
+        <div class="tile"><b class="n" data-l="en">worse</b><b class="n" data-l="ta">மோசம்</b><p data-l="en">Spoken Tamil got worse too (+1.3 WER). The bad rewrites confused what it heard.</p><p data-l="ta">பேச்சுத் தமிழும் மோசமானது (+1.3 WER). தவறான மாற்றங்கள் அது கேட்டதைக் குழப்பின.</p></div>
+        <div class="tile"><b class="n" data-l="en">dropped</b><b class="n" data-l="ta">கைவிட்டோம்</b><p data-l="en">The final version writes what people say. Turning that into formal Tamil is a separate job for a text AI.</p><p data-l="ta">இறுதிப் பதிப்பு மக்கள் சொல்வதை எழுதுகிறது. அதை எழுத்துத் தமிழாக மாற்றுவது ஒரு உரை AI-யின் தனி வேலை.</p></div>
+      </div>
     </div>
   </div>
 </section>
@@ -261,8 +286,8 @@
     <div class="sticky">
       <h2 class="reveal" data-l="en">Our computers could vanish at any second.</h2>
       <h2 class="reveal" data-l="ta">எங்கள் கணினிகள் எந்த நொடியிலும் மறையலாம்.</h2>
-      <p class="plain reveal" data-d="s" data-l="en">We rented powerful computers by the hour at a big discount. The catch: the owner can take them back at any moment, without warning. So the program saves its progress every few minutes, and a watchdog starts it again on another computer.</p>
-      <p class="plain reveal" data-d="s" data-l="ta">சக்திவாய்ந்த கணினிகளை மணி நேர வாடகைக்குப் பெரும் தள்ளுபடியில் எடுத்தோம். நிபந்தனை: உரிமையாளர் எந்த நொடியிலும் எச்சரிக்கையின்றித் திரும்பப் பெறலாம். அதனால் மென்பொருள் சில நிமிடங்களுக்கு ஒருமுறை முன்னேற்றத்தைச் சேமிக்கிறது; ஒரு காவலர் மென்பொருள் அதை வேறு கணினியில் மீண்டும் தொடங்குகிறது.</p>
+      <p class="plain reveal" data-d="s" data-l="en">With the data ready, we needed powerful computers to learn from it. We rented powerful computers by the hour at a big discount. The catch: the owner can take them back at any moment, without warning. So the program saves its progress every few minutes, and a watchdog starts it again on another computer.</p>
+      <p class="plain reveal" data-d="s" data-l="ta">தரவு தயாரானதும், அதிலிருந்து கற்கச் சக்திவாய்ந்த கணினிகள் தேவைப்பட்டன. சக்திவாய்ந்த கணினிகளை மணி நேர வாடகைக்குப் பெரும் தள்ளுபடியில் எடுத்தோம். நிபந்தனை: உரிமையாளர் எந்த நொடியிலும் எச்சரிக்கையின்றித் திரும்பப் பெறலாம். அதனால் மென்பொருள் சில நிமிடங்களுக்கு ஒருமுறை முன்னேற்றத்தைச் சேமிக்கிறது; ஒரு காவலர் மென்பொருள் அதை வேறு கணினியில் மீண்டும் தொடங்குகிறது.</p>
       <p class="reveal" data-d="d" data-l="en">We trained on spot VMs: cheap, and the cloud takes them back without warning. Every checkpoint, label shard and eval result goes to object storage as soon as it exists. A supervisor watches the VM and relaunches it.</p>
       <p class="reveal" data-d="d" data-l="ta">மலிவான spot VM-களில் பயிற்சி செய்தோம்; கிளவுட் எச்சரிக்கையின்றி அவற்றைத் திரும்பப் பெறும். ஒவ்வொரு checkpoint, label, மதிப்பீட்டு முடிவும் உருவானவுடன் object storage-க்குச் செல்கிறது. ஒரு மேற்பார்வையாளர் VM-ஐக் கண்காணித்து மீண்டும் தொடங்குகிறது.</p>
       <p class="reveal" data-l="en">Press the red button to see it happen.</p><p class="reveal" data-l="ta">அது எப்படி நடக்கிறது என்று பார்க்கச் சிவப்புப் பொத்தானை அழுத்துங்கள்.</p>
@@ -288,110 +313,40 @@
   </div>
 </section>
 
-<!-- TEACHER -->
-<section class="chapter" id="teacher">
+<!-- RUNS -->
+<section class="chapter" id="runs">
+  <div class="inner">
+    <h2 class="reveal" data-l="en">10 attempts in 5 days. English nearly died twice.</h2>
+    <h2 class="reveal" data-l="ta">5 நாட்களில் 10 முயற்சிகள். ஆங்கிலம் இருமுறை கிட்டத்தட்ட இறந்தது.</h2>
+    <p class="reveal" data-l="en">Then we trained, checked, fixed something, and trained again. We started from a program that already understood English and other European languages, and taught it Tamil. Learning Tamil made it forget English. The chart shows how many English words in 100 it got wrong after each attempt. Above the red line, we threw that attempt away.</p>
+    <p class="reveal" data-l="ta">பிறகு பயிற்சி, சோதனை, திருத்தம், மீண்டும் பயிற்சி. ஆங்கிலமும் ஐரோப்பிய மொழிகளும் ஏற்கெனவே புரிந்த ஒரு மென்பொருளிலிருந்து தொடங்கி, அதற்குத் தமிழ் கற்பித்தோம். தமிழ் கற்றதும் அது ஆங்கிலத்தை மறந்தது. ஒவ்வொரு முயற்சிக்குப் பிறகும் 100 ஆங்கிலச் சொற்களில் எத்தனையைத் தவறாக எழுதியது என்பதை வரைபடம் காட்டுகிறது. சிவப்புக் கோட்டுக்கு மேலே சென்ற முயற்சியை நிராகரித்தோம்.</p>
+    <div class="chart reveal" id="gate-chart"></div>
+  </div>
+  <div class="strip reveal" id="run-strip" data-d="d"></div>
+</section>
+
+<!-- EPOCHS -->
+<section class="chapter" id="epochs">
   <div class="inner split">
     <div class="sticky">
-      <h2 class="reveal" data-l="en">Another AI added the full stops.</h2>
-      <h2 class="reveal" data-l="ta">இன்னொரு AI முற்றுப்புள்ளிகளைச் சேர்த்தது.</h2>
-      <p class="reveal" data-l="en">Most Tamil recordings come with text that has no full stops or question marks. We asked another AI, Gemma 4 12B, to add them without changing a single letter. Now ours writes <code>.</code> <code>?</code> <code>,</code> in Tamil. No other free model we tested does.</p>
-      <p class="reveal" data-l="ta">பெரும்பாலான தமிழ்ப் பதிவுகளுடன் வரும் உரையில் முற்றுப்புள்ளிகளோ கேள்விக்குறிகளோ இல்லை. இன்னொரு AI-யான Gemma 4 12B-யிடம், ஒரு எழுத்தையும் மாற்றாமல் அவற்றைச் சேர்க்கச் சொன்னோம். இப்போது எங்களுடையது தமிழில் <code>.</code> <code>?</code> <code>,</code> எழுதுகிறது. நாங்கள் சோதித்த வேறு எந்தக் கட்டற்ற மாதிரியும் இதைச் செய்வதில்லை.</p>
+      <h2 class="reveal" data-l="en">Practice helps, up to a point.</h2>
+      <h2 class="reveal" data-l="ta">பயிற்சி உதவுகிறது, ஓர் அளவு வரை.</h2>
+      <p class="reveal" data-l="en">In the last attempt, we also tested how long to train. Each full pass through all the recordings is called an epoch. Mistakes went down with every pass until the 5th. The 6th made it worse, so we kept the 5th.</p>
+      <p class="reveal" data-l="ta">கடைசி முயற்சியில், எவ்வளவு நேரம் பயிற்சி செய்வது என்றும் சோதித்தோம். எல்லாப் பதிவுகளையும் ஒருமுறை முழுதாகக் கேட்பது ஒரு சுற்று (epoch). 5-ஆவது சுற்று வரை ஒவ்வொரு சுற்றிலும் தவறுகள் குறைந்தன. 6-ஆவது சுற்று மோசமாக்கியது; அதனால் 5-ஆவதை வைத்துக்கொண்டோம்.</p>
+      <div class="controls reveal" id="epoch-sets"></div>
     </div>
     <div>
-      <div class="scorer reveal">
-        <div class="controls"><button id="punct-toggle" aria-pressed="false">Gemma</button></div>
-        <div class="karaoke" id="punct-text" style="font-size:1.35rem;min-height:0"></div>
-      </div>
-      <div class="tiles reveal" style="margin-top:1rem">
-        <div class="tile yes"><span class="k" data-l="en">kept</span><span class="k" data-l="ta">வைத்தோம்</span><b class="n">13.5 min</b><p data-l="en">to add punctuation to all the YouTube text, on 8 rented GPUs</p><p data-l="ta">8 வாடகை GPU-களில் எல்லா YouTube உரைக்கும் நிறுத்தக்குறி இட</p></div>
-        <div class="tile no"><span class="k" data-l="en">dropped</span><span class="k" data-l="ta">கைவிட்டோம்</span><b class="n">70%</b><p data-l="en">of Gemma's formal-Tamil rewrites had an error. <a href="#two-tamils">Why we dropped them ↓</a></p><p data-l="ta">Gemma-வின் எழுத்துத் தமிழ் மாற்றங்களில் பிழை இருந்தது. <a href="#two-tamils">ஏன் கைவிட்டோம் ↓</a></p></div>
-      </div>
+      <div class="chart reveal" id="epoch-chart"></div>
+      <figure class="meme reveal" aria-label="meme">
+        <svg viewBox="0 0 560 300" role="img"><rect width="560" height="300" fill="var(--bg-3)"/>
+          <text x="24" y="44" style="font:700 21px var(--sans);fill:var(--fg)">me: one more epoch will close the gap</text>
+          <polyline points="50,250 140,196 230,166 320,150 410,136 500,196" fill="none" stroke="var(--ours)" stroke-width="5" stroke-linejoin="round"/>
+          <circle cx="410" cy="136" r="9" fill="var(--ours)"/><circle cx="500" cy="196" r="9" fill="var(--bad)"/>
+          <text x="372" y="118" style="font:700 16px var(--sans);fill:var(--fg)">epoch 5 😌</text>
+          <text x="450" y="232" style="font:700 16px var(--sans);fill:var(--bad)">epoch 6 💀</text>
+          <text x="24" y="286" style="font:12px var(--mono);fill:var(--fg-3)">Kathbath WER 29.15 → 31.17</text></svg>
+      </figure>
     </div>
-  </div>
-</section>
-
-<!-- TWO TAMILS -->
-<section class="chapter" id="two-tamils">
-  <div class="inner split">
-    <div class="sticky">
-      <h2 class="reveal" data-l="en">Tamil is two languages. We tried to teach both.</h2>
-      <h2 class="reveal" data-l="ta">தமிழ் இரண்டு மொழிகள். இரண்டையும் கற்பிக்க முயன்றோம்.</h2>
-      <p class="reveal" data-l="en">People speak one Tamil and write another. "I didn't accept it" is ஏத்துக்கல when spoken and ஏற்றுக்கொள்ளவில்லை when written. We wanted a switch: spoken Tamil by default, formal Tamil on request.</p>
-      <p class="reveal" data-l="ta">மக்கள் பேசுவது ஒரு தமிழ், எழுதுவது இன்னொரு தமிழ். பேச்சில் "ஏத்துக்கல", எழுத்தில் "ஏற்றுக்கொள்ளவில்லை". நாங்கள் ஒரு சுவிட்ச் விரும்பினோம்: இயல்பாகப் பேச்சுத் தமிழ், கேட்டால் எழுத்துத் தமிழ்.</p>
-      <p class="reveal" data-l="en">No recordings come with both. So Gemma rewrote 761,151 spoken sentences into formal Tamil, and we trained on both.</p>
-      <p class="reveal" data-l="ta">இரண்டும் உள்ள பதிவுகள் இல்லை. அதனால் Gemma 7,61,151 பேச்சு வாக்கியங்களை எழுத்துத் தமிழாக மாற்றியது; இரண்டிலும் பயிற்சி செய்தோம்.</p>
-    </div>
-    <div>
-      <div class="scorer reveal">
-        <div class="small" data-l="en">a spoken sentence, and Gemma's formal version. Tap through.</div>
-        <div class="small" data-l="ta">ஒரு பேச்சு வாக்கியம், அதன் Gemma எழுத்து வடிவம். அழுத்திப் பாருங்கள்.</div>
-        <div id="twin-card" style="margin-top:.8rem"></div>
-        <div class="controls" style="margin-top:1rem"><button id="twin-next">→ <span data-l="en">next</span><span data-l="ta">அடுத்தது</span></button></div>
-      </div>
-      <div class="tiles reveal" style="margin-top:1rem">
-        <div class="tile"><b class="n">70%</b><p data-l="en">of the rewrites had at least 1 error when we checked them blind.</p><p data-l="ta">மாற்றங்களில் குறைந்தது 1 பிழை இருந்தது (மறைமுகச் சோதனை).</p></div>
-        <div class="tile"><b class="n" data-l="en">worse</b><b class="n" data-l="ta">மோசம்</b><p data-l="en">Spoken Tamil got worse too (+1.3 WER). The bad rewrites confused what it heard.</p><p data-l="ta">பேச்சுத் தமிழும் மோசமானது (+1.3 WER). தவறான மாற்றங்கள் அது கேட்டதைக் குழப்பின.</p></div>
-        <div class="tile"><b class="n" data-l="en">dropped</b><b class="n" data-l="ta">கைவிட்டோம்</b><p data-l="en">The final version writes what people say. Turning that into formal Tamil is a separate job for a text AI.</p><p data-l="ta">இறுதிப் பதிப்பு மக்கள் சொல்வதை எழுதுகிறது. அதை எழுத்துத் தமிழாக மாற்றுவது ஒரு உரை AI-யின் தனி வேலை.</p></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- LOANS -->
-<section class="chapter" id="loans">
-  <div class="inner">
-    <h2 class="reveal" data-l="en">English words stay English.</h2>
-    <h2 class="reveal" data-l="ta">ஆங்கிலச் சொற்கள் ஆங்கிலத்திலேயே.</h2>
-    <p class="plain reveal" data-l="en">Tamil speakers borrow English words all the time: meeting, office, bus. Most Tamil datasets write them in Tamil letters. That taught our early versions to write English in Tamil letters, even when someone was speaking English. So we made one rule: an English word is written in English, with the Tamil ending attached.</p>
-    <p class="plain reveal" data-l="ta">தமிழ் பேசுபவர்கள் எப்போதும் ஆங்கிலச் சொற்களைக் கடன் வாங்குகிறார்கள்: meeting, office, bus. பெரும்பாலான தமிழ்த் தரவுகள் அவற்றைத் தமிழ் எழுத்தில் எழுதுகின்றன. அது எங்கள் முந்தைய பதிப்புகளுக்கு, ஒருவர் ஆங்கிலம் பேசும்போதும் ஆங்கிலத்தைத் தமிழ் எழுத்தில் எழுதக் கற்றுக்கொடுத்தது. அதனால் ஒரே விதி: ஆங்கிலச் சொல் ஆங்கிலத்தில், தமிழ் விகுதி இணைப்புடன்.</p>
-    <div class="scorer reveal loancmp" id="loan-lines"></div>
-    <p class="reveal" data-l="en" style="margin-top:1rem">With this rule, plus a few smaller fixes, English came back: errors on Indian-accented English fell from 45 to 12 per 100 words between the attempt before the rule and the one after.</p>
-    <p class="reveal" data-l="ta" style="margin-top:1rem">இந்த விதியாலும் சில சிறு திருத்தங்களாலும் ஆங்கிலம் திரும்பியது: இந்திய உச்சரிப்பு ஆங்கிலத்தில் 100 சொற்களுக்குத் தவறுகள், விதிக்கு முந்தைய முயற்சியில் 45, பிந்தையதில் 12.</p>
-    <div class="grid2x reveal" style="margin-top:3.5rem;align-items:start">
-      <div>
-        <h3 class="subhead" style="margin-top:0" data-l="en">The hard part: which words are English?</h3>
-        <h3 class="subhead" style="margin-top:0" data-l="ta">கடினமான பகுதி: எந்தச் சொற்கள் ஆங்கிலம்?</h3>
-        <p data-l="en">Many Tamil words look like English ones. We built a dictionary of 23,804 Tamil-script spellings of English words. An AI read each candidate inside several real sentences, without being told our guess, and we converted a word only when every sentence agreed. Gemma 4 helped check candidates when the dictionary grew. When unsure, it leaves the word alone: 99% of the words it converted were right in a hand-checked sample.</p>
-        <p data-l="ta">பல தமிழ்ச் சொற்கள் ஆங்கிலம் போல் தோன்றுகின்றன. ஆங்கிலச் சொற்களின் 23,804 தமிழ் எழுத்து வடிவங்களைக் கொண்ட அகராதியை உருவாக்கினோம். ஒவ்வொரு சொல்லையும் ஒரு AI பல உண்மையான வாக்கியங்களுக்குள் படித்தது — எங்கள் ஊகத்தைச் சொல்லாமல்; எல்லா வாக்கியங்களும் ஒப்புக்கொண்டால் மட்டுமே மாற்றினோம். அகராதி வளர்ந்தபோது Gemma 4 சரிபார்க்க உதவியது. உறுதியில்லையென்றால் சொல்லை விட்டுவிடும்: கையால் சரிபார்த்த மாதிரியில் மாற்றிய சொற்களில் 99% சரி.</p>
-      </div>
-      <div>
-        <div class="small" style="margin-bottom:.6rem" data-l="en">Look English, aren't. Tap a card.</div>
-        <div class="small" style="margin-bottom:.6rem" data-l="ta">ஆங்கிலம் போல் தோன்றும், ஆனால் அல்ல. அட்டையைத் தொடுங்கள்.</div>
-        <div class="flips" id="loan-traps"></div>
-      </div>
-    </div>
-      <div data-d="d" class="reveal" style="margin-top:1.5rem">
-        <p data-l="en">The dictionary has 2 routes: exact Tamil-script forms, and verified English stems plus a whitelisted Tamil suffix for forms never seen before. Native look-alikes are blocked. Names, Sanskrit-origin words and ambiguous words (கால் = leg or call) stay Tamil. Context rules handle sandhi (பேசிக் கொண்டு is "while speaking", not basic) and split compounds (ஸ்டார்ட் அப்புக்கு → startup-க்கு). Candidates: about 75,000 Tamil-script word types. A local AI model proposed English + suffix; each proposal had to match a mechanical split and the seed lexicon, then pass a blind check in up to 3 random transcript snippets. Precision 0.99 and recall 0.64 on 200 hand-checked transcripts. A later blind audit of changed words found bugs in the converter itself (sir-ஆ, police சாமியார்); they were fixed before run 10. The scorer folds both scripts, so writing an English word either way is never counted as an error.</p>
-        <p data-l="ta">அகராதிக்கு 2 வழிகள்: சரியான தமிழ் எழுத்து வடிவங்கள்; புதிய வடிவங்களுக்கு, சரிபார்த்த ஆங்கில வேர் + அனுமதிக்கப்பட்ட தமிழ் விகுதி. பெயர்கள், வடமொழிச் சொற்கள், இருபொருள் சொற்கள் (கால்) தமிழிலேயே. புணர்ச்சி, பிரிந்த கூட்டுச் சொற்களுக்குச் சூழல் விதிகள். சுமார் 75,000 சொல் வகைகள்; ஒவ்வொரு முன்மொழிவும் 3 தற்செயல் வாக்கியங்களில் மறைமுகமாகச் சோதிக்கப்பட்டது. 200 கையால் சரிபார்த்த உரைகளில் துல்லியம் 0.99, மீட்பு 0.64. மதிப்பீட்டில் இரு எழுத்துகளும் சரியே.</p>
-      </div>
-  </div>
-</section>
-
-<!-- DIRTY DATA -->
-<section class="chapter" id="data">
-  <div class="inner">
-    <h2 class="reveal" data-l="en">As you sow, so shall you reap.</h2>
-    <h2 class="reveal" data-l="ta">வினை விதைத்தவன் வினை அறுப்பான்.</h2>
-    <p class="plain reveal" data-l="en">Every recording comes with the text of what was said, typed or prepared by people. That text is often wrong, and the computer learns the mistakes.</p>
-    <p class="plain reveal" data-l="ta">ஒவ்வொரு பதிவும் அதில் சொன்னதின் எழுத்து வடிவத்துடன் வருகிறது; அதை மனிதர்கள் தட்டச்சு செய்தனர் அல்லது தயாரித்தனர். அந்த உரை அடிக்கடி தவறாக இருக்கிறது; கணினி அந்தத் தவறுகளையும் கற்கிறது.</p>
-    <div class="secret reveal" id="secret">
-      <div class="small" data-l="en">Common Voice English clip <code>common_voice_en_17832183</code> (version 17, test split) asked a volunteer to read:</div>
-      <div class="small" data-l="ta">Common Voice ஆங்கிலப் பதிவு <code>common_voice_en_17832183</code> (பதிப்பு 17, சோதனைப் பகுதி) ஒரு தன்னார்வலரை இதைப் படிக்கச் சொன்னது:</div>
-      <div class="prompt">"As you sow, so shall you reap."</div>
-      <div class="small" style="margin-top:1rem" data-l="en">Every model we ran, ours and 3 others, heard this instead:</div><div class="small" style="margin-top:1rem" data-l="ta">நாங்கள் சோதித்த ஒவ்வொரு மாதிரியும் (எங்களுடையதும் வேறு 3-உம்) கேட்டது இது:</div>
-      <div class="heard">"I just shitted and farted all over myself. I just shitted and farted all over myself."</div>
-      <div class="controls" style="margin-top:1rem"><button id="secret-btn"><span data-l="en">reveal</span><span data-l="ta">காட்டு</span></button> <span class="cw" data-l="en">toilet humour</span><span class="cw" data-l="ta">கழிவறை நகைச்சுவை</span>
-        <a class="small" href="https://huggingface.co/datasets/fixie-ai/common_voice_17_0/viewer/en/test?row=2467" target="_blank" rel="noopener"><span data-l="en">go listen for yourself ↗</span><span data-l="ta">நீங்களே கேளுங்கள் ↗</span></a></div>
-      <div class="small" data-l="en">The text still says "As you sow". Every model gets marked wrong.</div><div class="small" data-l="ta">உரை இன்னும் "As you sow" என்கிறது. ஒவ்வொரு மாதிரியும் தவறு எனக் குறிக்கப்படுகிறது.</div>
-    </div>
-    <p class="big reveal" style="margin-top:3rem" data-l="en">More mistakes we found in the training text. Tap a card.</p>
-    <p class="big reveal" style="margin-top:3rem" data-l="ta">பயிற்சி உரையில் நாங்கள் கண்ட மேலும் சில தவறுகள். அட்டையைத் தொடுங்கள்.</p>
-    <div class="flips reveal" id="dirty-cards"></div>
-    <details class="howto reveal">
-      <summary><span data-l="en">How did we count label errors?</span><span data-l="ta">லேபிள் பிழைகளை எப்படி எண்ணினோம்?</span></summary>
-      <p data-l="en">We took 100 random training labels from each source: only the text, as the model was trained on it, without the audio. 4 independent Claude reviewers marked every error they found, using one shared rubric: wrong vowel length, ல/ள/ழ, ன/ண/ந and ர/ற swaps, dropped final consonants, cut-off words, wrong word joins and garbled text. Spoken forms and missing sandhi consonants were counted separately and not called errors. To check the reviewers agreed, 3 of them rated the same 25 Kathbath labels: all 3 found the same 5 errors (1.8 to 2.2 per 100 words). Shrutilipi came out at 6.44 errors per 100 words, and 34 of its 100 labels had at least 1 error. Text alone can't show where the reader said something different from the label, so the real rate can only be higher.</p>
-      <p data-l="ta">ஒவ்வொரு மூலத்திலிருந்தும் 100 பயிற்சி லேபிள்களைத் தற்செயலாக எடுத்தோம்: மாதிரி பயின்ற அதே உரை மட்டும், ஒலி இல்லாமல். 4 தனித்தனி Claude மதிப்பீட்டாளர்கள் ஒரே விதிமுறையுடன் ஒவ்வொரு பிழையையும் குறித்தனர்: குறில்/நெடில், ல/ள/ழ, ன/ண/ந, ர/ற மாற்றங்கள், விடுபட்ட இறுதி மெய், துண்டிக்கப்பட்ட சொற்கள், தவறான சேர்ப்பு, சிதைந்த உரை. பேச்சு வடிவங்களும் விடுபட்ட புணர்ச்சி ஒற்றுகளும் தனியாக எண்ணப்பட்டன; பிழையாகக் கருதப்படவில்லை. மதிப்பீட்டாளர்கள் ஒத்துப்போகிறார்களா என்று பார்க்க, 3 பேர் அதே 25 Kathbath லேபிள்களை மதிப்பிட்டனர்: மூவரும் அதே 5 பிழைகளைக் கண்டனர் (100 சொற்களுக்கு 1.8 முதல் 2.2). Shrutilipi: 100 சொற்களுக்கு 6.44 பிழைகள்; 100 லேபிள்களில் 34-இல் குறைந்தது 1 பிழை. உரையை மட்டும் வைத்து, வாசித்தவர் லேபிளிலிருந்து வேறுபட்டுச் சொன்னதைக் கண்டறிய முடியாது; உண்மையான விகிதம் இதைவிட அதிகமாகவே இருக்கும்.</p>
-    </details>
   </div>
 </section>
 
@@ -400,8 +355,8 @@
   <div class="inner">
     <h2 class="reveal" data-l="en">How do you mark a Tamil test?</h2>
     <h2 class="reveal" data-l="ta">தமிழ்த் தேர்வை எப்படித் திருத்துவது?</h2>
-    <p class="big reveal" data-l="en">The same word can be spelled 3 ways, and English words can come in either alphabet. A strict marker calls all of these mistakes. Turn on the rules and watch the score.</p>
-    <p class="big reveal" data-l="ta">ஒரே சொல்லை 3 விதமாக எழுதலாம்; ஆங்கிலச் சொற்கள் எந்த எழுத்திலும் வரலாம். கண்டிப்பான திருத்துநர் இவை அனைத்தையும் தவறு என்பார். விதிகளை இயக்கி மதிப்பெண்ணைப் பாருங்கள்.</p>
+    <p class="big reveal" data-l="en">To know whether an attempt was better, we had to mark it, and marking Tamil is harder than it sounds. The same word can be spelled 3 ways, and English words can come in either alphabet. A strict marker calls all of these mistakes. Turn on the rules and watch the score.</p>
+    <p class="big reveal" data-l="ta">ஒரு முயற்சி சிறந்ததா என்று அறிய அதைத் திருத்த வேண்டும்; தமிழைத் திருத்துவது தோன்றுவதைவிடக் கடினம். ஒரே சொல்லை 3 விதமாக எழுதலாம்; ஆங்கிலச் சொற்கள் எந்த எழுத்திலும் வரலாம். கண்டிப்பான திருத்துநர் இவை அனைத்தையும் தவறு என்பார். விதிகளை இயக்கி மதிப்பெண்ணைப் பாருங்கள்.</p>
     <div class="grid2x reveal">
       <div class="scorer" id="scorer">
         <div class="controls" id="fold-btns"></div>
@@ -433,13 +388,110 @@
   </div>
 </section>
 
+<!-- LISTEN QUIZ -->
+<section class="chapter" id="listen">
+  <div class="inner split">
+    <div class="sticky">
+      <h2 class="reveal" data-l="en">Who heard it right?</h2>
+      <h2 class="reveal" data-l="ta">யார் சரியாகக் கேட்டார்கள்?</h2>
+      <p class="big reveal" data-l="en">Scores only tell part of the story. Listen to a real recording. Two programs wrote it down. Pick the one that matches what the person said.</p>
+      <p class="big reveal" data-l="ta">மதிப்பெண்கள் கதையின் ஒரு பகுதியை மட்டுமே சொல்கின்றன. ஓர் உண்மையான பதிவைக் கேளுங்கள். இரண்டு மென்பொருள்கள் அதை எழுதின. அந்த நபர் சொன்னதோடு பொருந்துவதைத் தேர்ந்தெடுங்கள்.</p>
+      <p class="reveal" data-l="en">The other one is indic-transcribe-core, the strongest Tamil program we could find. It turns spoken Tamil into formal written Tamil. Ours writes what was actually said.</p>
+      <p class="reveal" data-l="ta">மற்றது indic-transcribe-core — நாங்கள் கண்டுபிடிக்க முடிந்த வலிமையான தமிழ் மென்பொருள். அது பேச்சுத் தமிழை எழுத்துத் தமிழாக மாற்றுகிறது. எங்களுடையது உண்மையில் சொன்னதை எழுதுகிறது.</p>
+      <p class="reveal score-line" id="score-line"></p>
+    </div>
+    <div class="quiz" data-quiz="listen"></div>
+  </div>
+</section>
+
+<!-- SCOREBOARD -->
+<section class="chapter" id="scores">
+  <div class="inner">
+    <h2 class="reveal" data-l="en">We win spoken Tamil. We lose read Tamil.</h2>
+    <h2 class="reveal" data-l="ta">பேச்சுத் தமிழில் வெல்கிறோம். வாசிப்புத் தமிழில் தோற்கிறோம்.</h2>
+    <p class="plain reveal" data-d="s" data-l="en">Across thousands of recordings, the same pattern holds. We judge it the way a person would, with 2 questions. Did it hear the right sounds? And did the meaning come through? In everyday conversation, ours does better on both. When people read formal sentences aloud, the other program still does better on both. In English the two are about even.</p>
+    <p class="plain reveal" data-d="s" data-l="ta">ஆயிரக்கணக்கான பதிவுகளிலும் இதே போக்குதான். ஒரு மனிதர் பார்ப்பது போலவே 2 கேள்விகளால் மதிப்பிடுகிறோம். சரியான ஒலிகளைக் கேட்டதா? பொருள் சரியாக வந்ததா? அன்றாட உரையாடலில் இரண்டிலும் எங்களுடையது சிறந்தது. முறையான வாக்கியங்களை உரக்க வாசிக்கும்போது இரண்டிலும் மற்ற மென்பொருள் இன்னும் சிறந்தது. ஆங்கிலத்தில் இரண்டும் கிட்டத்தட்ட சமம்.</p>
+    <div class="grid2x reveal" data-d="s" id="story-score"></div>
+    <p class="small reveal" data-d="s" data-l="en">The other program is indic-transcribe-core, the strongest Tamil program we could find. "Reading aloud" is the average of 5 tests. Lower is better on both.</p>
+    <p class="small reveal" data-d="s" data-l="ta">மற்ற மென்பொருள் indic-transcribe-core — நாங்கள் கண்டுபிடிக்க முடிந்த வலிமையான தமிழ் மென்பொருள். "உரக்க வாசித்தல்" 5 தேர்வுகளின் சராசரி. இரண்டிலும் குறைவே சிறந்தது.</p>
+    <div class="controls reveal" data-d="d">
+      <button data-metric="per" aria-pressed="true">PER</button>
+      <button data-metric="eer" aria-pressed="false">EER</button>
+      <button data-metric="wer" aria-pressed="false">WER</button>
+      <button data-metric="cer" aria-pressed="false">CER</button>
+      <span style="width:1rem"></span>
+      <button id="lm-toggle" aria-pressed="false"><span data-l="en">+ language model</span><span data-l="ta">+ மொழி மாதிரி</span></button>
+    </div>
+    <div class="legend reveal" id="dumb-legend" data-d="d"></div>
+    <div class="chart reveal" id="dumbbell" data-d="d"></div>
+    <p class="small reveal" data-d="d" data-l="en">Same clips (up to 2,000 per test), same scorer. <a href="https://huggingface.co/bodhan-ai/indic-transcribe-core">indic-transcribe-core</a> is a 1B model, 1.7× our size, used only as a benchmark. WER words · CER characters · PER sounds · EER meaning. Tamil scores count an English word as correct in either script.</p>
+    <p class="small reveal" data-d="d" data-l="ta">அதே ஒலிக்கோப்புகள் (ஒரு தேர்வுக்கு 2,000 வரை), அதே மதிப்பீடு. <a href="https://huggingface.co/bodhan-ai/indic-transcribe-core">indic-transcribe-core</a> 1B மாதிரி, எங்களை விட 1.7 மடங்கு பெரியது; ஒப்பீட்டுக்கு மட்டுமே. WER சொற்கள் · CER எழுத்துகள் · PER ஒலிகள் · EER பொருள்.</p>
+    <div data-d="d" class="reveal" style="margin-top:3rem">
+      <h3 data-l="en">Every open model we scored, on the same clips</h3><h3 data-l="ta">நாங்கள் மதிப்பிட்ட கட்டற்ற மாதிரிகள் அனைத்தும், அதே ஒலிக்கோப்புகளில்</h3>
+      <div class="tablewrap" id="open-table"></div>
+    </div>
+  </div>
+</section>
+
+<!-- LOSE -->
+<section class="chapter" id="lose">
+  <div class="inner split">
+    <div class="sticky">
+      <h2 class="reveal" data-l="en">Where it still struggles.</h2>
+      <h2 class="reveal" data-l="ta">அது இன்னும் தடுமாறும் இடம்.</h2>
+      <p class="reveal" data-l="en">So where does it still lose? Words that sound alike but mean different things, like மழை (rain) and மலை (hill). A person uses the rest of the sentence to tell them apart. Our model doesn't do that well enough yet. We think this matters less in practice: the text usually goes on to an AI assistant like Claude or ChatGPT, which reads the whole sentence and works out that மலை was meant to be மழை. Tap a card.</p>
+      <p class="reveal" data-l="ta">அப்படியென்றால் அது இன்னும் எங்கே தோற்கிறது? ஒன்றுபோல் ஒலித்து வேறு பொருள் தரும் சொற்கள் — மழை, மலை போல. ஒருவர் வாக்கியத்தின் மீதியை வைத்து வேறுபடுத்துவார். எங்கள் மாதிரி அதை இன்னும் போதுமான அளவு செய்வதில்லை. நடைமுறையில் இது அவ்வளவு முக்கியமில்லை என்று நினைக்கிறோம்: இந்த உரை பொதுவாக Claude, ChatGPT போன்ற AI உதவியாளரிடம் செல்கிறது; அது முழு வாக்கியத்தையும் படித்து, மலை என்பது மழை என்று புரிந்துகொள்ளும். அட்டையைத் தொடுங்கள்.</p>
+      <div class="flips reveal" id="homophones"></div>
+    </div>
+    <div>
+      <div class="quiz" data-quiz="lose"></div>
+      <div class="chart reveal" id="gap-chart" style="margin-top:2rem" data-d="d"></div>
+    </div>
+  </div>
+</section>
+
+<!-- LM -->
+<section class="chapter" id="lm">
+  <div class="inner">
+    <h2 class="reveal" data-l="en">A second opinion that has read the Tamil internet</h2>
+    <h2 class="reveal" data-l="ta">தமிழ் இணையத்தைப் படித்த இரண்டாவது கருத்து</h2>
+    <p class="plain reveal" data-l="en">Our hunch: most of those losses are spelling, not hearing, and spelling is exactly what a language model knows. So we tested whether one could close the gap. A language model is a program that guesses the next word. Your phone keyboard has a small one. ChatGPT and Claude are enormous ones. Ours is small and simple: it looks only at the last 4 words, and it learned which words tend to follow which by reading 8 million Tamil sentences from the web, plus our own transcripts.</p>
+    <p class="plain reveal" data-l="ta">எங்கள் ஊகம்: அந்தத் தோல்விகளில் பெரும்பாலானவை எழுத்துக்கூட்டல், கேட்டல் அல்ல; எழுத்துக்கூட்டல்தான் மொழி மாதிரிக்குத் தெரிந்தது. அதனால் அது இடைவெளியை மூட முடியுமா என்று சோதித்தோம். மொழி மாதிரி என்பது அடுத்த சொல்லை ஊகிக்கும் ஒரு மென்பொருள். உங்கள் கைபேசி விசைப்பலகையில் ஒரு சிறியது இருக்கிறது. ChatGPT, Claude மிகப் பெரியவை. எங்களுடையது சிறியது, எளிமையானது: அது கடைசி 4 சொற்களை மட்டுமே பார்க்கிறது; இணையத்திலிருந்து 80 லட்சம் தமிழ் வாக்கியங்களையும் எங்கள் உரைப்படிகளையும் படித்து, எந்தச் சொல்லுக்குப் பின் எந்தச் சொல் வரும் என்று கற்றது.</p>
+    <div class="family reveal" id="family"></div>
+    <p class="plain reveal" data-l="en">Our speech model writes what it hears. When it is torn between 2 spellings, the language model votes for the one Tamil writers actually use after those words. Pick the words that come before:</p>
+    <p class="plain reveal" data-l="ta">எங்கள் பேச்சு மாதிரி கேட்பதை எழுதுகிறது. 2 எழுத்துக்கூட்டல்களுக்கு இடையே தயங்கும்போது, அந்தச் சொற்களுக்குப் பின் தமிழ் எழுத்தாளர்கள் உண்மையில் பயன்படுத்துவதற்கு மொழி மாதிரி வாக்களிக்கிறது. முன் வரும் சொல்லைத் தேர்ந்தெடுங்கள்:</p>
+    <div class="scorer reveal" id="nextword"></div>
+    <div class="grid2x reveal" style="margin-top:2rem">
+      <div class="scorer">
+        <div class="small" data-l="en">what the speech model heard, and what the language model chose. Tap through.</div>
+        <div class="small" data-l="ta">பேச்சு மாதிரி கேட்டதும், மொழி மாதிரி தேர்ந்ததும். அழுத்திப் பாருங்கள்.</div>
+        <div id="lm-card" style="margin-top:.8rem"></div>
+        <div class="controls" style="margin-top:1rem"><button id="lm-next">→ <span data-l="en">next</span><span data-l="ta">அடுத்தது</span></button></div>
+      </div>
+      <div class="scorer"><div id="lm-chart"></div></div>
+    </div>
+    <div class="tiles reveal" style="margin-top:1rem">
+      <div class="tile"><b class="n">6–17%</b><p data-l="en">fewer word mistakes on read Tamil, depending on the test</p><p data-l="ta">வாசிப்புத் தமிழில் குறைவான சொல் தவறுகள், தேர்வைப் பொறுத்து</p></div>
+      <div class="tile"><b class="n" data-l="en">0</b><b class="n" data-l="ta">0</b><p data-l="en">change to English: the language model stays off for English speech</p><p data-l="ta">ஆங்கிலத்தில் மாற்றம்: ஆங்கிலப் பேச்சுக்கு மொழி மாதிரி அணைந்திருக்கும்</p></div>
+      <div class="tile"><b class="n">2.3 GB</b><p data-l="en">on disk, and decoding is slower. Optional: the model works without it.</p><p data-l="ta">வட்டில் இடம்; வேகமும் குறைகிறது. விருப்பத்தேர்வு: அது இல்லாமலும் மாதிரி இயங்கும்.</p></div>
+    </div>
+    <p class="plain reveal" style="margin-top:2rem" data-l="en">The result: it closed 30–45% of the read-Tamil gap to the best other program. Not all of it. A language model fixes spelling, but it cannot make the speech model hear better, and the sounds it mishears stay misheard.</p>
+    <p class="plain reveal" style="margin-top:2rem" data-l="ta">முடிவு: வாசிப்புத் தமிழில் மற்ற சிறந்த மென்பொருளுடனான இடைவெளியில் 30–45% மூடியது. முழுவதும் அல்ல. மொழி மாதிரி எழுத்துக்கூட்டலைச் சரிசெய்கிறது; ஆனால் பேச்சு மாதிரி கேட்பதைச் சிறப்பாக்க முடியாது; தவறாகக் கேட்ட ஒலிகள் தவறாகவே இருக்கின்றன.</p>
+    <div data-d="d" class="reveal" style="margin-top:2rem">
+      <p data-l="en">A Kneser-Ney 5-gram over the model's own tokens, trained on our transcripts (weight 2) and 8 million Sangraha web sentences (CC BY 4.0), fused into a 4-wide beam search at weight 0.2, chosen on held-out dev clips. A clip whose greedy output is more than half Latin letters keeps the greedy output. The LM fixes spelling, not hearing: PER barely moves, while WER, CER and EER drop. It closes 30–45% of the read-Tamil gap to indic-transcribe-core. Leakage: 1,445 test sentences were removed from the web text before training; MILE was missed and 10 of its test sentences remain (≤ 0.08 WER effect). The release LM will be rebuilt with every test set excluded. Gains are as large on test sets whose training text the LM never saw, so it is not memorising benchmarks. It also writes fewer commas, because web text has few.</p>
+      <p data-l="ta">மாதிரியின் சொந்த token-களின் மீது Kneser-Ney 5-gram; எங்கள் உரைப்படிகள் (எடை 2) மற்றும் 80 லட்சம் Sangraha இணைய வாக்கியங்கள் (CC BY 4.0); 4-அகல beam search-இல் எடை 0.2 (dev-இல் தேர்வு). பாதிக்கு மேல் லத்தீன் எழுத்துகள் உள்ள வெளியீடு மாறாது. மொழி மாதிரி எழுத்துக்கூட்டலைச் சரிசெய்கிறது, கேட்டலை அல்ல: PER அதிகம் மாறவில்லை; WER, CER, EER குறைகின்றன. வெளியீட்டுக்கு முன் எல்லாச் சோதனைத் தொகுப்புகளையும் நீக்கி மீண்டும் உருவாக்கப்படும் (இப்போது MILE-இன் 10 வாக்கியங்கள் உள்ளன; விளைவு ≤ 0.08 WER).</p>
+      <div class="tablewrap" id="lm-table"></div>
+    </div>
+  </div>
+</section>
+
 <!-- SPEED -->
 <section class="chapter" id="speed">
   <div class="inner">
     <h2 class="reveal" data-l="en">Small enough to live at home.</h2>
     <h2 class="reveal" data-l="ta">வீட்டில் வாழும் அளவுக்குச் சிறியது.</h2>
-    <p class="plain reveal" data-l="en">It runs on an ordinary computer at home, without the internet, so what you say stays in the house. Race it against a person typing. The race runs in real time. Speed it up if you're impatient.</p>
-    <p class="plain reveal" data-l="ta">இது வீட்டிலுள்ள சாதாரண கணினியில், இணையம் இல்லாமல் இயங்குகிறது; நீங்கள் பேசுவது வீட்டுக்குள்ளேயே இருக்கும். தட்டச்சு செய்யும் ஒருவருடன் போட்டியிட வையுங்கள். போட்டி உண்மையான நேரத்தில் நடக்கிறது. பொறுமை இல்லையென்றால் வேகப்படுத்துங்கள்.</p>
+    <p class="plain reveal" data-l="en">And all of it has to run at home. It runs on an ordinary computer at home, without the internet, so what you say stays in the house. Race it against a person typing. The race runs in real time. Speed it up if you're impatient.</p>
+    <p class="plain reveal" data-l="ta">இவை அனைத்தும் வீட்டிலேயே இயங்க வேண்டும். இது வீட்டிலுள்ள சாதாரண கணினியில், இணையம் இல்லாமல் இயங்குகிறது; நீங்கள் பேசுவது வீட்டுக்குள்ளேயே இருக்கும். தட்டச்சு செய்யும் ஒருவருடன் போட்டியிட வையுங்கள். போட்டி உண்மையான நேரத்தில் நடக்கிறது. பொறுமை இல்லையென்றால் வேகப்படுத்துங்கள்.</p>
     <div class="racebox reveal">
       <div class="controls">
         <span class="lbl" data-l="en">audio</span><span class="lbl" data-l="ta">ஒலி</span>
@@ -466,56 +518,6 @@
       <div class="chart" id="ladder" style="margin-top:1.5rem"></div>
       <p class="small" data-l="en">Savings estimate: 6 epochs of training is about 6 hours on 8 cards (43,238 steps × 0.50 s), roughly $72 at the ~$12/h we paid. At the old speed it would take 2.54× as long, about $183.</p>
       <p class="small" data-l="ta">சேமிப்புக் கணிப்பு: 6 சுற்றுப் பயிற்சி 8 அட்டைகளில் சுமார் 6 மணி நேரம் (43,238 படிகள் × 0.50 வி), மணிக்குச் சுமார் $12-இல் $72. பழைய வேகத்தில் 2.54 மடங்கு நேரம், சுமார் $183.</p>
-    </div>
-  </div>
-</section>
-
-<!-- LOSE -->
-<section class="chapter" id="lose">
-  <div class="inner split">
-    <div class="sticky">
-      <h2 class="reveal" data-l="en">Where it still struggles.</h2>
-      <h2 class="reveal" data-l="ta">அது இன்னும் தடுமாறும் இடம்.</h2>
-      <p class="reveal" data-l="en">Words that sound alike but mean different things, like மழை (rain) and மலை (hill). A person uses the rest of the sentence to tell them apart. Our model doesn't do that well enough yet. We think this matters less in practice: the text usually goes on to an AI assistant like Claude or ChatGPT, which reads the whole sentence and works out that மலை was meant to be மழை. Tap a card.</p>
-      <p class="reveal" data-l="ta">ஒன்றுபோல் ஒலித்து வேறு பொருள் தரும் சொற்கள் — மழை, மலை போல. ஒருவர் வாக்கியத்தின் மீதியை வைத்து வேறுபடுத்துவார். எங்கள் மாதிரி அதை இன்னும் போதுமான அளவு செய்வதில்லை. நடைமுறையில் இது அவ்வளவு முக்கியமில்லை என்று நினைக்கிறோம்: இந்த உரை பொதுவாக Claude, ChatGPT போன்ற AI உதவியாளரிடம் செல்கிறது; அது முழு வாக்கியத்தையும் படித்து, மலை என்பது மழை என்று புரிந்துகொள்ளும். அட்டையைத் தொடுங்கள்.</p>
-      <div class="flips reveal" id="homophones"></div>
-    </div>
-    <div>
-      <div class="quiz" data-quiz="lose"></div>
-      <div class="chart reveal" id="gap-chart" style="margin-top:2rem" data-d="d"></div>
-    </div>
-  </div>
-</section>
-
-<!-- LM -->
-<section class="chapter" id="lm">
-  <div class="inner">
-    <h2 class="reveal" data-l="en">A second opinion that has read the Tamil internet</h2>
-    <h2 class="reveal" data-l="ta">தமிழ் இணையத்தைப் படித்த இரண்டாவது கருத்து</h2>
-    <p class="plain reveal" data-l="en">A language model is a program that guesses the next word. Your phone keyboard has a small one. ChatGPT and Claude are enormous ones. Ours is small and simple: it looks only at the last 4 words, and it learned which words tend to follow which by reading 8 million Tamil sentences from the web, plus our own transcripts.</p>
-    <p class="plain reveal" data-l="ta">மொழி மாதிரி என்பது அடுத்த சொல்லை ஊகிக்கும் ஒரு மென்பொருள். உங்கள் கைபேசி விசைப்பலகையில் ஒரு சிறியது இருக்கிறது. ChatGPT, Claude மிகப் பெரியவை. எங்களுடையது சிறியது, எளிமையானது: அது கடைசி 4 சொற்களை மட்டுமே பார்க்கிறது; இணையத்திலிருந்து 80 லட்சம் தமிழ் வாக்கியங்களையும் எங்கள் உரைப்படிகளையும் படித்து, எந்தச் சொல்லுக்குப் பின் எந்தச் சொல் வரும் என்று கற்றது.</p>
-    <div class="family reveal" id="family"></div>
-    <p class="plain reveal" data-l="en">Our speech model writes what it hears. When it is torn between 2 spellings, the language model votes for the one Tamil writers actually use after those words. Pick the words that come before:</p>
-    <p class="plain reveal" data-l="ta">எங்கள் பேச்சு மாதிரி கேட்பதை எழுதுகிறது. 2 எழுத்துக்கூட்டல்களுக்கு இடையே தயங்கும்போது, அந்தச் சொற்களுக்குப் பின் தமிழ் எழுத்தாளர்கள் உண்மையில் பயன்படுத்துவதற்கு மொழி மாதிரி வாக்களிக்கிறது. முன் வரும் சொல்லைத் தேர்ந்தெடுங்கள்:</p>
-    <div class="scorer reveal" id="nextword"></div>
-    <div class="grid2x reveal" style="margin-top:2rem">
-      <div class="scorer">
-        <div class="small" data-l="en">what the speech model heard, and what the language model chose. Tap through.</div>
-        <div class="small" data-l="ta">பேச்சு மாதிரி கேட்டதும், மொழி மாதிரி தேர்ந்ததும். அழுத்திப் பாருங்கள்.</div>
-        <div id="lm-card" style="margin-top:.8rem"></div>
-        <div class="controls" style="margin-top:1rem"><button id="lm-next">→ <span data-l="en">next</span><span data-l="ta">அடுத்தது</span></button></div>
-      </div>
-      <div class="scorer"><div id="lm-chart"></div></div>
-    </div>
-    <div class="tiles reveal" style="margin-top:1rem">
-      <div class="tile"><b class="n">6–17%</b><p data-l="en">fewer word mistakes on read Tamil, depending on the test</p><p data-l="ta">வாசிப்புத் தமிழில் குறைவான சொல் தவறுகள், தேர்வைப் பொறுத்து</p></div>
-      <div class="tile"><b class="n" data-l="en">0</b><b class="n" data-l="ta">0</b><p data-l="en">change to English: the language model stays off for English speech</p><p data-l="ta">ஆங்கிலத்தில் மாற்றம்: ஆங்கிலப் பேச்சுக்கு மொழி மாதிரி அணைந்திருக்கும்</p></div>
-      <div class="tile"><b class="n">2.3 GB</b><p data-l="en">on disk, and decoding is slower. Optional: the model works without it.</p><p data-l="ta">வட்டில் இடம்; வேகமும் குறைகிறது. விருப்பத்தேர்வு: அது இல்லாமலும் மாதிரி இயங்கும்.</p></div>
-    </div>
-    <div data-d="d" class="reveal" style="margin-top:2rem">
-      <p data-l="en">A Kneser-Ney 5-gram over the model's own tokens, trained on our transcripts (weight 2) and 8 million Sangraha web sentences (CC BY 4.0), fused into a 4-wide beam search at weight 0.2, chosen on held-out dev clips. A clip whose greedy output is more than half Latin letters keeps the greedy output. The LM fixes spelling, not hearing: PER barely moves, while WER, CER and EER drop. It closes 30–45% of the read-Tamil gap to indic-transcribe-core. Leakage: 1,445 test sentences were removed from the web text before training; MILE was missed and 10 of its test sentences remain (≤ 0.08 WER effect). The release LM will be rebuilt with every test set excluded. Gains are as large on test sets whose training text the LM never saw, so it is not memorising benchmarks. It also writes fewer commas, because web text has few.</p>
-      <p data-l="ta">மாதிரியின் சொந்த token-களின் மீது Kneser-Ney 5-gram; எங்கள் உரைப்படிகள் (எடை 2) மற்றும் 80 லட்சம் Sangraha இணைய வாக்கியங்கள் (CC BY 4.0); 4-அகல beam search-இல் எடை 0.2 (dev-இல் தேர்வு). பாதிக்கு மேல் லத்தீன் எழுத்துகள் உள்ள வெளியீடு மாறாது. மொழி மாதிரி எழுத்துக்கூட்டலைச் சரிசெய்கிறது, கேட்டலை அல்ல: PER அதிகம் மாறவில்லை; WER, CER, EER குறைகின்றன. வெளியீட்டுக்கு முன் எல்லாச் சோதனைத் தொகுப்புகளையும் நீக்கி மீண்டும் உருவாக்கப்படும் (இப்போது MILE-இன் 10 வாக்கியங்கள் உள்ளன; விளைவு ≤ 0.08 WER).</p>
-      <div class="tablewrap" id="lm-table"></div>
     </div>
   </div>
 </section>
@@ -584,6 +586,6 @@
   <p data-l="en">Audio clips: IndicVoices (AI4Bharat, CC BY 4.0), Kathbath (AI4Bharat), FLEURS (Google, audio CC BY 4.0, text from FLORES CC BY-SA 4.0), Svarah (AI4Bharat, CC BY 4.0), LibriSpeech (CC BY 4.0). Scores use the public test sets listed in the repository. Other models were used only as benchmarks.</p>
   <p data-l="ta">ஒலிக்கோப்புகள்: IndicVoices (AI4Bharat, CC BY 4.0), Kathbath (AI4Bharat), FLEURS (Google, ஒலி CC BY 4.0, உரை FLORES CC BY-SA 4.0), Svarah (AI4Bharat, CC BY 4.0), LibriSpeech (CC BY 4.0). மற்ற மாதிரிகள் ஒப்பீட்டுக்கு மட்டுமே பயன்படுத்தப்பட்டன.</p>
 </footer>
-<script src="assets/app.js?v=13"></script>
+<script src="assets/app.js?v=16"></script>
 </body>
 </html>

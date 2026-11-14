@@ -553,19 +553,35 @@ function storyScore() {
 }
 (function waitSC() { if (SC) { storyScore(); redraw.push(storyScore); } else setTimeout(waitSC, 100); })();
 
-/* ---------- one sentence per line in prose ---------- */
-(function splitSentences() {
-  const sel = ".chapter .inner > p:not(.small), .chapter .sticky > p:not(.small):not(.score-line), .chapter .scorer > p, .chapter [data-d] > p:not(.small), .chapter details.howto > p, .chapter .grid2x p.plain, .chapter .voices > p:not(.small), #lm [data-d] > p, #loans .grid2x > div > p";
-  $$(sel).forEach((p) => {
-    if (p.classList.contains("sents") || p.closest(".lines") || p.querySelector("a, code") && p.textContent.length < 60) return;
+/* ---------- one sentence per line, everywhere (static and script-rendered text) ---------- */
+const SENT_SEL = "h2, h3, p, li, .verdict, .flip .g, .small, .tile p, .hint, .tag, figcaption";
+const SENT_SKIP = ".lines, svg, table, .karaoke, .numbers, .simlog, .pair, .prompt, .heard, pre, .opt, .loanrow, .bar, footer";
+// widow control: the last space inside an element becomes a no-break space, across inline tags
+function glueNode(el) {
+  const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), nodes = [];
+  while (w.nextNode()) nodes.push(w.currentNode);
+  for (let i = nodes.length - 1; i >= 0; i--) {
+    const t = nodes[i].nodeValue, trimmed = t.replace(/\s+$/, ""), k = trimmed.search(/\s\S*$/);
+    if (k > 0) { nodes[i].nodeValue = t.slice(0, k) + "\u00a0" + t.slice(k + 1); return; }
+    if (trimmed.trim().length > 14) return;
+  }
+}
+function splitSentences(root = document) {
+  const els = [...(root.matches?.(SENT_SEL) ? [root] : []), ...root.querySelectorAll(SENT_SEL)];
+  els.forEach((p) => {
+    if (p.dataset.split === "1" || p.closest(SENT_SKIP) || p.querySelector(".s")) return;
     const html = p.innerHTML.trim();
-    const parts = html.split(/(?<=[.?!])\s+(?=[A-Z0-9"“(஀-௿])/);
-    if (parts.length < 2) return;
+    const parts = html.split(/(?<=[.?!…])\s+(?=(?:<[^>]+>)*["“(]?[A-Z0-9஀-௿])/);
+    p.dataset.split = "1";
+    // glue the last 2 words of every sentence so no sentence ends with a lone short word on its own line
+    if (parts.length < 2) { glueNode(p); return; }
     p.innerHTML = parts.map((x) => `<span class="s">${x}</span>`).join("");
     p.classList.add("sents");
+    $$(".s", p).forEach(glueNode);
   });
-})();
-
+}
+splitSentences();
+new MutationObserver((ms) => { for (const m of ms) m.addedNodes.forEach((n) => { if (n.nodeType === 1) splitSentences(n); }); }).observe(document.body, { childList: true, subtree: true });
 /* ---------- voice range dial: pitch of a synthetic voice vs real Tamil speakers ---------- */
 function vdial() {
   const A = [-1, -0.5, 0, 0.5, 1], HZ = [112, 117, 169, 232, 271];
