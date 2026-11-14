@@ -452,40 +452,40 @@
   },
   "e5_lm": {
    "eval_indicvoices": {
-    "wer": 32.75,
-    "cer": 11.43,
-    "per": 9.55,
-    "eer": 2.54
+    "wer": 33.53,
+    "cer": 11.93,
+    "per": 9.89,
+    "eer": 2.69
    },
    "eval_kathbath": {
-    "wer": 25.39,
-    "cer": 4.87,
-    "per": 2.18,
+    "wer": 25.38,
+    "cer": 4.85,
+    "per": 2.17,
     "eer": 1.51
    },
    "eval_mile_ta": {
     "wer": 26.31,
-    "cer": 4.93,
-    "per": 2.14,
-    "eer": 1.45
+    "cer": 4.91,
+    "per": 2.12,
+    "eer": 1.46
    },
    "eval_fleurs_ta": {
-    "wer": 27.44,
-    "cer": 9.13,
-    "per": 6.42,
+    "wer": 27.36,
+    "cer": 9.09,
+    "per": 6.4,
     "eer": 2.26
    },
    "eval_cv_ta": {
-    "wer": 32.62,
-    "cer": 5.97,
-    "per": 2.84,
-    "eer": 2.13
+    "wer": 32.6,
+    "cer": 5.93,
+    "per": 2.79,
+    "eer": 2.12
    },
    "eval_openslr65": {
     "wer": 20.73,
-    "cer": 3.84,
-    "per": 1.38,
-    "eer": 1.1
+    "cer": 3.83,
+    "per": 1.36,
+    "eer": 1.09
    },
    "eval_cv_en": {
     "wer": 10.19,
@@ -500,8 +500,8 @@
     "ta_script": 0.1
    },
    "eval_svarah": {
-    "wer": 10.64,
-    "ta_script": 9.32
+    "wer": 10.65,
+    "ta_script": 9.27
    }
   },
   "itcore": {

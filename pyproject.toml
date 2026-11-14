@@ -23,8 +23,11 @@ eer = ["torch>=2.6", "transformers>=4.56"]
 lm = ["sentencepiece>=0.2", "pyarrow", "huggingface_hub"]
 # Blackwell training kernels + training utilities
 train = ["kili[nemo]", "triton>=3.2", "lightning>=2.4", "lhotse>=1.30", "omegaconf>=2.3"]
-# synthetic voices (Maya2 runtime `maya3` installs from github.com/MayaResearch/maya2-native, see kili/synth/voices.py)
-synth = ["torch>=2.6", "torchaudio", "soundfile>=0.12", "soxr", "jiwer"]
+# synthetic voices (Maya2 runtime `maya3`, pinned below to the commit the voices were made with)
+synth = ["maya3", "torch>=2.6", "torchaudio", "soundfile>=0.12", "soxr", "jiwer"]
+
+[tool.uv.sources]
+maya3 = { git = "https://github.com/MayaResearch/maya2-native", rev = "c6b376868e268551d065c4206193e96257bef4a1" }
 
 [dependency-groups]
 dev = ["pytest>=8"]

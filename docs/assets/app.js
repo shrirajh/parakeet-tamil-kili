@@ -712,7 +712,6 @@ const LMX = [
   ["தொலைக்காட்சியில் ஒலிபரப்பப்பட்ட", "தொலைக்காட்சியில் ஒளிபரப்பப்பட்ட", { en: "\"on television\": a TV broadcast is ஒளிபரப்பு (light), radio is ஒலிபரப்பு (sound). Both are real words. Only the context decides.", ta: "\"தொலைக்காட்சியில்\" என்று வருகிறது. தொலைக்காட்சி என்றால் ஒளிபரப்பு (ஒளி), வானொலி என்றால் ஒலிபரப்பு (ஒலி). இரண்டுமே சரியான சொற்கள். எது என்பதைச் சூழல்தான் தீர்மானிக்கும்." }],
   ["கருவரை வாயிலிலே", "கருவறை வாயிலிலே", { en: "the sanctum of a temple is கருவறை.", ta: "கோயிலின் சன்னதியைக் குறிக்கும் சொல் கருவறை." }],
   ["அந்த அரக்கட்டளை", "அந்த அறக்கட்டளை", { en: "a charitable trust is அறக்கட்டளை (அறம், virtue).", ta: "தொண்டு நிறுவனம் அறக்கட்டளை (அறம் என்ற சொல்லிலிருந்து)." }],
-  ["தேசிய தனிக்கை", "தேசிய தணிக்கை", { en: "an audit is தணிக்கை.", ta: "கணக்குச் சரிபார்ப்பைக் குறிக்கும் சொல் தணிக்கை." }],
   ["நிளம் சமூகத்திலிருந்து", "நிலம் சமூகத்திலிருந்து", { en: "land is நிலம்; நிளம் is not a word.", ta: "நிலம் என்பதே சரி. நிளம் என்று ஒரு சொல்லே இல்லை." }],
 ];
 let lmI = 0;
@@ -767,8 +766,8 @@ function family() {
 }
 /* ---------- next word: real counts from the language model's text ---------- */
 const NW = [
-  { c: "தொலைக்காட்சியில்", g: { en: "on television", ta: "தொலைக்காட்சியில்" }, a: 764, b: 1 },
-  { c: "வானொலியில்", g: { en: "on the radio", ta: "வானொலியில்" }, a: 2, b: 94 },
+  { c: "தொலைக்காட்சியில்", g: { en: "on television", ta: "தொலைக்காட்சியில்" }, a: 754, b: 1 },
+  { c: "வானொலியில்", g: { en: "on the radio", ta: "வானொலியில்" }, a: 1, b: 39 },
 ];
 let nwI = 0;
 function nextword() {
@@ -777,7 +776,7 @@ function nextword() {
   $("#nextword").innerHTML = `<div class="controls">${NW.map((x, i) => `<button data-nw="${i}" aria-pressed="${i === nwI}"><span class="ta">${x.c}</span>${L({ en: ` · ${esc(x.g.en)}`, ta: "" })}</button>`).join("")}</div>
     <div class="ta" style="font-size:1.4rem;margin:.6rem 0 .8rem">${n.c} <span class="dim">___</span></div>
     ${row("ஒளிபரப்பு…", { en: "broadcast (light: TV)", ta: "ஒளி: தொலைக்காட்சி" }, n.a)}${row("ஒலிபரப்பு…", { en: "broadcast (sound: radio)", ta: "ஒலி: வானொலி" }, n.b)}
-    <div class="small" style="margin-top:.6rem">${L({ en: "How often Tamil writers used each word after these words, in the 8.9 million sentences our language model read.", ta: "எங்கள் மொழி மாதிரி படித்த 89 லட்சம் வாக்கியங்களில், இந்தச் சொற்களுக்குப் பிறகு, தமிழில் எழுதுபவர்கள் ஒவ்வொரு சொல்லையும் எத்தனை முறை பயன்படுத்தினார்கள் என்பது." })}</div>`;
+    <div class="small" style="margin-top:.6rem">${L({ en: "How often Tamil writers used each word after these words, in the 8 million sentences our language model read.", ta: "எங்கள் மொழி மாதிரி படித்த 80 லட்சம் வாக்கியங்களில், இந்தச் சொற்களுக்குப் பிறகு, தமிழில் எழுதுபவர்கள் ஒவ்வொரு சொல்லையும் எத்தனை முறை பயன்படுத்தினார்கள் என்பது." })}</div>`;
   $$("[data-nw]").forEach((x) => x.addEventListener("click", () => { nwI = +x.dataset.nw; nextword(); }));
 }
 family(); nextword(); redraw.push(family, nextword);
