@@ -387,6 +387,14 @@ $$("[data-tab]").forEach((b) => b.addEventListener("click", () => { tab = b.data
 
 /* ---------- reveal card ---------- */
 $("#secret-btn").addEventListener("click", () => $("#secret").classList.toggle("open"));
+document.addEventListener("click", (e) => {
+  if (!e.target.closest("[data-dflip]")) return;
+  const w = $("#dflip"), on = !w.classList.contains("on");
+  w.classList.toggle("on", on);
+  $("#okm").inert = on; $("#secret").inert = !on;
+  if (on && $("#okm-play").getAttribute("aria-pressed") === "true") $("#okm-play").click();
+  if (e.detail === 0) (on ? $("#secret") : $("#okm")).querySelector("[data-dflip]").focus({ preventScroll: true });
+});
 
 /* ---------- alternate chapter shading ---------- */
 $$("section.chapter").forEach((s, i) => s.classList.toggle("alt", i % 2 === 1));
