@@ -39,7 +39,7 @@ def test_override():
 
 
 def test_transcribe_lm_gpu():
-    """KILI_TEST_MODEL (.nemo or HF id), KILI_TEST_LM (.arpa/.nemo) and KILI_TEST_AUDIO (comma-separated 16 kHz files,
+    """KILI_TEST_MODEL (.nemo or HF id), KILI_TEST_LM (.arpa/.nemo) and KILI_TEST_AUDIO (16 kHz files, comma- or space-separated,
     Tamil and English) must be set."""
     torch = pytest.importorskip("torch")
     pytest.importorskip("nemo")
@@ -51,7 +51,7 @@ def test_transcribe_lm_gpu():
     from kili.infer.transcribe import load_model
     from kili.lm.decode import _transcribe, transcribe_lm
     model = load_model(model_id)
-    paths = audio.split(",")
+    paths = audio.replace(",", " ").split()
     before = json.dumps(dict(model.cfg.decoding), default=str)
     greedy = _transcribe(model, paths, 4)
     out = transcribe_lm(model, paths, lm, batch_size=4)

@@ -1,6 +1,6 @@
 """Parity of the numpy runtime with PyTorch / NeMo. Skipped without torch / NeMo; the model tests also need
 
-  KILI_NEMO_MODEL=path/to/model.nemo (or a HF id)   KILI_ONNX_DIR=export dir   KILI_TEST_AUDIO="a.wav b.wav ..."
+  KILI_TEST_MODEL=path/to/model.nemo (or a HF id)   KILI_ONNX_DIR=export dir   KILI_TEST_AUDIO="a.wav b.wav ..."
 """
 import os
 
@@ -53,10 +53,10 @@ def test_frontend_matches_nemo_preprocessor():
 
 
 def _env():
-    m, d, audio = (os.environ.get(k) for k in ("KILI_NEMO_MODEL", "KILI_ONNX_DIR", "KILI_TEST_AUDIO"))
+    m, d, audio = (os.environ.get(k) for k in ("KILI_TEST_MODEL", "KILI_ONNX_DIR", "KILI_TEST_AUDIO"))
     if not m:
-        pytest.skip("set KILI_NEMO_MODEL (and KILI_ONNX_DIR, KILI_TEST_AUDIO for the ONNX parity test)")
-    return m, d, (audio or "").split()
+        pytest.skip("set KILI_TEST_MODEL (and KILI_ONNX_DIR, KILI_TEST_AUDIO for the ONNX parity test)")
+    return m, d, (audio or "").replace(",", " ").split()
 
 
 def test_load_model_attention():
