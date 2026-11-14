@@ -14,7 +14,7 @@ Fold WER, %; lower is better. 5 epochs of run 10, greedy decoding; "+ LM" is the
 Sangraha 5-gram. Up to 2,000 clips per test set (all of FLEURS: 580, MILE: 1,333). PER and EER for every set are in
 the write-up.
 
-| test set | kind | **kili** | kili + LM | indic-transcribe-core | IndicWhisper | parakeet v3 |
+| test set | kind | **kili** | kili + LM | indic-transcribe-core | IndicWhisper | original parakeet v3 |
 |---|---|---|---|---|---|---|
 | IndicVoices | conversational | **34.05** | 33.53 | 49.28 | 68.84 | 103.92 |
 | Kathbath | read | 29.15 | 25.38 | 20.80 | 21.77 | 117.16 |
@@ -113,8 +113,8 @@ uv run python -m kili.infer.transcribe --model shrirajh/parakeet-tamil-kili --lm
 
 - **Start**: parakeet-tdt-0.6b-v3, with 2,044 Tamil-script pieces appended to its 8,192 (`kili.tokenizer`). English
   tokenisation and weights are unchanged, and a Tamil sentence takes 27 pieces instead of 57. Each new piece is
-  warm-started from the mean of v3's rows for its romanised spelling (க்கு starts as "kku"), so after the surgery
-  the model scores exactly like stock v3.
+  warm-started from the mean of the original parakeet v3's rows for its romanised spelling (க்கு starts as "kku"), so after the surgery
+  the model scores exactly like the original parakeet v3.
 - **Data**: 6,534 hours, of which:
   - Tamil: IndicVoices, Shrutilipi, Kathbath, SPRING-INX, YODAS v3 Tamil (relabelled), and 525 h of synthetic
     Tamil-English;
