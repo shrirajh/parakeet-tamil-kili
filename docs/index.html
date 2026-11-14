@@ -427,6 +427,22 @@
   </div>
 </section>
 
+<!-- KERNELS -->
+<section class="chapter" id="kernels">
+  <div class="inner">
+  <h2 class="reveal" data-l="en">We rewrote the engine to save money.</h2>
+  <h2 class="reveal" data-l="ta">பணத்தை மிச்சப்படுத்த, மென்பொருளின் இதயப் பகுதியையே மாற்றி எழுதினோம்.</h2>
+  <p class="plain reveal" data-d="s" data-l="en">Rented computers cost by the hour, so faster training is cheaper training. We rewrote the slowest parts of the training code. It ran 2.5 times faster, which saved about $110 on the final training run alone. The faster parts are published, so anyone training a similar model can use them: <a href="https://github.com/shrirajh/parakeet-tamil-kili/tree/main/kili/kernels">the code is on GitHub</a>.</p>
+  <p class="plain reveal" data-d="s" data-l="ta">வாடகைக் கணினிகளுக்கு மணிக்கணக்கில் கட்டணம். அதனால் மென்பொருள் எவ்வளவு வேகமோ, செலவு அவ்வளவு குறைவு. பயிற்சி மென்பொருளில் மிக மெதுவாக ஓடிய பகுதிகளை மாற்றி எழுதினோம். அது 2.5 மடங்கு வேகமானது. கடைசிப் பயிற்சியில் மட்டுமே சுமார் $110 மிச்சமானது. இந்த வேகமான பகுதிகளை வெளியிட்டிருக்கிறோம்; இதே போன்ற மாதிரியைப் பயிற்றுவிக்கும் யார் வேண்டுமானாலும் இவற்றைப் பயன்படுத்தலாம்: <a href="https://github.com/shrirajh/parakeet-tamil-kili/tree/main/kili/kernels">நிரல் GitHub-இல்</a>.</p>
+  <div data-d="d" class="reveal">
+    <p data-l="en">We profiled a training step on 1 RTX PRO 6000 (Blackwell), fixed the biggest cost, and measured again, 11 times. Most wins came from memory: a banded attention kernel in Triton that never builds the full attention matrix freed enough memory for 1,000-second micro-batches without activation checkpointing. The rest fused small operations (residual + dropout + LayerNorm, depthwise convolution, the joint's bias) so the GPU stops waiting on memory. Every change was checked against a float64 reference, or bit for bit against the old path, before it went in. Throughput went from 358 to 911 audio hours per GPU-hour. The kernels are on GitHub as <a href="https://github.com/shrirajh/parakeet-tamil-kili/tree/main/kili/kernels"><code>kili.kernels</code></a>: one call, <code>kili.kernels.apply(model)</code>, patches a NeMo FastConformer model (the loss kernel is for TDT models like parakeet), and the exactness tests come with them.</p>
+    <p data-l="ta">1 RTX PRO 6000 (Blackwell)-இல் ஒரு பயிற்சிப் படியை அளந்தோம். அதிக நேரம் எடுத்த பகுதியைச் சரிசெய்தோம். மீண்டும் அளந்தோம். இப்படி 11 முறை. பெரும்பாலான லாபம் நினைவகத்திலிருந்து வந்தது. Triton-இல் எழுதிய banded attention kernel, முழு attention matrix-ஐ உருவாக்குவதே இல்லை. அதனால் மிச்சமான நினைவகத்தில், activation checkpointing இல்லாமலே 1,000-வினாடி micro-batch-கள் பொருந்தின. மீதி லாபம், சிறு செயல்களை ஒன்றாக இணைத்ததால் வந்தது (residual + dropout + LayerNorm, depthwise convolution, joint-இன் bias). இதனால் GPU நினைவகத்துக்காகக் காத்திருப்பது நின்றது. ஒவ்வொரு மாற்றமும், சேர்ப்பதற்கு முன், float64 குறிப்புடனோ, பழைய வழியுடன் பிட்டுக்குப் பிட் ஒப்பிட்டோ சோதிக்கப்பட்டது. வேகம், ஒரு GPU-மணிக்கு 358 ஒலி மணிகளிலிருந்து 911 ஒலி மணிகளாக உயர்ந்தது. இந்த kernel-கள் GitHub-இல் <a href="https://github.com/shrirajh/parakeet-tamil-kili/tree/main/kili/kernels"><code>kili.kernels</code></a> என்ற பெயரில் உள்ளன: <code>kili.kernels.apply(model)</code> என்ற ஒரே அழைப்பு, ஒரு NeMo FastConformer மாதிரியில் இவற்றைப் பொருத்திவிடும் (loss kernel, parakeet போன்ற TDT மாதிரிகளுக்கானது). துல்லியச் சோதனைகளும் உடன் வருகின்றன.</p>
+    <div class="chart" id="ladder" style="margin-top:1.5rem"></div>
+    <p class="small" data-l="en">Savings estimate: 6 epochs of training is about 6 hours on 8 cards (43,238 steps × 0.50 s), roughly $72 at the ~$12/h we paid. At the old speed it would take 2.54× as long, about $183.</p>
+    <p class="small" data-l="ta">மிச்சத்தின் கணக்கு: 6 சுற்றுப் பயிற்சிக்கு 8 GPU அட்டைகளில் சுமார் 6 மணி நேரம் ஆகும் (43,238 படிகள் × 0.50 வினாடி). நாங்கள் கொடுத்த மணிக்குச் சுமார் $12 கட்டணத்தில், அது ஏறக்குறைய $72. பழைய வேகத்தில் 2.54 மடங்கு நேரம் ஆகியிருக்கும்; சுமார் $183.</p>
+  </div>
+  </div>
+</section>
 <!-- RUNS -->
 <section class="chapter" id="runs">
   <div class="inner">
@@ -628,18 +644,6 @@
       <div class="tile"><b class="n">0.25 s</b><p data-l="en">median time from end of speech to text, on the home server's CPU</p><p data-l="ta">பேசி முடித்ததிலிருந்து எழுத்து வரும் வரை வழக்கமாக ஆகும் நேரம் (median), வீட்டு server கணினியின் CPU-வில்</p></div>
       <div class="tile"><b class="n">2.8 GB</b><p data-l="en">peak memory, int8 ONNX Runtime on the CPU, without PyTorch</p><p data-l="ta">அதிகபட்சம் தேவைப்படும் நினைவகம் (memory); CPU-வில் int8 ONNX Runtime, PyTorch இல்லாமல்</p></div>
     </div>
-
-    <h3 class="reveal subhead" data-l="en">We rewrote the engine to save money.</h3>
-    <h3 class="reveal subhead" data-l="ta">பணத்தை மிச்சப்படுத்த, மென்பொருளின் இதயப் பகுதியையே மாற்றி எழுதினோம்.</h3>
-    <p class="plain reveal" data-d="s" data-l="en">Rented computers cost by the hour, so faster training is cheaper training. We rewrote the slowest parts of the training code. It ran 2.5 times faster, which saved about $110 on the final training run alone.</p>
-    <p class="plain reveal" data-d="s" data-l="ta">வாடகைக் கணினிகளுக்கு மணிக்கணக்கில் கட்டணம். அதனால் மென்பொருள் எவ்வளவு வேகமோ, செலவு அவ்வளவு குறைவு. பயிற்சி மென்பொருளில் மிக மெதுவாக ஓடிய பகுதிகளை மாற்றி எழுதினோம். அது 2.5 மடங்கு வேகமானது. கடைசிப் பயிற்சியில் மட்டுமே சுமார் $110 மிச்சமானது.</p>
-    <div data-d="d" class="reveal">
-      <p data-l="en">We profiled a training step on 1 RTX PRO 6000 (Blackwell), fixed the biggest cost, and measured again, 11 times. Most wins came from memory: a banded attention kernel in Triton that never builds the full attention matrix freed enough memory for 1,000-second micro-batches without activation checkpointing. The rest fused small operations (residual + dropout + LayerNorm, depthwise convolution, the joint's bias) so the GPU stops waiting on memory. Every change was checked against a float64 reference, or bit for bit against the old path, before it went in. Throughput went from 358 to 911 audio hours per GPU-hour.</p>
-      <p data-l="ta">1 RTX PRO 6000 (Blackwell)-இல் ஒரு பயிற்சிப் படியை அளந்தோம். அதிக நேரம் எடுத்த பகுதியைச் சரிசெய்தோம். மீண்டும் அளந்தோம். இப்படி 11 முறை. பெரும்பாலான லாபம் நினைவகத்திலிருந்து வந்தது. Triton-இல் எழுதிய banded attention kernel, முழு attention matrix-ஐ உருவாக்குவதே இல்லை. அதனால் மிச்சமான நினைவகத்தில், activation checkpointing இல்லாமலே 1,000-வினாடி micro-batch-கள் பொருந்தின. மீதி லாபம், சிறு செயல்களை ஒன்றாக இணைத்ததால் வந்தது (residual + dropout + LayerNorm, depthwise convolution, joint-இன் bias). இதனால் GPU நினைவகத்துக்காகக் காத்திருப்பது நின்றது. ஒவ்வொரு மாற்றமும், சேர்ப்பதற்கு முன், float64 குறிப்புடனோ, பழைய வழியுடன் பிட்டுக்குப் பிட் ஒப்பிட்டோ சோதிக்கப்பட்டது. வேகம், ஒரு GPU-மணிக்கு 358 ஒலி மணிகளிலிருந்து 911 ஒலி மணிகளாக உயர்ந்தது.</p>
-      <div class="chart" id="ladder" style="margin-top:1.5rem"></div>
-      <p class="small" data-l="en">Savings estimate: 6 epochs of training is about 6 hours on 8 cards (43,238 steps × 0.50 s), roughly $72 at the ~$12/h we paid. At the old speed it would take 2.54× as long, about $183.</p>
-      <p class="small" data-l="ta">மிச்சத்தின் கணக்கு: 6 சுற்றுப் பயிற்சிக்கு 8 GPU அட்டைகளில் சுமார் 6 மணி நேரம் ஆகும் (43,238 படிகள் × 0.50 வினாடி). நாங்கள் கொடுத்த மணிக்குச் சுமார் $12 கட்டணத்தில், அது ஏறக்குறைய $72. பழைய வேகத்தில் 2.54 மடங்கு நேரம் ஆகியிருக்கும்; சுமார் $183.</p>
-    </div>
   </div>
 </section>
 
@@ -725,6 +729,6 @@
   <p data-l="en">Also built with: <a href="https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3">NVIDIA parakeet-tdt-0.6b-v3</a> (CC BY 4.0, the starting point) · <a href="https://huggingface.co/maya-research/maya2-native">Maya2</a> text-to-speech (Apache-2.0) and <a href="https://huggingface.co/kyutai/mimi">Kyutai Mimi</a> (CC BY 4.0) for the synthetic voices · <a href="https://huggingface.co/datasets/vishnu-n/Tanglish-Corpus-185k">Tanglish-Corpus-185k</a> (CC BY 4.0) as text for those voices · <a href="https://huggingface.co/google/gemma-4-12B-it">Gemma 4 12B</a> (Apache-2.0) for punctuation · <a href="https://huggingface.co/google/embeddinggemma-2">EmbeddingGemma 2</a> for the meaning score · <a href="https://huggingface.co/datasets/ai4bharat/sangraha">Sangraha</a> (AI4Bharat, CC BY 4.0) for the optional language model.</p>
   <p data-l="ta">இவற்றின் உதவியுடனும் உருவாக்கப்பட்டது: <a href="https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3">NVIDIA parakeet-tdt-0.6b-v3</a> (CC BY 4.0, தொடக்கப் புள்ளி) · <a href="https://huggingface.co/maya-research/maya2-native">Maya2</a> உரை-பேச்சு மென்பொருள் (Apache-2.0), <a href="https://huggingface.co/kyutai/mimi">Kyutai Mimi</a> (CC BY 4.0): கணினிக் குரல்கள் · <a href="https://huggingface.co/datasets/vishnu-n/Tanglish-Corpus-185k">Tanglish-Corpus-185k</a> (CC BY 4.0): அந்தக் குரல்களுக்கான வாக்கியங்கள் · <a href="https://huggingface.co/google/gemma-4-12B-it">Gemma 4 12B</a> (Apache-2.0): நிறுத்தக்குறிகள் · <a href="https://huggingface.co/google/embeddinggemma-2">EmbeddingGemma 2</a>: பொருள் மதிப்பெண் · <a href="https://huggingface.co/datasets/ai4bharat/sangraha">Sangraha</a> (AI4Bharat, CC BY 4.0): விருப்பத்தேர்வு மொழி மாதிரி.</p>
 </footer>
-<script src="assets/app.js?v=62"></script>
+<script src="assets/app.js?v=64"></script>
 </body>
 </html>

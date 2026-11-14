@@ -496,7 +496,8 @@ const MAP = {
     epochs: [410, 60, { en: "Epoch 6 💀", ta: "6-ஆவது சுற்று 💀" }],
     recipe: [410, 170, { en: "What it learned from", ta: "எதைக் கேட்டுக் கற்றது" }],
     spot: [260, 260, { en: "Vanishing computers", ta: "காணாமல் போகும் கணினிகள்" }],
-    speed: [410, 310, { en: "Small enough for home", ta: "வீட்டுக்கு ஏற்ற அளவு" }],
+    kernels: [300, 330, { en: "A faster engine", ta: "வேகமான இதயப் பகுதி" }],
+    speed: [680, 320, { en: "Small enough for home", ta: "வீட்டுக்கு ஏற்ற அளவு" }],
     teacher: [260, 400, { en: "Gemma adds full stops", ta: "Gemma இட்ட முற்றுப்புள்ளிகள்" }],
     "two-tamils": [410, 460, { en: "Two Tamils", ta: "இரண்டு தமிழ்" }],
     loans: [580, 470, { en: "English stays English", ta: "ஆங்கிலம் ஆங்கிலத்திலேயே" }],
@@ -509,7 +510,7 @@ const MAP = {
     claude: [935, 170, { en: "Made with Claude", ta: "Claude-இன் துணையோடு" }],
     use: [935, 350, { en: "Use it", ta: "பயன்படுத்துங்கள்" }],
   },
-  edges: [["why", "hard"], ["hard", "recipe"], ["hard", "data"], ["hard", "lose"], ["recipe", "epochs"], ["recipe", "runs"], ["why", "listen"], ["why", "speed"], ["why", "runs"], ["runs", "epochs"], ["runs", "spot"], ["runs", "two-tamils"], ["spot", "speed"], ["teacher", "two-tamils"], ["teacher", "data"],
+  edges: [["why", "hard"], ["hard", "recipe"], ["hard", "data"], ["hard", "lose"], ["recipe", "epochs"], ["recipe", "runs"], ["why", "listen"], ["why", "speed"], ["why", "runs"], ["runs", "epochs"], ["runs", "spot"], ["runs", "two-tamils"], ["spot", "kernels"], ["kernels", "runs"], ["kernels", "speed"], ["teacher", "two-tamils"], ["teacher", "data"],
     ["two-tamils", "listen"], ["data", "measure"], ["data", "scores"], ["measure", "scores"], ["measure", "lose"], ["scores", "listen"], ["scores", "lose"], ["epochs", "scores"], ["lose", "use"], ["lose", "lm"], ["loans", "runs"], ["loans", "measure"], ["loans", "data"], ["hard", "loans"], ["lm", "use"], ["lm", "scores"], ["claude", "runs"], ["speed", "use"]],
 };
 function mapDraw() {
@@ -540,7 +541,7 @@ mapDraw(); redraw.push(mapDraw);
 const TOC = [
   [null, [["top", { en: "Start", ta: "தொடக்கம்" }], ["map", { en: "The map", ta: "வரைபடம்" }]]],
   [MAP.stages[0][1], ["why", "hard"]],
-  [MAP.stages[1][1], ["recipe", "data", "loans", "teacher", "two-tamils", "spot", "runs", "epochs"]],
+  [MAP.stages[1][1], ["recipe", "data", "loans", "teacher", "two-tamils", "spot", "kernels", "runs", "epochs"]],
   [MAP.stages[2][1], ["measure", "listen", "scores"]],
   [MAP.stages[3][1], ["lose", "lm", "speed"]],
   [MAP.stages[4][1], ["claude", "use"]],
