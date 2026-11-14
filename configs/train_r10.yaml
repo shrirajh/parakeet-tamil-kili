@@ -1,0 +1,200 @@
+# parakeet-tamil-kili run 10: the training recipe (hyperparameters exactly as trained).
+#
+# This is a RECIPE, not a runnable pipeline: the data preparation (downloads, relabelling, punctuation, label
+# normalisation, sharding) and the training driver are not released. It documents every setting that produced the
+# released model; the released pieces are kili.kernels (speed), kili.train.wsd (schedule), kili.train.ema (weight
+# average) and kili.train.augment (augmentation). Paths are placeholders under ${data_dir}.
+#
+# Model: nvidia/parakeet-tdt-0.6b-v3 (FastConformer encoder + TDT decoder, 0.6B) with 2,044 Tamil BPE pieces appended
+# to its tokenizer (English ids and weights unchanged; the new rows warm-started). Fresh optimizer; no auxiliary heads.
+# Released model = the 5-epoch decay branch of this run (see wsd below).
+#
+# Hardware: 8 x RTX PRO 6000 Blackwell (96 GB), 1000 s of audio per GPU per step, no gradient accumulation, ~0.5 s/step.
+
+data_dir: ./data
+init_from: ${data_dir}/models/parakeet-tdt-0.6b-v3-tamil-tokens.nemo   # stock v3 + Tamil tokens (not released)
+
+# ---------------------------------------------------------------------------------------------------- speed
+# kili.kernels.apply(model, **kernels): local attention [256, 256] + Triton kernels (2.54x per GPU vs NeMo's path,
+# exactness-tested). Local attention is part of the model (trained and decoded with [256, 256]).
+kernels:
+  att_context: [256, 256]
+  attention: true          # fused banded rel-pos attention, in-kernel dropout
+  conv: true               # conv module without layout copies
+  triton_dw: true          # Triton depthwise conv
+  layer: true              # fused residual + dropout + LayerNorm
+  tdt_loss: true           # gathered TDT loss: joint only on valid cells, Triton rows + recursion
+  chunk_elems: 134217728   # 128 Mi joint logits per chunk
+  recompute_cells: 3000000 # keep bf16 joint logits for backward up to 3M (t, u) cells, recompute above
+  bias_in_rows: true       # joint output bias inside the row kernels
+  max_T: 2048              # longer inputs (> 164 s) use NeMo's attention; all training clips are <= 125 s
+# No activation checkpointing of conformer layers below 2048 frames (all training clips). NeMo's fused sub-batch
+# joint (fused_batch_size, on in stock v3) is off: the gathered loss replaces it.
+
+# ---------------------------------------------------------------------------------------------------- data
+# Labels: one convention for every source: Tamil in Tamil script; English loanwords in Latin script with the Tamil
+# suffix attached by a hyphen ("meeting-க்கு"); numbers as words; Tamil transcripts punctuated (. ? and rule-like
+# commas) by an LLM pass; text normalised (kili.text.normalise). Every clip trains the TDT decoder.
+#
+# Mix: `passes` = times each source is seen over the 3-epoch plan (3 = once per epoch). Each clip is drawn with
+# probability proportional to passes x clips, so every source is seen `passes` times in expectation by the end; the
+# run length follows from the total (3 epochs = 21,619 steps of 8,000 s). Hours = unique hours after filtering.
+# English must be 25-40% of the hours seen (~28% here).
+mix:
+  fill: 0.665                       # measured sampler fill of the nominal batch budget (bucketing padding)
+  checks: {lang_hours_share: {en: [0.25, 0.40]}}
+  sources:
+    # Tamil, spoken
+    - {name: indicvoices, lang: ta, path: "${data_dir}/indicvoices", passes: 3}          # 801 h
+    - {name: spring_inx_r1, lang: ta, path: "${data_dir}/spring_inx_r1", passes: 3}      # 192 h
+    - {name: spring_inx_r2, lang: ta, path: "${data_dir}/spring_inx_r2", passes: 3}      # 56 h (duplicates of R1 removed)
+    - {name: rasa_spoken, lang: ta, path: "${data_dir}/rasa_spoken", passes: 3}          # 21 h
+    - {name: rasa_cmd, lang: ta, path: "${data_dir}/rasa_cmd", passes: 3}                # 4 h
+    # Tamil, YouTube (YODAS v3): labelled by run 8 (beam 4), kept where it agrees with the captions
+    # (fold CER <= 0.35); _long = 45-120 s stretches of the same videos (long-form)
+    - {name: yodas_ta_r10, lang: ta, path: "${data_dir}/yodas_ta_r10", passes: 3}        # 1,875 h
+    - {name: yodas_long_r10, lang: ta, path: "${data_dir}/yodas_long_r10", passes: 3}    # 392 h
+    # Tamil, read
+    - {name: shrutilipi, lang: ta, path: "${data_dir}/shrutilipi", passes: 1}            # 457 h (noisiest labels: 1 pass)
+    - {name: kathbath, lang: ta, path: "${data_dir}/kathbath", passes: 3}                # 171 h
+    - {name: mile_ta, lang: ta, path: "${data_dir}/mile_ta", passes: 3}                  # 124 h
+    - {name: cv17_ta, lang: ta, path: "${data_dir}/cv17_ta", passes: 3}                  # 82 h
+    - {name: fleurs_ta, lang: ta, path: "${data_dir}/fleurs_ta", passes: 3}              # 8 h
+    - {name: indictts_ta, lang: ta, path: "${data_dir}/indictts_ta", passes: 3}          # 25 h
+    - {name: rasa_read, lang: ta, path: "${data_dir}/rasa_read", passes: 3}              # 25 h
+    # Tamil-English code-switching, synthetic (TTS with random speaker vectors, no voice cloning)
+    - {name: synth_tanglish_rv, lang: ta, path: "${data_dir}/synth_tanglish_rv", passes: 3}              # 26 h, generated sentences
+    - {name: synth_tanglish_real_rv, lang: ta, path: "${data_dir}/synth_tanglish_real_rv", passes: 3}    # real comment text,
+    - {name: synth_tanglish_real_rv1, lang: ta, path: "${data_dir}/synth_tanglish_real_rv1", passes: 3}  #   3 voice passes,
+    - {name: synth_tanglish_real_rv2, lang: ta, path: "${data_dir}/synth_tanglish_real_rv2", passes: 3}  #   499 h together
+    # negatives: room tone / noise cut from the corpora above, empty labels (teaches it to stay quiet)
+    - {name: nonspeech, lang: ta, path: "${data_dir}/nonspeech", passes: 30}             # 2 h, 10 passes per epoch
+    # English (retention)
+    - {name: granary_en, lang: en, type: parquet, files: "${data_dir}/granary_en/*.parquet", passes: 3}  # 1,456 h
+    - {name: cv_en_india, lang: en, path: "${data_dir}/cv_en_india", passes: 3}          # 87 h
+    - {name: cv_en_other, lang: en, path: "${data_dir}/cv_en_other", passes: 3}          # 150 h
+    - {name: peoples_speech, lang: en, path: "${data_dir}/peoples_speech", passes: 3}    # 81 h (clean), numbers as words
+
+# NeMo lhotse dataloader (tarred NeMo manifests; parquet for Granary)
+train_ds:
+  use_lhotse: true
+  sample_rate: 16000
+  shuffle: true
+  num_workers: 8
+  pin_memory: true
+  # 1112 s cap x min speed factor 0.9 = 1000 s per GPU micro-batch (speed perturbation stretches audio after packing);
+  # 8 GPUs x 1000 s = the 8,000 s global batch, no accumulation. Peak ~61 GiB of 96.
+  batch_duration: 1112
+  quadratic_duration: 30          # long clips cost d + d^2/30 s of the budget (attention / joint cost)
+  use_bucketing: true
+  num_buckets: 60
+  bucket_buffer_size: 10000
+  shuffle_buffer_size: 10000
+  min_duration: 0.5
+  max_duration: 125.0             # long-form clips are <= 120 s
+  shard_seed: randomized
+  seed: 1234
+  # background noise: room-tone clips (the nonspeech source), 30% of clips, SNR 0-20 dB
+  noise_path: {manifest_filepath: "${data_dir}/nonspeech/manifest__OP_0..N_CL_.jsonl",
+               tarred_audio_filepaths: "${data_dir}/nonspeech/audio__OP_0..N_CL_.tar"}
+  noise_snr: [0.0, 20.0]
+  noise_mix_prob: 0.3
+  # codec compression: 10% of clips
+  compression_enabled: true
+  compression_prob: 0.1
+  compression_codecs: [opus, mp3, gsm]
+  compression_codec_weights: [0.4, 0.3, 0.3]
+  compression_level_interval: [0.5, 0.95]
+
+# kili.train.augment.install(model, ...): on the GPU before the preprocessor (training only)
+gpu_augment:
+  p_rir: 0.3                      # synthetic room reverb
+  rt60: [0.2, 1.0]
+  drr_db: [-3.0, 12.0]
+  p_lowpass: 0.1                  # band limit (phone line)
+  hz: [3400.0, 8000.0]
+  p_speed: 0.5                    # speed perturbation, pitch moves with it
+  speed_factors: [0.9, 1.1]
+
+# kili.train.augment.patch_nemo(...): joined pairs / overlapping turns / background talkers on the cut stream
+pairing:
+  p: 0.25                         # share of output clips that are two joined clips
+  max_s: 24.0
+  gap_s: 0.2
+  seed: 1234
+  p_overlap: 0.3                  # share of joins that overlap at the turn change
+  overlap_s: [0.2, 1.5]
+  overlap_snr: [-3.0, 6.0]        # second voice 3 dB louder .. 6 dB quieter
+  p_babble: 0.25                  # share of single clips with background speech
+  babble_snr: [3.0, 20.0]
+  babble_n: [1, 3]                # 1-3 background talkers
+  src_max_s: 125.0
+
+val_ds:
+  use_lhotse: true
+  sample_rate: 16000
+  batch_size: 32
+  shuffle: false
+  num_workers: 4
+  pin_memory: true
+  # validation sets: IndicVoices, Kathbath, Svarah, Common Voice English (held-out splits)
+  manifest_filepath: ["${data_dir}/val/indicvoices.json", "${data_dir}/val/kathbath.json",
+                      "${data_dir}/val/svarah.json", "${data_dir}/val/cv_en.json"]
+
+# ---------------------------------------------------------------------------------------------------- losses
+# TDT loss as in stock v3 (its durations / sigma / omega / mean_volume reduction; an all-empty-label batch is guarded).
+# English retention by distillation (not released): a frozen copy of the stock v3 encoder sees the same augmented
+# features; on clips whose label is all Latin script the student's final encoder frames are pulled toward the
+# teacher's with 1 - cosine per frame, weight 1.0. Tamil and mixed clips are unconstrained. No trainable extra head.
+english_kd: {enabled: true, teacher: nvidia/parakeet-tdt-0.6b-v3, weight: 1.0}
+
+# ---------------------------------------------------------------------------------------------------- optimisation
+global_batch_s: 8000              # seconds of audio per optimizer step, whatever the machine shape
+ddp_comm: bf16                    # bf16-compressed gradient all-reduce
+optim:
+  name: adamw
+  lr: 1.49e-4                     # 5e-5 at a 900 s batch, sqrt-scaled to 8,000 s: 5e-5 x sqrt(8000 / 900)
+  betas: [0.9, 0.98]
+  weight_decay: 1.0e-3
+  fused: true
+  sched:                          # rewritten by kili.train.wsd.apply(cfg): name WSD, decay_start / decay_end
+    warmup_steps: 100
+    min_lr: 1.0e-6
+
+# kili.train.wsd: warm-up / flat / 1 - sqrt decay over the last 10% of an epoch; decay branches at epoch ends.
+# The 3-epoch run (21,619 steps): forks at 6,485 (1-epoch model) and 13,692 (2-epoch model), main decays 20,898 -> 21,619.
+# It was then extended to 6 epochs of the same mix from its final checkpoint, re-warming the lr over 300 steps:
+#   wsd: {total_steps: 43238, epochs: 6, rewarm_start: 21619, rewarm_steps: 300}
+# with branches at the ends of epochs 4 and 5. The RELEASED model is branch b5: main run to step 35,311, then decay to
+# 36,032 (5 epochs). The 6-epoch model regressed on read Tamil and English and was not released.
+wsd:
+  epochs: 3
+  decay_frac: 0.1
+  segment: main                   # main | b<k>
+  stop: null                      # k: the main run stops at fork k (its checkpoint seeds branch k)
+  total_steps: 21619
+  rewarm_start: -1
+  rewarm_steps: 0
+
+# kili.train.ema: fp32 average over each model's decay window (start_step = decay start), updated every 4 steps;
+# the averaged weights are the saved model.
+ema: {enabled: true, every: 4}
+
+# skip a step whose loss or gradient is non-finite (crash if it persists); gradient clipping inside the same hook
+nan_guard: {enabled: true}
+
+trainer:
+  devices: 8                      # one node, DDP
+  accelerator: gpu
+  precision: bf16-mixed
+  max_steps: 21619                # 3 epochs (set from the mix plan; overwritten per WSD segment)
+  limit_train_batches: 1500       # validate every 1,500 steps
+  check_val_every_n_epoch: 1
+  num_sanity_val_steps: 0
+  log_every_n_steps: 25
+  gradient_clip_val: 1.0
+  accumulate_grad_batches: 1
+  use_distributed_sampler: false  # lhotse shards per rank
+  benchmark: false
+  enable_checkpointing: false
+  logger: false
