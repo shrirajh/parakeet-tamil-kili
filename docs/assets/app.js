@@ -376,6 +376,7 @@ $$("[data-tab]").forEach((b) => b.addEventListener("click", () => { tab = b.data
 /* ---------- boot ---------- */
 (async () => {
   setLang(document.documentElement.lang || "en");
+  $$("[data-set-depth]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.setDepth === (document.documentElement.dataset.depth || "simple"))));
   const [clips, metrics, per, sc] = await Promise.all([J("data/clips.json"), J("data/metrics.json").catch(() => ({})), J("data/per_demo.json").catch(() => []), J("data/scores.json")]);
   SC = sc; PERD = per;
   hero(clips); quiz(clips, metrics); dumbbell(); epochs(); runs(); sim(); teacher(); flips(); scorer(); perDemo(); ladder(); gap(); use(); raceInit(); hardCharts(); recipe(); openTable();
