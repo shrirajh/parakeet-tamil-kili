@@ -571,7 +571,12 @@ function glueNode(el) {
   while (w.nextNode()) nodes.push(w.currentNode);
   for (let i = nodes.length - 1; i >= 0; i--) {
     const t = nodes[i].nodeValue, trimmed = t.replace(/\s+$/, ""), k = trimmed.search(/\s\S*$/);
-    if (k > 0) { nodes[i].nodeValue = t.slice(0, k) + "\u00a0" + t.slice(k + 1); return; }
+    if (k > 0) {
+      // glue only short endings: two long (Tamil) words glued together cannot fit and get split mid-word
+      const prev = trimmed.slice(0, k).match(/\S*$/)[0], last = trimmed.slice(k + 1);
+      if (prev.length + last.length <= (/[\u0B80-\u0BFF]/.test(prev + last) ? 12 : 20)) nodes[i].nodeValue = t.slice(0, k) + "\u00a0" + t.slice(k + 1);
+      return;
+    }
     if (trimmed.trim().length > 14) return;
   }
 }
@@ -583,14 +588,21 @@ function splitSentences(root = document) {
     const parts = html.split(/(?<=[.?!…])\s+(?=(?:<[^>]+>)*["“(]?[A-Z0-9஀-௿])/);
     p.dataset.split = "1";
     // glue the last 2 words of every sentence so no sentence ends with a lone short word on its own line
-    if (parts.length < 2) { glueNode(p); return; }
+    if (parts.length < 2) { if (!/^H[1-3]$/.test(p.tagName)) glueNode(p); return; }
     p.innerHTML = parts.map((x) => `<span class="s">${x}</span>`).join("");
     p.classList.add("sents");
-    $$(".s", p).forEach(glueNode);
+    if (!/^H[1-3]$/.test(p.tagName)) $$(".s", p).forEach(glueNode);
   });
 }
 splitSentences();
-new MutationObserver((ms) => { for (const m of ms) m.addedNodes.forEach((n) => { if (n.nodeType === 1) splitSentences(n); }); }).observe(document.body, { childList: true, subtree: true });
+// keep a Tamil suffix on the same line as the English word it is attached to ("AI-க்கு"): word joiner after the hyphen
+function joinSuffixes(root) {
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let n;
+  while ((n = w.nextNode())) if (/[-/–]/.test(n.nodeValue) && !n.parentElement.closest("script, style")) n.nodeValue = n.nodeValue.replace(/-(?=[\u0B80-\u0BFF])/g, "-\u2060").replace(/(?<=[\u0B80-\u0BFF])\/(?=[\u0B80-\u0BFF])/g, "\u2060/\u2060").replace(/(?<=\d)–(?=\d)/g, "–\u2060");
+}
+joinSuffixes(document.body);
+new MutationObserver((ms) => { for (const m of ms) m.addedNodes.forEach((n) => { if (n.nodeType === 1) { joinSuffixes(n); splitSentences(n); } }); }).observe(document.body, { childList: true, subtree: true });
 /* ---------- voice map: stepped dial, infographic, real clip with synced caption ---------- */
 let VD = null, vdAudio = null, vdI = 2;
 const vdA = [-1, -0.5, 0, 0.5, 1];

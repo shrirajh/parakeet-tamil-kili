@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>parakeet-tamil · தமிழ் கிளி</title>
 <meta name="description" content="Free Tamil and English speech recognition that runs on an ordinary computer.">
-<link rel="stylesheet" href="assets/style.css?v=21">
+<link rel="stylesheet" href="assets/style.css?v=27">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦜</text></svg>">
 <script>(function(){var d=document.documentElement,t=localStorage.getItem("theme"),l=localStorage.getItem("lang"),p=localStorage.getItem("depth");if(t)d.dataset.theme=t;if(l)d.lang=l;if(p)d.dataset.depth=p;})();</script>
 </head>
@@ -132,24 +132,13 @@
           <h3 data-l="en">And we had almost nothing.</h3><h3 data-l="ta">எங்களிடம் கிட்டத்தட்ட எதுவுமே இல்லை.</h3>
           <p data-l="en">Big tech companies build these with large teams and huge budgets. We had 1 person, 1 AI assistant, about $400 of rented computers, and 5 days.</p>
           <p data-l="ta">பெரிய தொழில்நுட்ப நிறுவனங்கள் இவற்றைப் பெரிய குழுக்களை வைத்து, பெரும் பணம் செலவழித்து உருவாக்குகின்றன. எங்களிடம் இருந்தது: 1 மனிதர், 1 AI உதவியாளர், சுமார் $400-க்கு வாடகைக்கு எடுத்த கணினிகள், 5 நாட்கள்.</p>
-          <figure class="meme" style="margin:1.6rem 0 0;max-width:640px" aria-label="meme: show me the money">
-            <svg viewBox="0 0 640 300" role="img">
-              <rect width="640" height="300" fill="var(--bg-3)"/>
-              <line x1="320" y1="20" x2="320" y2="280" stroke="var(--rule)" stroke-width="2"/>
-              <g data-l="en"><text x="160" y="48" text-anchor="middle" style="font:700 17px var(--sans);fill:var(--fg-3)">big tech, building speech AI</text>
-                <text x="160" y="96" text-anchor="middle" style="font:800 30px var(--sans);fill:var(--fg)">"SHOW ME</text><text x="160" y="134" text-anchor="middle" style="font:800 30px var(--sans);fill:var(--fg)">THE MONEY!"</text></g>
-              <g data-l="ta"><text x="160" y="48" text-anchor="middle" style="font:700 16px var(--ta);fill:var(--fg-3)">பெரிய நிறுவனங்கள்</text>
-                <text x="160" y="100" text-anchor="middle" style="font:800 26px var(--ta);fill:var(--fg)">"கையில காசு,</text><text x="160" y="138" text-anchor="middle" style="font:800 26px var(--ta);fill:var(--fg)">வாயில தோசை!"</text></g>
-              <text x="160" y="230" text-anchor="middle" style="font-size:64px">💰💰💰</text>
-              <g data-l="en"><text x="480" y="48" text-anchor="middle" style="font:700 17px var(--sans);fill:var(--fg-3)">us</text></g>
-              <g data-l="ta"><text x="480" y="48" text-anchor="middle" style="font:700 16px var(--ta);fill:var(--fg-3)">நாங்கள்</text></g>
-              <text x="480" y="150" text-anchor="middle" style="font-size:78px">👛</text>
-              <text x="480" y="208" text-anchor="middle" style="font:800 30px var(--mono);fill:var(--fg)">$400</text>
-              <g data-l="en"><text x="480" y="244" text-anchor="middle" style="font:500 14px var(--sans);fill:var(--fg-2)">1 human · 1 AI · 5 days</text>
-                <text x="480" y="266" text-anchor="middle" style="font:500 13px var(--sans);fill:var(--fg-3)">(the moths flew out)</text></g>
-              <g data-l="ta"><text x="480" y="244" text-anchor="middle" style="font:500 14px var(--ta);fill:var(--fg-2)">ஒரே ஒரு அப்பாவி · 1 AI · 5 நாட்கள்</text>
-                <text x="480" y="270" text-anchor="middle" style="font:800 18px var(--ta);fill:var(--fg)">"வட போச்சே!"</text></g>
-            </svg>
+          <figure class="meme photo" style="margin:1.6rem 0 0;max-width:640px">
+            <img src="img/meme_money.jpg" width="1080" height="959" loading="lazy" decoding="async" alt="Meme in two panels. Top, labelled 'big companies': a boardroom of suited executives around a table piled with cash, captioned 'money in hand, dosa in mouth!'. Bottom, labelled 'us': one man in a small tea shop staring at a nearly empty purse, '$400', 'just one innocent · 1 AI · 5 days', captioned 'there goes the vadai!'.">
+            <div class="cap">
+              <div data-l="en">Top, big companies: "Money in hand, dosa in mouth!"</div>
+              <div data-l="en">Bottom, us: $400, "just one innocent · 1 AI · 5 days", "There goes the vadai!"</div>
+              <span class="aigen"><span data-l="en">AI-generated image (Gemini 4 Hydrogen)</span><span data-l="ta">AI உருவாக்கிய படம் (Gemini 4 Hydrogen)</span></span>
+            </div>
           </figure>
         </div>
       </div>
@@ -683,6 +672,6 @@
   <p data-l="en">Also built with: <a href="https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3">NVIDIA parakeet-tdt-0.6b-v3</a> (CC BY 4.0, the starting point) · <a href="https://huggingface.co/maya-research/maya2-native">Maya2</a> text-to-speech (Apache-2.0) and <a href="https://huggingface.co/kyutai/mimi">Kyutai Mimi</a> (CC BY 4.0) for the synthetic voices · <a href="https://huggingface.co/datasets/vishnu-n/Tanglish-Corpus-185k">Tanglish-Corpus-185k</a> (CC BY 4.0) as text for those voices · <a href="https://huggingface.co/google/gemma-4-12B-it">Gemma 4 12B</a> (Apache-2.0) for punctuation · <a href="https://huggingface.co/google/embeddinggemma-2">EmbeddingGemma 2</a> for the meaning score · <a href="https://huggingface.co/datasets/ai4bharat/sangraha">Sangraha</a> (AI4Bharat, CC BY 4.0) for the optional language model.</p>
   <p data-l="ta">இவற்றின் உதவியுடனும் உருவாக்கப்பட்டது: <a href="https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3">NVIDIA parakeet-tdt-0.6b-v3</a> (CC BY 4.0, தொடக்கப் புள்ளி) · <a href="https://huggingface.co/maya-research/maya2-native">Maya2</a> உரை-பேச்சு மென்பொருள் (Apache-2.0), <a href="https://huggingface.co/kyutai/mimi">Kyutai Mimi</a> (CC BY 4.0): கணினிக் குரல்கள் · <a href="https://huggingface.co/datasets/vishnu-n/Tanglish-Corpus-185k">Tanglish-Corpus-185k</a> (CC BY 4.0): அந்தக் குரல்களுக்கான வாக்கியங்கள் · <a href="https://huggingface.co/google/gemma-4-12B-it">Gemma 4 12B</a> (Apache-2.0): நிறுத்தக்குறிகள் · <a href="https://huggingface.co/google/embeddinggemma-2">EmbeddingGemma 2</a>: பொருள் மதிப்பெண் · <a href="https://huggingface.co/datasets/ai4bharat/sangraha">Sangraha</a> (AI4Bharat, CC BY 4.0): விருப்பத்தேர்வு மொழி மாதிரி.</p>
 </footer>
-<script src="assets/app.js?v=39"></script>
+<script src="assets/app.js?v=43"></script>
 </body>
 </html>
