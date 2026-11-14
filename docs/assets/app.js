@@ -16,14 +16,48 @@ function setLang(l) {
   $$("[data-set-lang]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.setLang === l)));
   redraw.forEach((f) => f());
 }
-$$("[data-set-lang]").forEach((b) => b.addEventListener("click", () => setLang(b.dataset.setLang)));
+$$("[data-set-lang]").forEach((b) => b.addEventListener("click", () => keepPlace(() => setLang(b.dataset.setLang))));
 function setDepth(d) {
   document.documentElement.dataset.depth = d; localStorage.setItem("depth", d);
   $$("[data-set-depth]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.setDepth === d)));
   if (d === "simple") { metric = "per"; withLM = false; }
   redraw.forEach((f) => f());
 }
-$$("[data-set-depth]").forEach((b) => b.addEventListener("click", () => setDepth(b.dataset.setDepth)));
+$$("[data-set-depth]").forEach((b) => b.addEventListener("click", () => keepPlace(() => setDepth(b.dataset.setDepth))));
+/* keep the reader's place when switching language or depth: anchor on the most specific block under a line
+   30% down the screen, remember how far into it we are, and after the switch scroll so the same block (or its
+   other-language twin, or its nearest surviving ancestor) sits at the same point */
+function langPartner(el) {
+  const other = el.dataset.l === "en" ? "ta" : "en", sib = [...el.parentElement.children];
+  const mine = sib.filter((c) => c.dataset.l === el.dataset.l), theirs = sib.filter((c) => c.dataset.l === other);
+  return theirs[mine.indexOf(el)] || null;
+}
+function keepPlace(change) {
+  const probe = Math.round(innerHeight * 0.3), seen = (e) => e && e.getClientRects().length > 0;
+  let best = null;
+  for (const e of $$("header.hero, section, footer, section *, header.hero *")) {
+    if (e.closest("svg, .bar") || !seen(e) || getComputedStyle(e).display.startsWith("inline")) continue;
+    const r = e.getBoundingClientRect();
+    if (r.top <= probe && r.bottom > probe && (!best || r.height <= best.r.height)) best = { e, r };
+  }
+  if (!best) return change();
+  const chain = [];
+  for (let e = best.e; e && e !== document.body; e = e.parentElement) { const r = e.getBoundingClientRect(); chain.push({ e, f: (probe - r.top) / (r.height || 1) }); }
+  const lang0 = document.documentElement.lang;
+  change();
+  const swapped = document.documentElement.lang !== lang0;
+  const place = () => {
+    for (const { e, f } of chain) {
+      let m = e;
+      if (swapped) { const l = e.closest("[data-l]"); if (l) { if (l !== e) continue; m = langPartner(l); if (!m) continue; } }
+      if (!seen(m)) continue;
+      const r = m.getBoundingClientRect(), d = r.top + f * r.height - probe;
+      if (Math.abs(d) > 1) window.scrollTo({ top: scrollY + d, behavior: "instant" });
+      return;
+    }
+  };
+  place(); requestAnimationFrame(place);
+}
 $("#theme").addEventListener("click", () => {
   const t = document.documentElement.dataset.theme === "light" ? "" : "light";
   if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
