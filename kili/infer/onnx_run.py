@@ -106,7 +106,8 @@ class Frontend:
         return cls(meta.get("features"), z["fb"], z["window"])
 
     def __call__(self, x: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-        """audio [N] -> feats [1, n_mels, T], length [1] with T = N // hop + 1."""
+        """audio [N] -> feats [1, n_mels, N // hop + 1], valid length [1] = N // hop (as NeMo: frames past the valid
+        length are set to the pad value 0 after per-feature normalisation over the valid frames)."""
         x = np.asarray(x, np.float32)
         n = len(x)
         x = np.concatenate([x[:1], x[1:] - self.preemph * x[:-1]])
@@ -116,10 +117,11 @@ class Frontend:
         spec = np.fft.rfft(frames, axis=-1)
         power = (spec.real ** 2 + spec.imag ** 2).astype(np.float32)
         m = np.log(self.fb @ power.T + self.guard)  # [n_mels, T]
-        t = n // self.hop + 1
+        t = max(n // self.hop, 1)
         mean = m[:, :t].mean(axis=1, keepdims=True)
         std = np.sqrt(((m[:, :t] - mean) ** 2).sum(axis=1, keepdims=True) / max(t - 1, 1)) + self.eps
         m = (m - mean) / std
+        m[:, t:] = 0.0
         return m[None].astype(np.float32), np.array([t], np.int64)
 
 

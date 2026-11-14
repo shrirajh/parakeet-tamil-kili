@@ -97,9 +97,11 @@ def test_frontend_shapes_and_normalisation():
     x = rng.standard_normal(SR).astype(np.float32) * 0.1
     feats, n = Frontend()(x)
     assert feats.shape == (1, 128, SR // 160 + 1) and feats.dtype == np.float32
-    assert n.dtype == np.int64 and int(n[0]) == 101
-    assert np.allclose(feats[0].mean(axis=1), 0, atol=1e-4)
-    assert np.allclose(feats[0].std(axis=1, ddof=1), 1, atol=1e-3)
+    assert n.dtype == np.int64 and int(n[0]) == SR // 160  # NeMo: valid frames = samples // hop
+    v = feats[0, :, : int(n[0])]
+    assert np.allclose(v.mean(axis=1), 0, atol=1e-4)
+    assert np.allclose(v.std(axis=1, ddof=1), 1, atol=1e-3)
+    assert not feats[0, :, int(n[0]):].any()  # frames past the valid length are the pad value 0
     assert Frontend()(x[:1000])[0].shape == (1, 128, 1000 // 160 + 1)
 
 
