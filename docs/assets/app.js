@@ -715,25 +715,40 @@ const AUG = [
   ["slow", { en: "10% slower", ta: "10% மெதுவு" }],
 ];
 const augOn = new Set();
-let augCtx = null, augNodes = [];
+let augCtx = null, augG = null, augPlaying = false;
 async function augBuf(url) { augCtx ||= new (window.AudioContext || window.webkitAudioContext)(); const b = await (await fetch(url)).arrayBuffer(); return augCtx.decodeAudioData(b); }
+function augApply() {
+  if (!augG) return;
+  const now = augCtx.currentTime, set = (p, v) => p.setTargetAtTime(v, now, 0.03);
+  augG.src.playbackRate.setValueAtTime(augOn.has("fast") ? 1.1 : augOn.has("slow") ? 0.9 : 1, now);
+  set(augG.hp.frequency, augOn.has("phone") ? 300 : 10); set(augG.lp.frequency, augOn.has("phone") ? 3400 : 20000);
+  set(augG.dry.gain, augOn.has("echo") ? 0.5 : 1); set(augG.wet.gain, augOn.has("echo") ? 0.6 : 0);
+  set(augG.noise.gain, augOn.has("noise") ? 0.35 : 0); set(augG.babble.gain, augOn.has("babble") ? 0.3 : 0);
+}
 function augRender() {
   $("#aug-btns").innerHTML = AUG.map(([k, l]) => `<button data-aug="${k}" aria-pressed="${augOn.has(k)}">${esc(L(l))}</button>`).join("");
-  $$("[data-aug]").forEach((b) => b.addEventListener("click", () => { const k = b.dataset.aug; if (augOn.has(k)) augOn.delete(k); else { augOn.add(k); if (k === "fast") augOn.delete("slow"); if (k === "slow") augOn.delete("fast"); } augRender(); }));
+  $$("[data-aug]").forEach((b) => b.addEventListener("click", () => { const k = b.dataset.aug; if (augOn.has(k)) augOn.delete(k); else { augOn.add(k); if (k === "fast") augOn.delete("slow"); if (k === "slow") augOn.delete("fast"); } augRender(); augApply(); }));
   $("#aug-desc").textContent = augOn.size ? L({ en: `${augOn.size} effect${augOn.size > 1 ? "s" : ""} on`, ta: `${augOn.size} விளைவு இயக்கத்தில்` }) : L({ en: "clean recording", ta: "சுத்தமான பதிவு" });
+  $("#aug-play").innerHTML = augPlaying ? "❚❚" : `▶ ${esc(L({ en: "play", ta: "கேளுங்கள்" }))}`;
 }
+function augStop() { if (augG) { [augG.src, augG.ns, augG.bs].forEach((n) => { try { n.stop(); } catch {} }); augG = null; } augPlaying = false; augRender(); }
 async function augPlay() {
-  augNodes.forEach((n) => { try { n.stop(); } catch {} }); augNodes = [];
-  const main = await augBuf("audio/eval_indicvoices_0000_01_00082.mp3"), ctx = augCtx; await ctx.resume();
-  const src = ctx.createBufferSource(); src.buffer = main; src.playbackRate.value = augOn.has("fast") ? 1.1 : augOn.has("slow") ? 0.9 : 1;
-  let node = src, out = ctx.createGain(); out.connect(ctx.destination);
-  if (augOn.has("phone")) { const hp = ctx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 300; const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 3400; node.connect(hp); hp.connect(lp); node = lp; }
-  if (augOn.has("echo")) { const n = Math.floor(ctx.sampleRate * 0.9), ir = ctx.createBuffer(1, n, ctx.sampleRate), d = ir.getChannelData(0); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-6 * i / n); d[0] = 1; const cv = ctx.createConvolver(); cv.buffer = ir; const dry = ctx.createGain(); dry.gain.value = 0.5; node.connect(cv); node.connect(dry); const mix = ctx.createGain(); mix.gain.value = 0.6; cv.connect(mix); mix.connect(out); dry.connect(out); }
-  else node.connect(out);
-  const dur = main.duration / src.playbackRate.value;
-  if (augOn.has("noise")) { const n = Math.floor(ctx.sampleRate * dur), nb = ctx.createBuffer(1, n, ctx.sampleRate), d = nb.getChannelData(0); let b = 0; for (let i = 0; i < n; i++) { b = 0.97 * b + 0.03 * (Math.random() * 2 - 1); d[i] = b * 2.2; } const ns = ctx.createBufferSource(); ns.buffer = nb; const g = ctx.createGain(); g.gain.value = 0.35; ns.connect(g); g.connect(ctx.destination); ns.start(); augNodes.push(ns); }
-  if (augOn.has("babble")) { const bb = await augBuf("audio/eval_indicvoices_0000_00_00698.mp3"); const bs = ctx.createBufferSource(); bs.buffer = bb; const g = ctx.createGain(); g.gain.value = 0.3; bs.connect(g); g.connect(ctx.destination); bs.start(ctx.currentTime + 0.4); augNodes.push(bs); }
-  src.start(); augNodes.push(src);
+  if (augPlaying) { augStop(); return; }
+  const main = await augBuf("audio/eval_indicvoices_0000_01_00082.mp3"), bab = await augBuf("audio/eval_indicvoices_0000_00_00698.mp3"), ctx = augCtx; await ctx.resume();
+  const g = {}; const out = ctx.createGain(); out.connect(ctx.destination);
+  g.src = ctx.createBufferSource(); g.src.buffer = main;
+  g.hp = ctx.createBiquadFilter(); g.hp.type = "highpass"; g.lp = ctx.createBiquadFilter(); g.lp.type = "lowpass";
+  const n = Math.floor(ctx.sampleRate * 0.9), ir = ctx.createBuffer(1, n, ctx.sampleRate), d = ir.getChannelData(0); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.exp((-6 * i) / n); d[0] = 1;
+  const cv = ctx.createConvolver(); cv.buffer = ir; g.dry = ctx.createGain(); g.wet = ctx.createGain();
+  g.src.connect(g.hp); g.hp.connect(g.lp); g.lp.connect(g.dry); g.lp.connect(cv); cv.connect(g.wet); g.dry.connect(out); g.wet.connect(out);
+  const nn = Math.floor(ctx.sampleRate * 4), nb = ctx.createBuffer(1, nn, ctx.sampleRate), nd = nb.getChannelData(0); let br = 0; for (let i = 0; i < nn; i++) { br = 0.97 * br + 0.03 * (Math.random() * 2 - 1); nd[i] = br * 2.2; }
+  g.ns = ctx.createBufferSource(); g.ns.buffer = nb; g.ns.loop = true; g.noise = ctx.createGain(); g.ns.connect(g.noise); g.noise.connect(out);
+  g.bs = ctx.createBufferSource(); g.bs.buffer = bab; g.bs.loop = true; g.babble = ctx.createGain(); g.bs.connect(g.babble); g.babble.connect(out);
+  [g.dry.gain, g.wet.gain, g.noise.gain, g.babble.gain].forEach((p) => (p.value = 0));
+  augG = g; augApply();
+  g.src.onended = () => { if (augG === g) augStop(); };
+  const t0 = ctx.currentTime + 0.05; g.src.start(t0); g.ns.start(t0); g.bs.start(t0 + 0.4);
+  augPlaying = true; augRender();
 }
 $("#aug-play").addEventListener("click", augPlay);
 augRender(); redraw.push(augRender);
