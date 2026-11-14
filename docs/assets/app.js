@@ -7,6 +7,7 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&l
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const J = async (p) => (await fetch(p)).json();
+let metric = "wer", withLM = false;
 
 /* ---------- language, theme, progress, reveal ---------- */
 const redraw = [];
@@ -16,6 +17,13 @@ function setLang(l) {
   redraw.forEach((f) => f());
 }
 $$("[data-set-lang]").forEach((b) => b.addEventListener("click", () => setLang(b.dataset.setLang)));
+function setDepth(d) {
+  document.documentElement.dataset.depth = d; localStorage.setItem("depth", d);
+  $$("[data-set-depth]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.setDepth === d)));
+  if (d === "simple") { metric = "wer"; withLM = false; }
+  redraw.forEach((f) => f());
+}
+$$("[data-set-depth]").forEach((b) => b.addEventListener("click", () => setDepth(b.dataset.setDepth)));
 $("#theme").addEventListener("click", () => {
   const t = document.documentElement.dataset.theme === "light" ? "" : "light";
   if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
@@ -63,7 +71,7 @@ function wirePlayer({ url, button, canvas, onTime }) {
   canvas.parentElement.addEventListener("click", (e) => { const r = canvas.getBoundingClientRect(); if (!audio.duration) { button.click(); return; } audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration; if (audio.paused) button.click(); });
   const io2 = new IntersectionObserver((es) => { if (es[0].isIntersecting) { paint(); io2.disconnect(); } }); io2.observe(canvas);
   addEventListener("resize", paint);
-  return paint;
+  return { paint, audio };
 }
 
 /* ---------- word diff: punctuation ignored, other-script loanwords marked as fold ---------- */
@@ -85,13 +93,25 @@ function diffHTML(ref, hyp) {
   return out.reverse().join(" ");
 }
 
-/* ---------- hero ---------- */
+/* ---------- hero: pick a recording ---------- */
+let heroClips = [], heroI = 0, heroAudio = null;
 function hero(clips) {
-  const c = clips.find((x) => x.group === "hero"); if (!c) return;
+  heroClips = clips.filter((x) => x.group === "hero");
+  $("#hero-pick").innerHTML = heroClips.map((c, i) => `<button data-hero="${i}" aria-pressed="${i === heroI}">${esc(L(c.label))}</button>`).join("");
+  $$("[data-hero]").forEach((b) => b.addEventListener("click", () => { heroI = +b.dataset.hero; heroLoad(true); }));
+  heroLoad(false);
+}
+function heroLoad(autoplay) {
+  const c = heroClips[heroI]; if (!c) return;
+  $$("[data-hero]").forEach((b) => b.setAttribute("aria-pressed", String(+b.dataset.hero === heroI)));
+  if (heroAudio) heroAudio.pause();
   const box = $("#hero-words");
   box.innerHTML = c.words.map(([w, t]) => `<span data-t="${t}" class="${latin(w) ? "lat" : ""}">${esc(w)}</span>`).join(" ");
-  const ws = $$("span", box);
-  redraw.push(wirePlayer({ url: c.audio, button: $("#hero-play"), canvas: $("#hero-wave canvas"), onTime: (t) => ws.forEach((w) => w.classList.toggle("on", +w.dataset.t <= t + 0.05)) }));
+  const ws = $$("span", box), btn = $("#hero-play"), fresh = btn.cloneNode(false); fresh.textContent = "▶"; fresh.setAttribute("aria-pressed", "false"); btn.replaceWith(fresh);
+  const w = $("#hero-wave"), w2 = w.cloneNode(false), cv2 = document.createElement("canvas"); w2.append(cv2); w.replaceWith(w2);
+  const r = wirePlayer({ url: c.audio, button: fresh, canvas: cv2, onTime: (t) => ws.forEach((x) => x.classList.toggle("on", +x.dataset.t <= t + 0.05)) });
+  heroAudio = r.audio; r.paint(); numbersStrip(c.audio);
+  if (autoplay) fresh.click();
 }
 function counters() {
   $$("[data-count]").forEach((el) => {
@@ -131,13 +151,13 @@ function quiz(clips, metrics) {
 }
 
 /* ---------- scoreboard dumbbell ---------- */
-let SC, metric = "wer", withLM = false;
+let SC;
 function dumbbell() {
   if (!SC) return;
   const host = $("#dumbbell"), S = SC.scores;
   const sets = Object.keys(SC.sets).filter((s) => metric === "wer" || SC.sets[s].kind !== "english");
   const vals = sets.flatMap((s) => ["e5", "itcore", "e5_lm"].map((m) => S[m]?.[s]?.[metric]).filter((v) => v != null));
-  const W = 1000, rowH = 44, GAPH = 30, P = { l: 220, r: 150, t: 20 };
+  const W = 1000, rowH = 44, GAPH = 30, P = { l: 220, r: 210, t: 20 };
   const kinds = [...new Set(sets.map((s) => SC.sets[s].kind))], H = P.t + sets.length * rowH + kinds.length * GAPH + 30;
   const mx = Math.max(...vals), stp = mx > 30 ? 10 : mx > 12 ? 5 : mx > 6 ? 2 : mx > 3 ? 1 : 0.5, lo = 0, hi = Math.ceil((mx * 1.04) / stp) * stp, x = (v) => P.l + ((v - lo) / (hi - lo)) * (W - P.l - P.r);
   const kindLbl = { spoken: { en: "spoken Tamil", ta: "பேச்சுத் தமிழ்" }, read: { en: "read Tamil", ta: "வாசிப்புத் தமிழ்" }, english: { en: "English", ta: "ஆங்கிலம்" } };
@@ -146,7 +166,7 @@ function dumbbell() {
   let last = null, yy = P.t;
   sets.forEach((s) => {
     const k = SC.sets[s].kind;
-    if (k !== last) { yy += GAPH; g += `<text x="0" y="${yy - 8}" style="fill:var(--fg-3);font-size:10px;letter-spacing:.08em">${esc(L(kindLbl[k]).toUpperCase())}</text>`; last = k; }
+    if (k !== last) { yy += GAPH; g += `<text x="0" y="${yy - 8}" style="fill:var(--fg-3);font-size:10px;${lang() === "en" ? "letter-spacing:.08em" : ""}">${esc(L(kindLbl[k]).toUpperCase())}</text>`; last = k; }
     const y = yy + rowH / 2; yy += rowH;
     const o = S.e5[s][metric], it = S.itcore[s]?.[metric], lm = S.e5_lm[s]?.[metric];
     const ours = withLM && lm != null ? lm : o;
@@ -165,7 +185,7 @@ function dumbbell() {
   host.innerHTML = g + "</svg>"; tips(host);
   $("#dumb-legend").innerHTML = [["--ours", "parakeet-tamil" + (withLM ? " + LM" : "")], ["--itcore", "indic-transcribe-core"]].map(([c, n]) => `<span class="key"><span class="dot" style="background:var(${c})"></span>${n}</span>`).join("") + `<span class="key dim">${L({ en: "lower is better", ta: "குறைவே சிறந்தது" })} · ${metric.toUpperCase()} %</span>`;
 }
-$$("[data-metric]").forEach((b) => b.addEventListener("click", () => { metric = b.dataset.metric; $$("[data-metric]").forEach((x) => x.setAttribute("aria-pressed", String(x === b))); dumbbell(); }));
+$$("[data-metric]").forEach((b) => b.addEventListener("click", () => { metric = b.dataset.metric; $$("[data-metric]").forEach((x) => x.setAttribute("aria-pressed", String(x === b))); dumbbell(); openTable(); }));
 $("#lm-toggle").addEventListener("click", (e) => { withLM = !withLM; e.currentTarget.setAttribute("aria-pressed", String(withLM)); dumbbell(); });
 
 /* ---------- epochs ---------- */
@@ -295,24 +315,38 @@ function perDemo() {
   $$("[data-per]", host).forEach((b) => b.addEventListener("click", () => { perI = +b.dataset.per; perDemo(); })); tips(host);
 }
 
-/* ---------- speed race + ladder ---------- */
+/* ---------- speed race: real time by default ---------- */
 const LANES = [
-  { n: { en: "RTX 3090, batched", ta: "RTX 3090, தொகுப்பாக" }, x: 646, c: "--ours" },
-  { n: { en: "8 CPU threads, home server", ta: "8 CPU இழைகள், வீட்டு சர்வர்" }, x: 28, c: "--ours-2" },
-  { n: { en: "a human typist", ta: "ஒரு மனிதத் தட்டச்சாளர்" }, x: 0.25, c: "--itcore" },
+  { n: { en: "gaming graphics card (RTX 3090)", ta: "கேமிங் கிராஃபிக்ஸ் அட்டை (RTX 3090)" }, x: 646, c: "--ours" },
+  { n: { en: "ordinary home computer, no graphics card", ta: "சாதாரண வீட்டுக் கணினி, கிராஃபிக்ஸ் அட்டை இல்லை" }, x: 28, c: "--ours-2" },
+  { n: { en: "a fast human typist", ta: "வேகமான மனிதத் தட்டச்சாளர்" }, x: 0.25, c: "--itcore" },
 ];
 const fmtT = (s) => (s < 90 ? `${s.toFixed(s < 10 ? 1 : 0)} s` : s < 5400 ? `${Math.round(s / 60)} min` : `${(s / 3600).toFixed(1)} h`);
-let raceRun = 0;
-function race(animate) {
+const clock = (s) => { s = Math.floor(s); return `${Math.floor(s / 3600)}:${String(Math.floor(s / 60) % 60).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; };
+let raceSpeed = 1, raceT = 0, raceOn = false, raceLast = 0;
+function raceDraw() {
   const H = +$("#hours").value; $$(".hours-v").forEach((e) => (e.textContent = H));
-  $("#race").innerHTML = LANES.map((l, i) => `<div class="lane"><span class="name">${esc(L(l.n))}</span><div class="tr"><i id="lane${i}" style="background:var(${l.c})"></i></div><span class="t">${fmtT((H * 3600) / l.x)}</span></div>`).join("");
-  const id = ++raceRun;
-  if (!animate) { LANES.forEach((l, i) => ($(`#lane${i}`).style.width = "100%")); return; }
-  const t0 = performance.now(), D = 8000;
-  const f = (t) => { if (id !== raceRun) return; const el = (t - t0) / D; LANES.forEach((l, i) => { const need = l.x === 0.25 ? 1 : Math.max(0.004, 0.25 / l.x); $(`#lane${i}`).style.width = Math.min(100, (100 * el) / need) + "%"; }); if (el < 1) requestAnimationFrame(f); };
-  requestAnimationFrame(f);
+  if (!$("#lane0")) $("#race").innerHTML = LANES.map((l, i) => `<div class="lane"><span class="name">${esc(L(l.n))}</span><div class="tr"><i id="lane${i}" style="background:var(${l.c})"></i></div><span class="t" id="lt${i}"></span></div>`).join("");
+  LANES.forEach((l, i) => { const need = (H * 3600) / l.x, f = Math.min(1, raceT / need); $(`#lane${i}`).style.width = 100 * f + "%"; $(`#lane${i}`).classList.toggle("done", f >= 1); $(`#lt${i}`).textContent = (f >= 1 ? "✓ " : "") + fmtT(need); });
+  $("#race-clock").textContent = clock(raceT);
 }
-const LADDER = [["baseline", 358], ["fast local attention, 1000 s micro-batches", 592], ["no activation checkpointing", 733], ["40 length buckets", 762], ["bf16 SDPA", 810], ["Triton banded attention", 838], ["60 buckets", 850], ["fast conv", 866], ["fused add + LayerNorm", 874], ["bias in row kernels", 893], ["Triton depthwise conv", 911]];
+function raceTick(t) {
+  if (!raceOn) return;
+  raceT += ((t - raceLast) / 1000) * raceSpeed; raceLast = t; raceDraw();
+  const H = +$("#hours").value;
+  if (raceT >= (H * 3600) / LANES[LANES.length - 1].x) { raceOn = false; $("#race-go").textContent = "↺"; } else requestAnimationFrame(raceTick);
+}
+function raceInit() {
+  $("#race-go").addEventListener("click", () => {
+    if (raceOn) { raceOn = false; $("#race-go").textContent = "▶"; return; }
+    const H = +$("#hours").value; if (raceT >= (H * 3600) / LANES[LANES.length - 1].x) raceT = 0;
+    raceOn = true; raceLast = performance.now(); $("#race-go").textContent = "❚❚"; requestAnimationFrame(raceTick);
+  });
+  $$("[data-speed]").forEach((b) => b.addEventListener("click", () => { raceSpeed = +b.dataset.speed; $$("[data-speed]").forEach((x) => x.setAttribute("aria-pressed", String(x === b))); }));
+  $("#hours").addEventListener("input", () => { raceT = 0; raceDraw(); });
+  raceDraw();
+}
+const LADDER = [["baseline", 358], ["local attention, 1000 s batches", 592], ["no activation checkpointing", 733], ["40 length buckets", 762], ["bf16 SDPA", 810], ["Triton banded attention", 838], ["60 buckets", 850], ["fast conv", 866], ["fused add + LayerNorm", 874], ["bias in row kernels", 893], ["Triton depthwise conv", 911]];
 function ladder() {
   const W = 1000, rh = 26, P = { l: 300, r: 60, t: 30 }, H = P.t + LADDER.length * rh + 10, x = (v) => P.l + (v / 950) * (W - P.l - P.r);
   let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="training throughput"><text x="0" y="16" style="fill:var(--fg);font-weight:700">${L({ en: "training speed: audio hours per GPU-hour, RTX PRO 6000", ta: "பயிற்சி வேகம்: ஒரு GPU-மணிக்கு ஒலி மணிகள், RTX PRO 6000" })}</text>`;
@@ -345,9 +379,148 @@ $$("[data-tab]").forEach((b) => b.addEventListener("click", () => { tab = b.data
   setLang(document.documentElement.lang || "en");
   const [clips, metrics, per, sc] = await Promise.all([J("data/clips.json"), J("data/metrics.json").catch(() => ({})), J("data/per_demo.json").catch(() => []), J("data/scores.json")]);
   SC = sc; PERD = per;
-  hero(clips); quiz(clips, metrics); dumbbell(); epochs(); runs(); sim(); teacher(); flips(); scorer(); perDemo(); ladder(); gap(); use(); race(false);
-  $("#hours").addEventListener("input", () => race(false)); $("#race-go").addEventListener("click", () => race(true));
+  hero(clips); quiz(clips, metrics); dumbbell(); epochs(); runs(); sim(); teacher(); flips(); scorer(); perDemo(); ladder(); gap(); use(); raceInit(); hardCharts(); recipe(); openTable();
   const cs = $(".counters"); cs.classList.add("reveal"); cs.addEventListener("shown", counters);
   observe();
-  redraw.push(() => { dumbbell(); epochs(); runs(); teacher(); flips(); scorer(); perDemo(); ladder(); gap(); race(false); quiz(clips, metrics); });
+  redraw.push(() => { dumbbell(); epochs(); runs(); teacher(); flips(); scorer(); perDemo(); ladder(); gap(); $("#race").innerHTML = ""; raceDraw(); quiz(clips, metrics); hero(clips); hardCharts(); recipe(); openTable(); });
 })();
+
+/* ---------- reveal card ---------- */
+$("#secret-btn").addEventListener("click", () => $("#secret").classList.toggle("open"));
+
+/* ---------- alternate chapter shading ---------- */
+$$("section.chapter").forEach((s, i) => s.classList.toggle("alt", i % 2 === 1));
+
+/* ---------- two Tamils: Gemma's formal twins ---------- */
+const TWINS = [
+  ["ஏத்துக்கல", "ஏற்றுக்கொள்ளுங்கள்", { en: "\"didn't accept\" became \"please accept\". The meaning flipped.", ta: "\"ஏற்கவில்லை\" என்பது \"ஏற்றுக்கொள்ளுங்கள்\" ஆனது. பொருள் தலைகீழானது." }],
+  ["போகுல", "போகிறோம்", { en: "\"not going\" became \"we are going\". Flipped again.", ta: "\"போகவில்லை\" என்பது \"போகிறோம்\" ஆனது. மீண்டும் தலைகீழ்." }],
+  ["இல்லாம", "இல்லாமால்", { en: "A word that doesn't exist. The formal form is இல்லாமல்.", ta: "இல்லாத ஒரு சொல். சரியான எழுத்து வடிவம் இல்லாமல்." }],
+  ["பசங்கள", "பசங்களിനെ", { en: "Malayalam letters (ിനെ) inside a Tamil word.", ta: "தமிழ்ச் சொல்லுக்குள் மலையாள எழுத்துகள் (ിനെ)." }],
+  ["எதுவா", "எதுவா든", { en: "A Korean syllable (든) inside a Tamil word.", ta: "தமிழ்ச் சொல்லுக்குள் ஒரு கொரிய எழுத்து (든)." }],
+];
+let twinI = 0;
+function twins() {
+  const [a, b, g] = TWINS[twinI];
+  $("#twin-card").innerHTML = `<div class="pair" style="font-size:1.6rem;grid-template-columns:6.5rem 1fr"><span class="who">${L({ en: "spoken", ta: "பேச்சு" })}</span><span>${a}</span><span class="who">Gemma</span><span style="color:var(--bad)">${b}</span></div><p style="margin:0">${esc(L(g))}</p><div class="small mono" style="margin-top:.6rem">${twinI + 1} / ${TWINS.length}</div>`;
+}
+$("#twin-next").addEventListener("click", () => { twinI = (twinI + 1) % TWINS.length; twins(); });
+twins(); redraw.push(twins);
+
+/* ---------- the map: chapters as a graph along the arc ---------- */
+const MAP = {
+  stages: [[90, { en: "the problem", ta: "சிக்கல்" }], [330, { en: "building it", ta: "உருவாக்கம்" }], [570, { en: "measuring honestly", ta: "நேர்மையான அளவீடு" }], [770, { en: "where it stands", ta: "நிலை" }], [930, { en: "hand it on", ta: "ஒப்படைப்பு" }]],
+  nodes: {
+    why: [90, 170, { en: "A stranger in the house", ta: "வீட்டில் ஓர் அந்நியர்" }],
+    hard: [90, 360, { en: "Why is this so hard?", ta: "ஏன் இவ்வளவு கடினம்?" }],
+    runs: [260, 110, { en: "10 attempts, 5 days", ta: "10 முயற்சிகள், 5 நாட்கள்" }],
+    epochs: [410, 60, { en: "Epoch 6 💀", ta: "6-ஆவது சுற்று 💀" }],
+    recipe: [410, 170, { en: "What it learned from", ta: "எதிலிருந்து கற்றது" }],
+    spot: [260, 260, { en: "Vanishing computers", ta: "மறையும் கணினிகள்" }],
+    speed: [410, 310, { en: "Small enough for home", ta: "வீட்டுக்கு ஏற்ற அளவு" }],
+    teacher: [260, 400, { en: "Gemma adds full stops", ta: "Gemma முற்றுப்புள்ளி" }],
+    "two-tamils": [410, 460, { en: "Two Tamils", ta: "இரண்டு தமிழ்" }],
+    data: [580, 190, { en: "As you sow", ta: "வினை விதைத்தவன்" }],
+    measure: [580, 370, { en: "Marking a Tamil test", ta: "தமிழ்த் தேர்வு திருத்தம்" }],
+    listen: [770, 110, { en: "Who heard it right?", ta: "யார் சரியாகக் கேட்டார்கள்?" }],
+    scores: [770, 260, { en: "Scoreboard", ta: "மதிப்பெண் பலகை" }],
+    lose: [770, 410, { en: "Where it struggles", ta: "தடுமாறும் இடம்" }],
+    claude: [935, 170, { en: "Made with Claude", ta: "Claude உடன்" }],
+    use: [935, 350, { en: "Use it", ta: "பயன்படுத்துங்கள்" }],
+  },
+  edges: [["why", "hard"], ["hard", "recipe"], ["hard", "data"], ["hard", "lose"], ["recipe", "epochs"], ["recipe", "runs"], ["why", "listen"], ["why", "speed"], ["why", "runs"], ["runs", "epochs"], ["runs", "spot"], ["runs", "two-tamils"], ["spot", "speed"], ["teacher", "two-tamils"], ["teacher", "data"],
+    ["two-tamils", "listen"], ["data", "measure"], ["data", "scores"], ["measure", "scores"], ["measure", "lose"], ["scores", "listen"], ["scores", "lose"], ["epochs", "scores"], ["lose", "use"], ["claude", "runs"], ["speed", "use"]],
+};
+function mapDraw() {
+  const W = 1020, H = 520, N = MAP.nodes;
+  let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="chapter map">`;
+  g += `<path d="M20,300 C 200,${H + 40} 420,-20 600,260 S 900,${H} ${W - 10},250" fill="none" stroke="var(--ours)" stroke-width="40" opacity=".07" stroke-linecap="round"/>`;
+  MAP.stages.forEach(([x, l]) => (g += `<text x="${x}" y="16" text-anchor="middle" style="fill:var(--fg-3);font-size:11px;${lang() === "en" ? "letter-spacing:.08em" : ""}">${esc(L(l).toUpperCase())}</text>`));
+  MAP.edges.forEach(([a, b]) => { const [x1, y1] = N[a], [x2, y2] = N[b], mx = (x1 + x2) / 2; g += `<path class="me" data-a="${a}" data-b="${b}" d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}" fill="none" stroke="var(--fg-3)" stroke-width="1.5" opacity=".35" style="transition:opacity .2s,stroke .2s"/>`; });
+  Object.entries(N).forEach(([id, [x, y, l]]) => {
+    const t = L(l), w = Math.max(110, t.length * 7.4 + 24);
+    g += `<g class="mn" data-id="${id}" style="cursor:pointer" tabindex="0" role="link" aria-label="${esc(t)}"><rect x="${x - w / 2}" y="${y - 17}" width="${w}" height="34" rx="17" fill="var(--bg-3)" stroke="var(--rule)" style="transition:stroke .2s,fill .2s"/><text x="${x}" y="${y + 5}" text-anchor="middle" class="lbl" style="font-size:12.5px">${esc(t)}</text></g>`;
+  });
+  $("#map-svg").innerHTML = g + "</svg>";
+  $$("#map-svg .mn").forEach((n) => {
+    const id = n.dataset.id, on = (v) => {
+      $$("#map-svg .me").forEach((e) => { const hit = e.dataset.a === id || e.dataset.b === id; e.style.opacity = v ? (hit ? 1 : 0.12) : 0.35; e.style.stroke = v && hit ? "var(--ours)" : "var(--fg-3)"; });
+      $$("#map-svg .mn").forEach((m) => { const linked = m.dataset.id === id || MAP.edges.some(([a, b]) => (a === id && b === m.dataset.id) || (b === id && a === m.dataset.id)); $("rect", m).style.stroke = v && linked ? "var(--ours)" : "var(--rule)"; m.style.opacity = v && !linked ? 0.4 : 1; });
+    };
+    n.addEventListener("mouseenter", () => on(true)); n.addEventListener("mouseleave", () => on(false)); n.addEventListener("focus", () => on(true)); n.addEventListener("blur", () => on(false));
+    const go = () => document.getElementById(id)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+    n.addEventListener("click", go); n.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+  });
+}
+mapDraw(); redraw.push(mapDraw);
+
+/* ---------- "a computer can't hear": the voice as numbers ---------- */
+let numTimer = null;
+async function numbersStrip(url) {
+  const host = $("#numbers"); if (!host) return;
+  await peaks(url, 10); const d = await peaksCache[url];
+  let pos = Math.floor(d.length * 0.3);
+  clearInterval(numTimer);
+  const draw = () => { const out = []; for (let i = 0; i < 48; i++) { const v = d[pos + i * 7] || 0; out.push(Math.abs(v) > 0.2 ? `<b>${v.toFixed(3)}</b>` : v.toFixed(3)); } host.innerHTML = out.join(" "); pos = (pos + 37) % (d.length - 400); };
+  draw(); if (!reduce) numTimer = setInterval(draw, 110);
+}
+
+/* ---------- Whisper's hours: English vs Tamil ---------- */
+function hardCharts() {
+  const B = [[{ en: "Whisper: English", ta: "Whisper: ஆங்கிலம்" }, 438218, "--fg-3"], [{ en: "Whisper: Tamil", ta: "Whisper: தமிழ்" }, 136, "--itcore"], [{ en: "our Tamil, collected from scraps", ta: "நாங்கள் சேகரித்த தமிழ்" }, 4760, "--ours"]];
+  const W = 1000, rh = 46, P = { l: 260, r: 120, t: 6 }, H = P.t + B.length * rh, x = (v) => P.l + (v / 438218) * (W - P.l - P.r);
+  let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="hours of training audio">`;
+  B.forEach(([n, v, c], i) => { const y = P.t + i * rh; g += `<text x="${P.l - 12}" y="${y + 27}" text-anchor="end" class="lbl">${esc(L(n))}</text><rect x="${P.l}" y="${y + 10}" width="${Math.max(3, x(v) - P.l)}" height="${rh - 20}" rx="4" fill="var(${c})" data-tip="${v.toLocaleString()} h"/><text x="${Math.max(P.l + 3, x(v)) + 10}" y="${y + 27}" style="fill:var(--fg);font-weight:700">${v.toLocaleString()} h</text>`; });
+  $("#gap-hours").innerHTML = g + "</svg>"; tips($("#gap-hours"));
+}
+
+/* ---------- what it learned from ---------- */
+let MIX = null;
+const KIND = { spoken: { en: "conversations", ta: "உரையாடல்கள்" }, read: { en: "read aloud", ta: "உரக்க வாசித்தவை" }, youtube: { en: "YouTube", ta: "YouTube" }, synthetic: { en: "computer voices, Tamil + English", ta: "கணினிக் குரல்கள், தமிழ் + ஆங்கிலம்" }, english: { en: "English", ta: "ஆங்கிலம்" }, negatives: { en: "silence and noise", ta: "அமைதி, இரைச்சல்" } };
+const KORDER = ["youtube", "spoken", "read", "english", "synthetic", "negatives"];
+function recipe() {
+  if (!MIX) return;
+  const by = {}; MIX.rows.forEach((r) => { (by[r.kind] ||= { h: 0, seen: 0 }); by[r.kind].h += r.hours; by[r.kind].seen += r.seen_5ep; });
+  const W = 1000, rh = 40, P = { l: 290, r: 150, t: 6 }, H = P.t + KORDER.length * rh, mx = Math.max(...KORDER.map((k) => by[k].h)), x = (v) => P.l + (v / mx) * (W - P.l - P.r);
+  let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="hours by kind">`;
+  KORDER.forEach((k, i) => { const y = P.t + i * rh, v = by[k].h; g += `<text x="${P.l - 12}" y="${y + 25}" text-anchor="end" class="lbl">${esc(L(KIND[k]))}</text><rect x="${P.l}" y="${y + 8}" width="${Math.max(3, x(v) - P.l)}" height="${rh - 16}" rx="4" fill="var(${k === "english" ? "--fg-3" : "--ours"})" data-tip="${v.toLocaleString()} h · ${L({ en: "heard", ta: "கேட்டது" })} ${by[k].seen.toLocaleString()} h"/><text x="${x(v) + 10}" y="${y + 25}" style="fill:var(--fg);font-weight:700">${v.toLocaleString()} h</text>`; });
+  $("#mix-bars").innerHTML = g + "</svg>"; tips($("#mix-bars"));
+  const hd = [L({ en: "source", ta: "மூலம்" }), L({ en: "what", ta: "என்ன" }), L({ en: "split", ta: "பகுதி" }), L({ en: "licence", ta: "உரிமம்" }), L({ en: "hours", ta: "மணி" }), L({ en: "passes per epoch", ta: "ஒரு சுற்றுக்கு" }), L({ en: "heard by epoch 5", ta: "5 சுற்றில் கேட்டது" })];
+  let t = `<table class="dt"><thead><tr>${hd.map((h) => `<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>`;
+  KORDER.forEach((k) => { t += `<tr class="grp"><td colspan="7">${esc(L(KIND[k]))}</td></tr>`; MIX.rows.filter((r) => r.kind === k).forEach((r) => (t += `<tr><td>${esc(r.name)}</td><td style="text-align:left">${esc(r.what)}</td><td style="text-align:left;white-space:normal;min-width:12rem">${esc(r.split)}</td><td style="text-align:left">${esc(r.licence)}</td><td>${r.hours.toLocaleString()}</td><td>${r.per_epoch}</td><td>${r.seen_5ep.toLocaleString()}</td></tr>`)); });
+  t += `<tr><td><b>${L({ en: "total", ta: "மொத்தம்" })}</b></td><td></td><td></td><td></td><td><b>${MIX.unique_hours.toLocaleString()}</b></td><td></td><td><b>${MIX.seen_hours_5ep.toLocaleString()}</b></td></tr></tbody></table>`;
+  $("#mix-table").innerHTML = t;
+  const S = MIX.schedule, T = S.total, E = S.steps_per_epoch, D = S.decay, pk = S.peak;
+  const dec = (s, a) => pk * (1 - Math.sqrt(Math.min(1, Math.max(0, (s - a) / D))));
+  const main = (s) => (s <= S.warmup ? (pk * s) / S.warmup : s < 3 * E - D ? pk : s < 3 * E ? dec(s, 3 * E - D) : s < 3 * E + S.rewarm[1] ? (pk * (s - 3 * E)) / S.rewarm[1] : s < T - D ? pk : dec(s, T - D));
+  const SW = 1000, SH = 260, Q = { l: 60, r: 20, t: 30, b: 36 }, sx = (s) => Q.l + (s / T) * (SW - Q.l - Q.r), sy = (v) => Q.t + (1 - v / pk) * (SH - Q.t - Q.b);
+  let p = ""; for (let s = 0; s <= T; s += 40) p += `${s ? "L" : "M"}${sx(s).toFixed(1)},${sy(main(s)).toFixed(1)}`;
+  let g2 = `<svg viewBox="0 0 ${SW} ${SH}" role="img" aria-label="learning rate schedule">`;
+  for (let k = 0; k <= 6; k++) g2 += `<g class="grid"><line x1="${sx(k * E)}" x2="${sx(k * E)}" y1="${Q.t}" y2="${SH - Q.b}"/></g><text x="${sx(k * E)}" y="${SH - 14}" text-anchor="${k === 6 ? "end" : k === 0 ? "start" : "middle"}">${k ? L({ en: "epoch ", ta: "சுற்று " }) + k : "0"}</text>`;
+  g2 += `<text x="${Q.l - 8}" y="${sy(pk) + 4}" text-anchor="end">1.49e-4</text><text x="${Q.l - 8}" y="${sy(0) + 4}" text-anchor="end">0</text>`;
+  [1, 2, 4, 5].forEach((k) => { const a = k * E - D; let q = ""; for (let s = a; s <= k * E; s += 20) q += `${s === a ? "M" : "L"}${sx(s).toFixed(1)},${sy(dec(s, a)).toFixed(1)}`; const rel = k === 5; g2 += `<path d="${q}" fill="none" stroke="var(${rel ? "--good" : "--ours-2"})" stroke-width="${rel ? 3 : 2}" stroke-dasharray="${rel ? "" : "4 3"}"/><circle cx="${sx(k * E)}" cy="${sy(0)}" r="${rel ? 7 : 5}" fill="var(${rel ? "--good" : "--ours-2"})" data-tip="${L({ en: "epoch", ta: "சுற்று" })} ${k}"/>`; });
+  g2 += `<path d="${p}" fill="none" stroke="var(--ours)" stroke-width="2.5"/>`;
+  g2 += `<circle cx="${sx(3 * E)}" cy="${sy(0)}" r="5" fill="var(--ours)" data-tip="${L({ en: "epoch", ta: "சுற்று" })} 3"/><circle cx="${sx(T)}" cy="${sy(0)}" r="5" fill="var(--bad)" data-tip="${L({ en: "epoch", ta: "சுற்று" })} 6"/>`;
+  g2 += `<text x="${sx(5 * E) - 12}" y="${sy(0) - 12}" text-anchor="end" style="fill:var(--fg);font-weight:700">${L({ en: "release: epoch 5", ta: "வெளியீடு: சுற்று 5" })}</text>`;
+  $("#sched-chart").innerHTML = g2 + "</svg>"; tips($("#sched-chart"));
+}
+
+/* ---------- every open model on the same clips ---------- */
+let OPEN = {};
+const ONAME = { e5: "parakeet-tamil", e5_lm: "parakeet-tamil + LM", itcore: "indic-transcribe-core", stock_v3: "stock parakeet v3", shruti: "shruti-tamil", indicwhisper: "IndicWhisper", omni: "Omni 7B", gemma4_e4b: "Gemma 4 E4B" };
+const OCOLS = ["e5", "e5_lm", "itcore", "stock_v3", "shruti", "indicwhisper", "omni", "gemma4_e4b"];
+function openTable() {
+  if (!SC) return;
+  const keyOf = (c) => Object.keys(OPEN).find((k) => k === c || k.startsWith(c)) || c;
+  const val = (c, s) => (c === "e5" || c === "e5_lm" || c === "itcore" ? SC.scores[c]?.[s] : OPEN[keyOf(c)]?.[s]) || null;
+  const m = metric === "eer" ? "wer" : metric;
+  let t = `<table class="dt"><thead><tr><th>${L({ en: "test set", ta: "தேர்வு" })} · ${m.toUpperCase()}</th>${OCOLS.map((c) => `<th>${esc(ONAME[c])}</th>`).join("")}</tr></thead><tbody>`;
+  Object.keys(SC.sets).forEach((s) => {
+    const en = SC.sets[s].kind === "english", mm = en ? "wer" : m;
+    const vs = OCOLS.map((c) => { const r = val(c, s); return r ? r[mm] : undefined; });
+    const ok = vs.filter((v) => v != null), best = ok.length ? Math.min(...ok) : null;
+    t += `<tr><td>${esc(L(SC.sets[s]))}</td>${vs.map((v, i) => { const c = OCOLS[i]; if (v == null) return c === "shruti" && en ? `<td class="pending">–</td>` : `<td class="pending">${L({ en: "scoring…", ta: "மதிப்பிடுகிறது…" })}</td>`; return `<td class="${v === best ? "best" : ""}">${v.toFixed(2)}</td>`; }).join("")}</tr>`;
+  });
+  $("#open-table").innerHTML = t + "</tbody></table>";
+}
+(async () => { try { MIX = await J("data/mix.json"); recipe(); } catch (e) { console.warn(e); } try { OPEN = await J("data/open_models.json"); openTable(); } catch (e) {} })();

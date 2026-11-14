@@ -2,12 +2,13 @@
  {
   "id": "eval_indicvoices_0000_01_00082.flac",
   "group": "hero",
+  "label": {
+   "en": "Tamil conversation",
+   "ta": "தமிழ் உரையாடல்"
+  },
   "audio": "audio/eval_indicvoices_0000_01_00082.mp3",
   "source": "IndicVoices · CC BY 4.0",
   "dur": 9.66,
-  "ref": "நம்ம இப்ப கூட பையன் கேப்பான் ஆஃபீஸ்ல ஆஃபீஸ் போறான் பையன் ஆஃபீஸ்ல எப்டி உங்க வீட்லலாம் சப்பாத்தி இவ்ளோ சாஃப்ட்டா பண்றாங்கன்னு",
-  "ours": "இப்ப கூட பையன் கேப்பான் office-ல office போறான். பையன் office-ல எப்டி உங்க வீட்லலாம் சப்பாத்தி இவ்ளோ soft-ஆ பண்றாங்கன்னு.",
-  "itcore": "இப்போ கூட பையன் கேட்பான் ஆஃபீஸில் ஆஃபீஸ் போகிறான் பையன் ஆஃபீஸில் எப்படி இவங்க வீட்லலாம் சப்பாத்தி இவ்வளோ சாஃப்டாக பண்ணுறாங்கன்னு",
   "words": [
    [
     "இப்ப",
@@ -73,11 +74,270 @@
     "பண்றாங்கன்னு.",
     8.96
    ]
-  ],
-  "note": {
-   "en": "Conversational Tamil with English words, the way it's actually spoken. Words light up at the times the model itself emitted them.",
-   "ta": "ஆங்கிலச் சொற்கள் கலந்த உரையாடல் தமிழ் — உண்மையில் பேசப்படும் விதத்தில். மாதிரி ஒவ்வொரு சொல்லையும் வெளியிட்ட நேரத்தில் அது ஒளிர்கிறது."
-  }
+  ]
+ },
+ {
+  "id": "eval_indicvoices_0000_00_00698.flac",
+  "group": "hero",
+  "label": {
+   "en": "Tamil + English",
+   "ta": "தமிழ் + ஆங்கிலம்"
+  },
+  "audio": "audio/eval_indicvoices_0000_00_00698.mp3",
+  "source": "IndicVoices · CC BY 4.0",
+  "dur": 6.59,
+  "words": [
+   [
+    "saturday",
+    0.0
+   ],
+   [
+    "sunday",
+    0.48
+   ],
+   [
+    "லீவ்",
+    0.8
+   ],
+   [
+    "தானுங்க.",
+    1.12
+   ],
+   [
+    "அப்ப",
+    1.68
+   ],
+   [
+    "கூட்டிட்டு",
+    1.92
+   ],
+   [
+    "போங்க,",
+    2.4
+   ],
+   [
+    "இப்ப",
+    2.8
+   ],
+   [
+    "school",
+    3.04
+   ],
+   [
+    "time",
+    3.44
+   ],
+   [
+    "வந்து",
+    3.84
+   ],
+   [
+    "நீங்க",
+    4.16
+   ],
+   [
+    "இப்டி",
+    4.48
+   ],
+   [
+    "leave",
+    5.04
+   ],
+   [
+    "போட",
+    5.44
+   ],
+   [
+    "வச்சிட்டே",
+    5.68
+   ],
+   [
+    "இருந்தா",
+    6.08
+   ],
+   [
+    "எப்டி?",
+    6.32
+   ]
+  ]
+ },
+ {
+  "id": "eval_svarah_0000_01_00080.flac",
+  "group": "hero",
+  "label": {
+   "en": "Indian English",
+   "ta": "இந்திய ஆங்கிலம்"
+  },
+  "audio": "audio/eval_svarah_0000_01_00080.mp3",
+  "source": "Svarah · CC BY 4.0",
+  "dur": 9.03,
+  "words": [
+   [
+    "Gajar",
+    0.24
+   ],
+   [
+    "Haluwa.",
+    0.8
+   ],
+   [
+    "I",
+    1.52
+   ],
+   [
+    "did",
+    1.68
+   ],
+   [
+    "not",
+    1.84
+   ],
+   [
+    "know",
+    2.0
+   ],
+   [
+    "anything",
+    2.24
+   ],
+   [
+    "about",
+    2.8
+   ],
+   [
+    "it.",
+    3.12
+   ],
+   [
+    "So",
+    3.68
+   ],
+   [
+    "I",
+    4.0
+   ],
+   [
+    "started",
+    4.64
+   ],
+   [
+    "watching",
+    5.76
+   ],
+   [
+    "videos",
+    6.48
+   ],
+   [
+    "on",
+    7.04
+   ],
+   [
+    "YouTube",
+    7.28
+   ],
+   [
+    "and",
+    7.92
+   ],
+   [
+    "then",
+    8.16
+   ],
+   [
+    "I",
+    8.48
+   ]
+  ]
+ },
+ {
+  "id": "eval_ls_clean_0000_06_00017.flac",
+  "group": "hero",
+  "label": {
+   "en": "Western English",
+   "ta": "மேற்கத்திய ஆங்கிலம்"
+  },
+  "audio": "audio/eval_ls_clean_0000_06_00017.mp3",
+  "source": "LibriSpeech · CC BY 4.0",
+  "dur": 9.94,
+  "words": [
+   [
+    "Nemo",
+    0.16
+   ],
+   [
+    "builds",
+    0.8
+   ],
+   [
+    "a",
+    1.12
+   ],
+   [
+    "fabulous",
+    1.28
+   ],
+   [
+    "futuristic",
+    1.92
+   ],
+   [
+    "submarine,",
+    2.56
+   ],
+   [
+    "the",
+    3.2
+   ],
+   [
+    "Nautilus,",
+    3.36
+   ],
+   [
+    "then",
+    4.4
+   ],
+   [
+    "conducts",
+    4.64
+   ],
+   [
+    "an",
+    5.12
+   ],
+   [
+    "underwater",
+    5.36
+   ],
+   [
+    "campaign",
+    6.0
+   ],
+   [
+    "of",
+    6.56
+   ],
+   [
+    "vengeance",
+    6.8
+   ],
+   [
+    "against",
+    7.44
+   ],
+   [
+    "his",
+    7.84
+   ],
+   [
+    "imperialist",
+    8.08
+   ],
+   [
+    "oppressor.",
+    8.88
+   ]
+  ]
  },
  {
   "id": "eval_indicvoices_0000_00_00791.flac",
