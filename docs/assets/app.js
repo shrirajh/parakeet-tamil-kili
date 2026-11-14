@@ -420,6 +420,7 @@ const MAP = {
     speed: [410, 310, { en: "Small enough for home", ta: "வீட்டுக்கு ஏற்ற அளவு" }],
     teacher: [260, 400, { en: "Gemma adds full stops", ta: "Gemma முற்றுப்புள்ளி" }],
     "two-tamils": [410, 460, { en: "Two Tamils", ta: "இரண்டு தமிழ்" }],
+    loans: [580, 470, { en: "English stays English", ta: "ஆங்கிலம் ஆங்கிலத்திலேயே" }],
     data: [580, 190, { en: "As you sow", ta: "வினை விதைத்தவன்" }],
     measure: [580, 370, { en: "Marking a Tamil test", ta: "தமிழ்த் தேர்வு திருத்தம்" }],
     listen: [770, 110, { en: "Who heard it right?", ta: "யார் சரியாகக் கேட்டார்கள்?" }],
@@ -430,7 +431,7 @@ const MAP = {
     use: [935, 350, { en: "Use it", ta: "பயன்படுத்துங்கள்" }],
   },
   edges: [["why", "hard"], ["hard", "recipe"], ["hard", "data"], ["hard", "lose"], ["recipe", "epochs"], ["recipe", "runs"], ["why", "listen"], ["why", "speed"], ["why", "runs"], ["runs", "epochs"], ["runs", "spot"], ["runs", "two-tamils"], ["spot", "speed"], ["teacher", "two-tamils"], ["teacher", "data"],
-    ["two-tamils", "listen"], ["data", "measure"], ["data", "scores"], ["measure", "scores"], ["measure", "lose"], ["scores", "listen"], ["scores", "lose"], ["epochs", "scores"], ["lose", "use"], ["lose", "lm"], ["lm", "use"], ["lm", "scores"], ["claude", "runs"], ["speed", "use"]],
+    ["two-tamils", "listen"], ["data", "measure"], ["data", "scores"], ["measure", "scores"], ["measure", "lose"], ["scores", "listen"], ["scores", "lose"], ["epochs", "scores"], ["lose", "use"], ["lose", "lm"], ["loans", "runs"], ["loans", "measure"], ["loans", "data"], ["hard", "loans"], ["lm", "use"], ["lm", "scores"], ["claude", "runs"], ["speed", "use"]],
 };
 function mapDraw() {
   const W = 1020, H = 520, N = MAP.nodes;
@@ -660,3 +661,21 @@ function nextword() {
   $$("[data-nw]").forEach((x) => x.addEventListener("click", () => { nwI = +x.dataset.nw; nextword(); }));
 }
 family(); nextword(); redraw.push(family, nextword);
+
+/* ---------- loanwords: the rule, and the traps ---------- */
+const LOANS = [
+  ["நாளைக்கு மீட்டிங்க்கு நீ வர்றியா", "நாளைக்கு meeting-க்கு நீ வர்றியா"],
+  ["பையன் ஆஃபீஸ்ல சப்பாத்தி இவ்ளோ சாஃப்டா", "பையன் office-ல சப்பாத்தி இவ்ளோ soft-ஆ"],
+  ["சாட்டர்டே சண்டே லீவ் போடுங்க", "saturday sunday leave போடுங்க"],
+];
+let loanOn = false;
+function loans() {
+  const b = $("#loan-toggle"); b.setAttribute("aria-pressed", String(loanOn));
+  b.textContent = L(loanOn ? { en: "rule on: English in English", ta: "விதி இயக்கம்: ஆங்கிலம் ஆங்கிலத்தில்" } : { en: "rule off: as most datasets write it", ta: "விதி அணைப்பு: பெரும்பாலான தரவுகள் எழுதுவது போல" });
+  $("#loan-lines").innerHTML = LOANS.map(([a, c]) => { const x = loanOn ? c : a, o = loanOn ? a : c, ow = o.split(" "); return `<div>${x.split(" ").map((w, i) => (w !== ow[i] ? `<b style="color:var(--ours-2)">${esc(w)}</b>` : esc(w))).join(" ")}</div>`; }).join("");
+  const TR = [["போன", { en: "\"went\", not phone", ta: "போன = சென்ற; phone அல்ல" }], ["கால", { en: "\"leg\" or \"time\", not call", ta: "கால = கால்/காலம்; call அல்ல" }], ["சீனா", { en: "China, not scene", ta: "சீனா நாடு; scene அல்ல" }], ["சாப்ட்டு", { en: "\"having eaten\", not soft", ta: "சாப்ட்டு = சாப்பிட்டு; soft அல்ல" }], ["பேசிக் கொண்டு", { en: "\"while speaking\", not basic", ta: "பேசிக்கொண்டு; basic அல்ல" }], ["போலிச் சாமியார்", { en: "\"fake godman\", not police", ta: "போலி; police அல்ல" }]];
+  $("#loan-traps").innerHTML = TR.map(([w, g]) => `<button class="flip" style="height:118px"><div class="in"><div class="f"><span class="w">${w}</span><span class="x">↻</span></div><div class="b"><span class="g">${esc(L(g))}</span></div></div></button>`).join("");
+  $$("#loan-traps .flip").forEach((f) => f.addEventListener("click", () => f.classList.toggle("on")));
+}
+$("#loan-toggle").addEventListener("click", () => { loanOn = !loanOn; loans(); });
+loans(); redraw.push(loans);

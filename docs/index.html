@@ -337,6 +337,37 @@
   </div>
 </section>
 
+<!-- LOANS -->
+<section class="chapter" id="loans">
+  <div class="inner split">
+    <div class="sticky">
+      <h2 class="reveal" data-l="en">English words stay English.</h2>
+      <h2 class="reveal" data-l="ta">ஆங்கிலச் சொற்கள் ஆங்கிலத்திலேயே.</h2>
+      <p class="reveal" data-l="en">Tamil speakers borrow English words all the time: meeting, office, bus. Most Tamil datasets write them in Tamil letters, like மீட்டிங்க்கு. That taught our early versions to write English in Tamil letters, even when someone was speaking English. So we made one rule: an English word is written in English, with the Tamil ending attached, like <span style="white-space:nowrap">meeting-க்கு</span>. With this rule, plus a few smaller fixes, English came back.</p>
+      <p class="reveal" data-l="ta">தமிழ் பேசுபவர்கள் எப்போதும் ஆங்கிலச் சொற்களைக் கடன் வாங்குகிறார்கள்: meeting, office, bus. பெரும்பாலான தமிழ்த் தரவுகள் அவற்றைத் தமிழ் எழுத்தில் எழுதுகின்றன — மீட்டிங்க்கு போல. அது எங்கள் முந்தைய பதிப்புகளுக்கு, ஒருவர் ஆங்கிலம் பேசும்போதும் ஆங்கிலத்தைத் தமிழ் எழுத்தில் எழுதக் கற்றுக்கொடுத்தது. அதனால் ஒரே விதி: ஆங்கிலச் சொல் ஆங்கிலத்தில், தமிழ் விகுதி இணைப்புடன் — <span style="white-space:nowrap">meeting-க்கு</span>. இந்த விதியாலும் சில சிறு திருத்தங்களாலும் ஆங்கிலம் திரும்பியது.</p>
+      <p class="reveal" data-l="en">The hard part is knowing which words are English. We built a dictionary of 23,804 Tamil-script spellings of English words. An AI read each candidate inside several real sentences, without being told our guess, and we converted a word only when every sentence agreed. Gemma 4 helped check candidates when the dictionary grew.</p>
+      <p class="reveal" data-l="ta">எந்தச் சொல் ஆங்கிலம் என்று அறிவதுதான் கடினம். ஆங்கிலச் சொற்களின் 23,804 தமிழ் எழுத்து வடிவங்களைக் கொண்ட அகராதியை உருவாக்கினோம். ஒவ்வொரு சொல்லையும் ஒரு AI பல உண்மையான வாக்கியங்களுக்குள் படித்தது — எங்கள் ஊகத்தைச் சொல்லாமல்; எல்லா வாக்கியங்களும் ஒப்புக்கொண்டால் மட்டுமே மாற்றினோம். அகராதி வளர்ந்தபோது Gemma 4 சொற்களைச் சரிபார்க்க உதவியது.</p>
+    </div>
+    <div>
+      <div class="scorer reveal">
+        <div class="controls"><button id="loan-toggle" aria-pressed="false"></button></div>
+        <div id="loan-lines" class="ta" style="font-size:1.3rem;line-height:1.9"></div>
+      </div>
+      <p class="big reveal" style="margin-top:2rem" data-l="en">Words that look English but aren't. Tap a card.</p>
+      <p class="big reveal" style="margin-top:2rem" data-l="ta">ஆங்கிலம் போல் தோன்றும், ஆனால் ஆங்கிலம் அல்லாத சொற்கள். அட்டையைத் தொடுங்கள்.</p>
+      <div class="flips reveal" id="loan-traps"></div>
+      <div class="tiles reveal" style="margin-top:1rem">
+        <div class="tile"><b class="n">99%</b><p data-l="en">of the words it converted were right, in a hand-checked sample. It leaves a word alone when unsure.</p><p data-l="ta">மாற்றிய சொற்களில் சரியானவை (கையால் சரிபார்த்த மாதிரி). உறுதியில்லையென்றால் சொல்லை விட்டுவிடும்.</p></div>
+        <div class="tile"><b class="n">45 → 12</b><p data-l="en">English word errors per 100 on Indian-accented English, from the attempt before the rule to the one after</p><p data-l="ta">இந்திய உச்சரிப்பு ஆங்கிலத்தில் 100 சொற்களுக்குத் தவறுகள், விதிக்கு முந்தைய முயற்சியிலிருந்து பிந்தையது வரை</p></div>
+      </div>
+      <div data-d="d" class="reveal" style="margin-top:1.5rem">
+        <p data-l="en">The dictionary has 2 routes: exact Tamil-script forms, and verified English stems plus a whitelisted Tamil suffix for forms never seen before. Native look-alikes are blocked. Names, Sanskrit-origin words and ambiguous words (கால் = leg or call) stay Tamil. Context rules handle sandhi (பேசிக் கொண்டு is "while speaking", not basic) and split compounds (ஸ்டார்ட் அப்புக்கு → startup-க்கு). Candidates: about 75,000 Tamil-script word types. A local AI model proposed English + suffix; each proposal had to match a mechanical split and the seed lexicon, then pass a blind check in up to 3 random transcript snippets. Precision 0.99 and recall 0.64 on 200 hand-checked transcripts. A later blind audit of changed words found bugs in the converter itself (sir-ஆ, police சாமியார்); they were fixed before run 10. The scorer folds both scripts, so writing an English word either way is never counted as an error.</p>
+        <p data-l="ta">அகராதிக்கு 2 வழிகள்: சரியான தமிழ் எழுத்து வடிவங்கள்; புதிய வடிவங்களுக்கு, சரிபார்த்த ஆங்கில வேர் + அனுமதிக்கப்பட்ட தமிழ் விகுதி. பெயர்கள், வடமொழிச் சொற்கள், இருபொருள் சொற்கள் (கால்) தமிழிலேயே. புணர்ச்சி, பிரிந்த கூட்டுச் சொற்களுக்குச் சூழல் விதிகள். சுமார் 75,000 சொல் வகைகள்; ஒவ்வொரு முன்மொழிவும் 3 தற்செயல் வாக்கியங்களில் மறைமுகமாகச் சோதிக்கப்பட்டது. 200 கையால் சரிபார்த்த உரைகளில் துல்லியம் 0.99, மீட்பு 0.64. மதிப்பீட்டில் இரு எழுத்துகளும் சரியே.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- DIRTY DATA -->
 <section class="chapter" id="data">
   <div class="inner">
@@ -554,6 +585,6 @@
   <p data-l="en">Audio clips: IndicVoices (AI4Bharat, CC BY 4.0), Kathbath (AI4Bharat), FLEURS (Google, audio CC BY 4.0, text from FLORES CC BY-SA 4.0), Svarah (AI4Bharat, CC BY 4.0), LibriSpeech (CC BY 4.0). Scores use the public test sets listed in the repository. Other models were used only as benchmarks.</p>
   <p data-l="ta">ஒலிக்கோப்புகள்: IndicVoices (AI4Bharat, CC BY 4.0), Kathbath (AI4Bharat), FLEURS (Google, ஒலி CC BY 4.0, உரை FLORES CC BY-SA 4.0), Svarah (AI4Bharat, CC BY 4.0), LibriSpeech (CC BY 4.0). மற்ற மாதிரிகள் ஒப்பீட்டுக்கு மட்டுமே பயன்படுத்தப்பட்டன.</p>
 </footer>
-<script src="assets/app.js?v=9"></script>
+<script src="assets/app.js?v=10"></script>
 </body>
 </html>
