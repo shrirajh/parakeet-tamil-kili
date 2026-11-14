@@ -11,6 +11,19 @@ let metric = "per", withLM = false;
 
 /* ---------- language, theme, progress, reveal ---------- */
 const redraw = [];
+const NARROW = 760;
+const isNarrow = () => innerWidth <= NARROW;
+// width to draw a chart at: the desktop viewBox width, or on phones the host box's pixel width
+const fitW = (host, desktopW, pad = 0) => (isNarrow() ? Math.max(280, Math.floor((host && host.clientWidth ? host.clientWidth : innerWidth - 56) - pad)) : desktopW);
+const wrapText = (s, width, font = 13) => {
+  const cw = font * (/[஀-௿]/.test(s) ? 0.7 : 0.64), max = Math.max(8, Math.floor(width / cw)), out = [];
+  let line = "";
+  for (const w of String(s).split(" ")) { if (line && (line + " " + w).length > max) { out.push(line); line = w; } else line = line ? line + " " + w : w; }
+  if (line) out.push(line);
+  return out;
+};
+const tspans = (lines, x, lh) => lines.map((l, i) => `<tspan x="${x}" dy="${i ? lh : 0}">${esc(l)}</tspan>`).join("");
+const fitSvg = (W, H, label) => `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${label}"${isNarrow() ? ' class="fit"' : ""}>`;
 function setLang(l) {
   document.documentElement.lang = l; localStorage.setItem("lang", l);
   $$("[data-set-lang]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.setLang === l)));
@@ -201,20 +214,20 @@ function dumbbell() {
   const host = $("#dumbbell"), S = SC.scores;
   const sets = Object.keys(SC.sets).filter((s) => metric === "wer" || SC.sets[s].kind !== "english");
   const vals = sets.flatMap((s) => ["e5", "itcore", "e5_lm"].map((m) => S[m]?.[s]?.[metric]).filter((v) => v != null));
-  const W = 1000, rowH = 44, GAPH = 30, P = { l: 220, r: 210, t: 20 };
+  const nar = isNarrow(), W = nar ? fitW(host, 1000) : 1000, rowH = nar ? 50 : 44, GAPH = 30, P = nar ? { l: 8, r: 64, t: 20 } : { l: 220, r: 210, t: 20 };
   const kinds = [...new Set(sets.map((s) => SC.sets[s].kind))], H = P.t + sets.length * rowH + kinds.length * GAPH + 30;
   const mx = Math.max(...vals), stp = mx > 30 ? 10 : mx > 12 ? 5 : mx > 6 ? 2 : mx > 3 ? 1 : 0.5, lo = 0, hi = Math.ceil((mx * 1.04) / stp) * stp, x = (v) => P.l + ((v - lo) / (hi - lo)) * (W - P.l - P.r);
   const kindLbl = { spoken: { en: "spoken Tamil", ta: "பேச்சுத் தமிழ்" }, read: { en: "read Tamil", ta: "வாசித்த தமிழ்" }, english: { en: "English", ta: "ஆங்கிலம்" } };
-  let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="scoreboard">`;
+  let g = fitSvg(W, H, "scoreboard");
   for (let v = 0; v <= hi + 1e-9; v += stp) { g += `<g class="grid"><line x1="${x(v)}" x2="${x(v)}" y1="${P.t}" y2="${H - 24}"/></g><text x="${x(v)}" y="${H - 6}" text-anchor="middle">${+v.toFixed(1)}</text>`; }
   let last = null, yy = P.t;
   sets.forEach((s) => {
     const k = SC.sets[s].kind;
     if (k !== last) { yy += GAPH; g += `<text x="0" y="${yy - 8}" style="fill:var(--fg-3);font-size:10px;${lang() === "en" ? "letter-spacing:.08em" : ""}">${esc(L(kindLbl[k]).toUpperCase())}</text>`; last = k; }
-    const y = yy + rowH / 2; yy += rowH;
+    const y = yy + rowH / 2 + (nar ? 8 : 0); yy += rowH;
     const o = S.e5[s][metric], it = S.itcore[s]?.[metric], lm = S.e5_lm[s]?.[metric];
     const ours = withLM && lm != null ? lm : o;
-    g += `<text class="lbl" x="0" y="${y + 5}">${esc(L(SC.sets[s]))}</text>`;
+    g += nar ? `<text class="lbl" x="0" y="${y - 14}" style="font-size:12px">${esc(L(SC.sets[s]))}</text>` : `<text class="lbl" x="0" y="${y + 5}">${esc(L(SC.sets[s]))}</text>`;
     if (it != null) g += `<line x1="${x(ours)}" x2="${x(it)}" y1="${y}" y2="${y}" stroke="var(--fg-3)" stroke-width="2" opacity=".45"/>`;
     if (withLM && lm != null) g += `<circle cx="${x(o)}" cy="${y}" r="7" fill="none" stroke="var(--ours)" stroke-width="2" opacity=".55" data-tip="parakeet-tamil · ${o.toFixed(2)}"/>`;
     if (it == null) g += `<circle cx="${x(ours)}" cy="${y}" r="8" fill="var(--ours)" stroke="var(--bg-2)" stroke-width="2" data-tip="parakeet-tamil${withLM ? " + LM" : ""} · ${ours.toFixed(2)}"/>`;
@@ -222,8 +235,8 @@ function dumbbell() {
       g += `<circle cx="${x(it)}" cy="${y}" r="9" fill="var(--itcore)" stroke="var(--bg-2)" stroke-width="2" data-tip="indic-transcribe-core · ${it.toFixed(2)}"/>`;
     g += `<circle cx="${x(ours)}" cy="${y}" r="8" fill="var(--ours)" stroke="var(--bg-2)" stroke-width="2" data-tip="parakeet-tamil${withLM ? " + LM" : ""} · ${ours.toFixed(2)}"/>`;
       const d = ours - it, win = d < 0;
-      g += `<text x="${W - P.r + 18}" y="${y + 5}" style="fill:var(--fg);font-weight:700;font-size:14px">${win ? "▲" : "▼"} ${Math.abs(d).toFixed(metric === "wer" || metric === "cer" ? 1 : 2)}</text>`;
-      g += `<text x="${W - 2}" y="${y + 5}" text-anchor="end" style="font-size:11px">${win ? L({ en: "we lead", ta: "நாங்கள் முன்னால்" }) : L({ en: "behind", ta: "நாங்கள் பின்னால்" })}</text>`;
+      g += `<text x="${nar ? W - 2 : W - P.r + 18}" y="${y + 5}" ${nar ? 'text-anchor="end"' : ""} style="fill:var(--fg);font-weight:700;font-size:14px">${win ? "▲" : "▼"} ${Math.abs(d).toFixed(metric === "wer" || metric === "cer" ? 1 : 2)}</text>`;
+      if (!nar) g += `<text x="${W - 2}" y="${y + 5}" text-anchor="end" style="font-size:11px">${win ? L({ en: "we lead", ta: "நாங்கள் முன்னால்" }) : L({ en: "behind", ta: "நாங்கள் பின்னால்" })}</text>`;
     }
   });
   host.innerHTML = g + "</svg>"; tips(host);
@@ -391,6 +404,8 @@ function raceInit() {
 }
 const LADDER = [["baseline", 358], ["local attention, 1000 s batches", 592], ["no activation checkpointing", 733], ["40 length buckets", 762], ["bf16 SDPA", 810], ["Triton banded attention", 838], ["60 buckets", 850], ["fast conv", 866], ["fused add + LayerNorm", 874], ["bias in row kernels", 893], ["Triton depthwise conv", 911]];
 function ladder() {
+  if (isNarrow()) return hbarsNarrow($("#ladder"), LADDER.map(([n, v], i) => [n, v, "--ours", `${v}`, 0.45 + (0.55 * i) / (LADDER.length - 1)]), 950,
+    "training throughput", L({ en: "training speed: audio hours per GPU-hour, RTX PRO 6000", ta: "பயிற்சி வேகம்: ஒரு GPU-மணியில் கற்கும் ஒலி மணிகள், RTX PRO 6000" }));
   const W = 1000, rh = 26, P = { l: 300, r: 60, t: 30 }, H = P.t + LADDER.length * rh + 10, x = (v) => P.l + (v / 950) * (W - P.l - P.r);
   let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="training throughput"><text x="0" y="16" style="fill:var(--fg);font-weight:700">${L({ en: "training speed: audio hours per GPU-hour, RTX PRO 6000", ta: "பயிற்சி வேகம்: ஒரு GPU ஒரு மணி நேரத்தில் கற்கும் ஒலி மணிகள், RTX PRO 6000" })}</text>`;
   LADDER.forEach(([n, v], i) => { const y = P.t + i * rh; g += `<text x="${P.l - 10}" y="${y + 17}" text-anchor="end">${esc(n)}</text><rect x="${P.l}" y="${y + 4}" width="${x(v) - P.l}" height="${rh - 8}" rx="4" fill="var(--ours)" opacity="${0.45 + (0.55 * i) / (LADDER.length - 1)}" data-tip="${esc(n)}: ${v}"/><text x="${x(v) + 6}" y="${y + 17}" style="fill:var(--fg)">${v}</text>`; });
@@ -401,6 +416,8 @@ function ladder() {
 const GAP = [[{ en: "near miss: one sound off", ta: "ஒரே ஒரு ஒலி மாறியது" }, 3.38, 35], [{ en: "a different word", ta: "வேறு சொல்" }, 1.98, 27], [{ en: "joined, split or suffix", ta: "சேர்த்து/பிரித்து எழுதியது, விகுதி" }, 1.67, 25],
   [{ en: "sandhi consonant (spelling rule)", ta: "புணர்ச்சி ஒற்று (எழுத்து விதி)" }, 1.19, 32], [{ en: "dropped word", ta: "விடுபட்ட சொல்" }, 1.13, 23], [{ en: "ல/ள/ழ, ன/ண/ந, ர/ற only", ta: "ல/ள/ழ, ன/ண/ந, ர/ற மட்டும்" }, 0.76, 27], [{ en: "English word, other script", ta: "ஆங்கிலச் சொல், வேறு எழுத்தில்" }, 0.47, 22]];
 function gap() {
+  if (isNarrow()) return hbarsNarrow($("#gap-chart"), GAP.map(([n, v, lm]) => [L(n), v, "--itcore", `${v} · LM ${lm}%`]), 3.6,
+    "FLEURS gap", L({ en: "FLEURS: WER points we lose to indic-transcribe-core, by kind", ta: "FLEURS: indic-transcribe-core-ஐ விட நாங்கள் பின்தங்கும் WER புள்ளிகள், வகைவாரியாக" }));
   const W = 1000, rh = 34, P = { l: 330, r: 160, t: 34 }, H = P.t + GAP.length * rh + 6, x = (v) => P.l + (v / 3.6) * (W - P.l - P.r);
   let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="FLEURS gap"><text x="0" y="16" style="fill:var(--fg);font-weight:700">${L({ en: "FLEURS: WER points we lose to indic-transcribe-core, by kind", ta: "FLEURS: indic-transcribe-core-ஐ விட நாங்கள் பின்தங்கும் WER புள்ளிகள், வகை வாரியாக" })}</text>`;
   GAP.forEach(([n, v, lm], i) => { const y = P.t + i * rh; g += `<text x="${P.l - 10}" y="${y + 21}" text-anchor="end" class="lbl" style="font-weight:500">${esc(L(n))}</text><rect x="${P.l}" y="${y + 6}" width="${x(v) - P.l}" height="${rh - 12}" rx="4" fill="var(--itcore)" data-tip="${v} WER · LM ${lm}%"/><text x="${x(v) + 8}" y="${y + 21}" style="fill:var(--fg)">${v.toFixed(2)}</text><text x="${W}" y="${y + 21}" text-anchor="end">${L({ en: "LM fixes", ta: "LM சரிசெய்வது" })} ${lm}%</text>`; });
@@ -572,6 +589,8 @@ function tocSpy(force) {
 let tocTick = false;
 addEventListener("scroll", () => { if (!tocTick) { tocTick = true; requestAnimationFrame(() => { tocTick = false; tocSpy(); }); } }, { passive: true });
 addEventListener("resize", () => tocSpy(true));
+let lastW = innerWidth, rzT = null;
+addEventListener("resize", () => { clearTimeout(rzT); rzT = setTimeout(() => { const w = innerWidth; if ((w <= NARROW) !== (lastW <= NARROW) || (w <= NARROW && Math.abs(w - lastW) > 30)) { lastW = w; redraw.forEach((f) => f()); } }, 200); });
 function tocOpen(open) {
   $("#tocpanel").classList.toggle("open", open); $("#tocscrim").classList.toggle("open", open);
   $("#tocbtn").setAttribute("aria-expanded", String(open));
@@ -603,9 +622,30 @@ async function numbersStrip(url) {
   draw(); if (!reduce) numTimer = setInterval(draw, 110);
 }
 
+/* ---------- phone layout for horizontal bar charts: label above a full-width bar, value at its end ---------- */
+function hbarsNarrow(host, rows, max, aria, title) {
+  const W = fitW(host, 1000), LH = 17, bh = 14, vw = 64, x = (v) => Math.max(3, (v / max) * (W - vw));
+  const tl = title ? wrapText(title, W, 13) : [], top = title ? tl.length * LH + 10 : 4;
+  const lab = rows.map(([n]) => wrapText(n, W, 13)), hs = lab.map((l) => l.length * LH + bh + 12);
+  const H = top + hs.reduce((a, b) => a + b, 0);
+  let g = fitSvg(W, H, esc(aria));
+  if (title) g += `<text x="0" y="14" style="fill:var(--fg);font-weight:700;font-size:13px">${tspans(tl, 0, LH)}</text>`;
+  let y = top;
+  rows.forEach(([n, v, c, label, op], i) => {
+    const w = x(v), by = y + lab[i].length * LH + 2;
+    g += `<text x="0" y="${y + 13}" class="lbl" style="font-size:13px">${tspans(lab[i], 0, LH)}</text>`;
+    g += `<rect x="0" y="${by}" width="${w}" height="${bh}" rx="4" fill="var(${c})"${op ? ` opacity="${op}"` : ""}/>`;
+    const lw = String(label).length * 7, inside = w + 6 + lw > W && w > lw + 12;  // no room after the bar: write it inside the bar's end
+    g += `<text x="${inside ? w - 6 : Math.min(w + 6, W - lw)}" y="${by + 11}" ${inside ? 'text-anchor="end"' : ""} style="fill:var(${inside ? "--bg" : "--fg"});font-weight:700;font-size:12px">${esc(label)}</text>`;
+    y += hs[i];
+  });
+  host.innerHTML = g + "</svg>";
+}
+
 /* ---------- Whisper's hours: English vs Tamil ---------- */
 function hardCharts() {
   const B = [[{ en: "Whisper: English", ta: "Whisper: ஆங்கிலம்" }, 438218, "--fg-3"], [{ en: "Whisper: Tamil", ta: "Whisper: தமிழ்" }, 136, "--itcore"], [{ en: "our Tamil, collected from scraps", ta: "நாங்கள் அங்கிங்கே சேகரித்த தமிழ்" }, 4760, "--ours"]];
+  if (isNarrow()) return hbarsNarrow($("#gap-hours"), B.map(([n, v, c]) => [L(n), v, c, `${v.toLocaleString()} h`]), 438218, "hours of training audio");
   const W = 1000, rh = 46, P = { l: lang() === "ta" ? 360 : 260, r: 120, t: 6 }, H = P.t + B.length * rh, x = (v) => P.l + (v / 438218) * (W - P.l - P.r);
   let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="hours of training audio">`;
   B.forEach(([n, v, c], i) => { const y = P.t + i * rh; g += `<text x="${P.l - 12}" y="${y + 27}" text-anchor="end" class="lbl">${esc(L(n))}</text><rect x="${P.l}" y="${y + 10}" width="${Math.max(3, x(v) - P.l)}" height="${rh - 20}" rx="4" fill="var(${c})" data-tip="${v.toLocaleString()} h"/><text x="${Math.max(P.l + 3, x(v)) + 10}" y="${y + 27}" style="fill:var(--fg);font-weight:700">${v.toLocaleString()} h</text>`; });
@@ -621,8 +661,10 @@ function recipe() {
   const by = {}; MIX.rows.forEach((r) => { (by[r.kind] ||= { h: 0, seen: 0 }); by[r.kind].h += r.hours; by[r.kind].seen += r.seen_5ep; });
   const W = 1000, rh = 40, P = { l: 290, r: 150, t: 6 }, H = P.t + KORDER.length * rh, mx = Math.max(...KORDER.map((k) => by[k].h)), x = (v) => P.l + (v / mx) * (W - P.l - P.r);
   let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="hours by kind">`;
+  const mixNarrow = isNarrow();
+  if (mixNarrow) hbarsNarrow($("#mix-bars"), KORDER.map((k) => [L(KIND[k]), by[k].h, k === "english" ? "--fg-3" : "--ours", `${Math.round(by[k].h).toLocaleString()} h`]), mx, "hours by kind");
   KORDER.forEach((k, i) => { const y = P.t + i * rh, v = by[k].h; g += `<text x="${P.l - 12}" y="${y + 25}" text-anchor="end" class="lbl">${esc(L(KIND[k]))}</text><rect x="${P.l}" y="${y + 8}" width="${Math.max(3, x(v) - P.l)}" height="${rh - 16}" rx="4" fill="var(${k === "english" ? "--fg-3" : "--ours"})" data-tip="${v.toLocaleString()} h · ${L({ en: "heard", ta: "கேட்டது" })} ${by[k].seen.toLocaleString()} h"/><text x="${x(v) + 10}" y="${y + 25}" style="fill:var(--fg);font-weight:700">${v.toLocaleString()} h</text>`; });
-  $("#mix-bars").innerHTML = g + "</svg>"; tips($("#mix-bars"));
+  if (!mixNarrow) { $("#mix-bars").innerHTML = g + "</svg>"; tips($("#mix-bars")); }
   const hd = [L({ en: "source", ta: "மூலம்" }), L({ en: "what", ta: "என்ன" }), L({ en: "split", ta: "பகுதி" }), L({ en: "licence", ta: "உரிமம்" }), L({ en: "hours", ta: "மணி" }), L({ en: "passes per epoch", ta: "ஒரு சுற்றில் எத்தனை முறை" }), L({ en: "heard by epoch 5", ta: "5 சுற்றுகளில் கேட்டது" })];
   let t = `<table class="dt"><thead><tr>${hd.map((h, i) => `<th style="text-align:${i <= 3 ? "left" : "right"}">${esc(h)}</th>`).join("")}</tr></thead><tbody>`;
   KORDER.forEach((k) => { t += `<tr class="grp"><td colspan="7">${esc(L(KIND[k]))}</td></tr>`; MIX.rows.filter((r) => r.kind === k).forEach((r) => (t += `<tr><td>${esc(r.name)}</td><td style="text-align:left">${esc(r.what)}</td><td style="text-align:left;white-space:normal;min-width:12rem">${esc(r.split)}</td><td style="text-align:left">${esc(r.licence)}</td><td>${r.hours.toLocaleString()}</td><td>${r.per_epoch === 0.33 ? "⅓" : r.per_epoch}</td><td>${r.seen_5ep.toLocaleString()}</td></tr>`)); });
@@ -675,13 +717,13 @@ function storyScore() {
   const G = [[{ en: "everyday conversation", ta: "அன்றாட உரையாடல்" }, (m, k) => S[m].eval_indicvoices[k]], [{ en: "reading aloud", ta: "உரக்க வாசித்தல்" }, avg]];
   $("#story-score").innerHTML = Q.map((q) => {
     const vals = G.flatMap(([, f]) => [f("e5", q.k), f("itcore", q.k)]), mx = Math.max(...vals) * 1.15;
-    const W = 520, rh = 34, H = 2 * (2 * rh + 34) + 10;
-    let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(L(q.t))}">`;
+    const W = fitW($("#story-score"), 520, 40), rh = 34, H = 2 * (2 * rh + 34) + 10;
+    let g = fitSvg(W, H, esc(L(q.t)));
     G.forEach(([gl, f], gi) => {
       const y0 = gi * (2 * rh + 34) + 4;
       g += `<text x="0" y="${y0 + 14}" class="lbl">${esc(L(gl))}</text>`;
       [["e5", "--ours", L({ en: "ours", ta: "எங்களுடையது" })], ["itcore", "--itcore", L({ en: "the other program", ta: "மற்றது" })]].forEach(([m, c, nm], i) => {
-        const v = f(m, q.k), y = y0 + 22 + i * rh, w = (v / mx) * (W - 200);
+        const v = f(m, q.k), y = y0 + 22 + i * rh, w = (v / mx) * (W - 190);
         g += `<text x="0" y="${y + 18}">${esc(nm)}</text><rect x="140" y="${y + 4}" width="${w}" height="${rh - 10}" rx="4" fill="var(${c})"/><text x="${146 + w}" y="${y + 19}" style="fill:var(--fg);font-weight:700;font-size:14px">${v.toFixed(1)}</text>`;
       });
     });
@@ -819,13 +861,16 @@ function lmChart() {
     [{ en: "Meaning drift, reading aloud", ta: "பொருள் மாற்றம், உரக்க வாசித்தல்" }, av("e5", "eer"), av("e5_lm", "eer")],
     [{ en: "Meaning drift, conversation", ta: "பொருள் மாற்றம், உரையாடல்" }, S.e5.eval_indicvoices.eer, S.e5_lm.eval_indicvoices.eer],
   ];
-  const W = 520, rh = 76, H = rows.length * rh + 10, mx = Math.max(...rows.flatMap((r) => [r[1], r[2]])) * 1.2, x = (v) => (v / mx) * (W - 170);
-  let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="effect of the language model">`;
+  const nar = isNarrow(), W = fitW($("#lm-chart"), 520), heads = rows.map(([n]) => (nar ? wrapText(L(n), W, 12) : [L(n)]));
+  const hh = heads.map((h) => (h.length - 1) * 15), mx = Math.max(...rows.flatMap((r) => [r[1], r[2]])) * 1.2, x = (v) => (v / mx) * (W - 170);
+  const H = rows.length * 76 + hh.reduce((a, b) => a + b, 0) + 10;
+  let g = fitSvg(W, H, "effect of the language model"), y = 4;
   rows.forEach(([n, a, b], i) => {
-    const y = i * rh + 4;
-    g += `<text x="0" y="${y + 14}" class="lbl">${esc(L(n))}</text>`;
-    g += `<text x="0" y="${y + 36}">${L({ en: "without", ta: "இல்லாமல்" })}</text><rect x="110" y="${y + 24}" width="${x(a)}" height="16" rx="4" fill="var(--ours)" opacity=".55"/><text x="${116 + x(a)}" y="${y + 37}" style="fill:var(--fg);font-weight:700">${a.toFixed(2)}</text>`;
-    g += `<text x="0" y="${y + 58}">${L({ en: "with LM", ta: "உடன்" })}</text><rect x="110" y="${y + 46}" width="${x(b)}" height="16" rx="4" fill="var(--ours)"/><text x="${116 + x(b)}" y="${y + 59}" style="fill:var(--fg);font-weight:700">${b.toFixed(2)}</text>`;
+    g += `<text x="0" y="${y + 14}" class="lbl"${nar ? ' style="font-size:12px"' : ""}>${tspans(heads[i], 0, 15)}</text>`;
+    const o = y + hh[i];
+    g += `<text x="0" y="${o + 36}">${L({ en: "without", ta: "இல்லாமல்" })}</text><rect x="110" y="${o + 24}" width="${x(a)}" height="16" rx="4" fill="var(--ours)" opacity=".55"/><text x="${116 + x(a)}" y="${o + 37}" style="fill:var(--fg);font-weight:700">${a.toFixed(2)}</text>`;
+    g += `<text x="0" y="${o + 58}">${L({ en: "with LM", ta: "உடன்" })}</text><rect x="110" y="${o + 46}" width="${x(b)}" height="16" rx="4" fill="var(--ours)"/><text x="${116 + x(b)}" y="${o + 59}" style="fill:var(--fg);font-weight:700">${b.toFixed(2)}</text>`;
+    y += 76 + hh[i];
   });
   $("#lm-chart").innerHTML = `<div class="small" style="margin-bottom:.4rem">${L({ en: "It fixes spelling and meaning, not hearing. Lower is better.", ta: "மொழி மாதிரி எழுத்துப் பிழையையும் பொருளையும் சரிசெய்கிறது. காதால் கேட்பதை அல்ல. எண் குறைவாக இருந்தால் நல்லது." })}</div><div class="chart">${g}</svg></div>`;
   const sets = Object.keys(SC.sets).filter((s) => SC.sets[s].kind !== "english");
@@ -995,6 +1040,19 @@ augRender(); redraw.push(augRender);
   };
   const begin = (src, dst, px, py) => {
     const sr = src.getBoundingClientRect(), fy = Math.min(1, Math.max(0, (py - sr.top) / (sr.height || 1)));
+    if (src.tagName === "IMG") {  // images have no words to morph: cross-fade the other language's picture over it
+      dst.loading = "eager";
+      dst.classList.add("peek-show", "in");
+      Object.assign(dst.style, { position: "absolute", left: "0px", top: "0px", width: sr.width + "px", margin: "0", zIndex: "40" });
+      const dr = dst.getBoundingClientRect();
+      dst.style.left = sr.left - dr.left + "px"; dst.style.top = sr.top - dr.top + "px";
+      const layer = document.createElement("div");
+      document.body.appendChild(layer);
+      document.documentElement.classList.add("peeking");
+      const anims = [dst.animate([{ opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0)" }], { duration: reduce ? 1 : D * 0.6, easing: ease, fill: "both" })];
+      cur = { src, dst, layer, anims, ending: false };
+      return;
+    }
     // lay the translation out invisibly on top of the original, same width, no reflow
     dst.classList.add("peek-show", "in");
     Object.assign(dst.style, { position: "absolute", left: "0px", top: "0px", width: sr.width + "px", margin: "0", visibility: "hidden", zIndex: "40" });
@@ -1049,6 +1107,7 @@ augRender(); redraw.push(augRender);
     if (!el || el.dataset.l !== document.documentElement.lang) return;
     const p = partner(el);
     if (!p) return;
+    if (p.tagName === "IMG") p.loading = "eager";
     start = [e.clientX, e.clientY];
     timer = setTimeout(() => { timer = null; begin(el, p, start[0], start[1]); }, HOLD);
   });

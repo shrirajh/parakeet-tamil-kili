@@ -267,6 +267,8 @@ table.dt tr.grp td { font: 600 .7rem var(--mono); color: var(--fg-3); text-trans
   .chart { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .chart svg { min-width: 680px; }
   #epoch-chart svg { min-width: 0; }
+  .chart svg.fit { min-width: 0; width: 100%; }
+  .chart:has(> svg.fit) { overflow: visible; }
 }
 html[lang="ta"] .hero .tag { max-width: 46rem; font-size: clamp(1.05rem, 1.9vw, 1.3rem); }
 html[lang="ta"] .box .t, html[lang="ta"] table.dt th, html[lang="ta"] table.dt tr.grp td, html[lang="ta"] .racebox .lbl, html[lang="ta"] .tile .k, html[lang="ta"] .opt .who, html[lang="ta"] .pair .who { letter-spacing: 0; text-transform: none; font-family: var(--ta); }
@@ -492,3 +494,7 @@ html[lang="ta"] .toc a { padding-top: .12rem; padding-bottom: .12rem; }
 .trylink { display: inline-flex; gap: .45rem; align-items: center; margin-top: 1.4rem; padding: .6rem 1.2rem; border-radius: 999px;
   text-decoration: none; font-weight: 600; color: var(--bg); background: var(--fg); transition: transform .2s, box-shadow .2s; margin-bottom: .8rem; }
 .trylink:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0, 0, 0, .25); }
+
+/* never let a chart stretch its box beyond the screen */
+.chart { max-width: 100%; }
+.grid2x > *, .scorer, .vpanel { min-width: 0; }
