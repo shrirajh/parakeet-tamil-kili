@@ -189,4 +189,6 @@ speech from Maya2 (Apache-2.0) with Kyutai Mimi (CC BY 4.0) on text from Tanglis
 punctuation few-shot examples in `kili/punct/prompts.py` are IndicVoices transcripts (CC BY 4.0). Full credits are
 in the write-up.
 
-Built by shrirajh with [Claude](https://claude.ai) as a coding and research assistant.
+Built by shrirajh with Claude Opus 5.5 [1m], via [Claude Code](https://claude.com/claude-code), as a coding and research
+assistant. Human in the loop throughout: a person directed every step and checked every result. Claude was not used
+autonomously.
