@@ -296,3 +296,6 @@ p.plain.sents .s:first-child { font-weight: 650; }
 .dial input[type=range] { width: min(320px, 60vw); accent-color: var(--ours); }
 .dial .lbl { font: .75rem var(--mono); color: var(--fg-3); }
 .voices .dial + p.small { margin-top: 1rem; }
+
+.family { margin: 1.5rem 0 2rem; }
+#nextword { margin-bottom: 1rem; }

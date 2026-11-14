@@ -625,3 +625,38 @@ function lmChart() {
   $("#lm-table").innerHTML = t + "</tbody></table>";
 }
 (function waitLM() { if (SC) { lmChart(); redraw.push(lmChart); } else setTimeout(waitLM, 100); })();
+
+/* ---------- same family: keyboard, our LM, ChatGPT/Claude ---------- */
+function family() {
+  const F = [
+    { r: 26, t: { en: "phone keyboard", ta: "கைபேசி விசைப்பலகை" }, d: { en: "guesses your next word from the last few", ta: "கடைசி சில சொற்களை வைத்து அடுத்த சொல்லை ஊகிக்கிறது" } },
+    { r: 40, t: { en: "our language model", ta: "எங்கள் மொழி மாதிரி" }, d: { en: "looks at the last 4 words · read 8 million Tamil sentences · runs on a home computer", ta: "கடைசி 4 சொற்கள் · 80 லட்சம் தமிழ் வாக்கியங்கள் · வீட்டுக் கணினியில்" } },
+    { r: 110, t: { en: "ChatGPT, Claude", ta: "ChatGPT, Claude" }, d: { en: "look at the whole conversation · read a large part of the internet · run in huge data centres", ta: "முழு உரையாடலையும் பார்க்கின்றன · இணையத்தின் பெரும் பகுதியைப் படித்தவை · பெரிய தரவு மையங்களில் இயங்குகின்றன" } },
+  ];
+  const W = 1000, H = 360, cx = [150, 420, 770], base = 250;
+  let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="language model family">`;
+  g += `<text x="${W / 2}" y="22" text-anchor="middle" class="lbl" style="font-size:15px">${esc(L({ en: "Same family: every one of them guesses the next word.", ta: "ஒரே குடும்பம்: ஒவ்வொன்றும் அடுத்த சொல்லை ஊகிக்கிறது." }))}</text>`;
+  F.forEach((f, i) => {
+    g += `<circle cx="${cx[i]}" cy="${base - f.r}" r="${f.r}" fill="var(--ours)" opacity="${0.35 + i * 0.25}"/>`;
+    g += `<text x="${cx[i]}" y="${base + 30}" text-anchor="middle" class="lbl">${esc(L(f.t))}</text>`;
+    g += `<foreignObject x="${cx[i] - 150}" y="${base + 38}" width="300" height="70"><div xmlns="http://www.w3.org/1999/xhtml" style="text-align:center;font-size:12px;color:var(--fg-3);line-height:1.4">${esc(L(f.d))}</div></foreignObject>`;
+  });
+  g += `<line x1="40" x2="${W - 40}" y1="${base}" y2="${base}" stroke="var(--rule)"/><text x="${W - 4}" y="${H - 4}" text-anchor="end" style="font-size:10px">${L({ en: "illustration, not to scale", ta: "விளக்கப்படம், அளவுப்படி அல்ல" })}</text>`;
+  $("#family").innerHTML = `<div class="chart">${g}</svg></div>`;
+}
+/* ---------- next word: real counts from the language model's text ---------- */
+const NW = [
+  { c: "தொலைக்காட்சியில்", g: { en: "on television", ta: "தொலைக்காட்சியில்" }, a: 764, b: 1 },
+  { c: "வானொலியில்", g: { en: "on the radio", ta: "வானொலியில்" }, a: 2, b: 94 },
+];
+let nwI = 0;
+function nextword() {
+  const n = NW[nwI], mx = Math.max(n.a, n.b);
+  const row = (w, gl, v) => `<div class="lane" style="grid-template-columns:12rem 1fr 5rem"><span class="name ta" style="font-size:1.15rem">${w}<br><small class="dim">${esc(L(gl))}</small></span><div class="tr"><i style="width:${Math.max(0.6, (100 * v) / mx)}%;background:var(--ours)"></i></div><span class="t">${v.toLocaleString()}×</span></div>`;
+  $("#nextword").innerHTML = `<div class="controls">${NW.map((x, i) => `<button data-nw="${i}" aria-pressed="${i === nwI}"><span class="ta">${x.c}</span> · ${esc(L(x.g))}</button>`).join("")}</div>
+    <div class="ta" style="font-size:1.4rem;margin:.6rem 0 .8rem">${n.c} <span class="dim">___</span></div>
+    ${row("ஒளிபரப்பு…", { en: "broadcast (light: TV)", ta: "ஒளி: தொலைக்காட்சி" }, n.a)}${row("ஒலிபரப்பு…", { en: "broadcast (sound: radio)", ta: "ஒலி: வானொலி" }, n.b)}
+    <div class="small" style="margin-top:.6rem">${L({ en: "How often Tamil writers used each word after these words, in the 8.9 million sentences our language model read.", ta: "எங்கள் மொழி மாதிரி படித்த 89 லட்சம் வாக்கியங்களில், இந்தச் சொற்களுக்குப் பின் தமிழ் எழுத்தாளர்கள் ஒவ்வொரு சொல்லையும் எத்தனை முறை பயன்படுத்தினர்." })}</div>`;
+  $$("[data-nw]").forEach((x) => x.addEventListener("click", () => { nwI = +x.dataset.nw; nextword(); }));
+}
+family(); nextword(); redraw.push(family, nextword);
