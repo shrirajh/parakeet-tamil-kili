@@ -817,3 +817,43 @@ async function augPlay() {
 }
 $("#aug-play").addEventListener("click", augPlay);
 augRender(); redraw.push(augRender);
+
+/* ---------- press and hold any text to peek at the other language ---------- */
+(() => {
+  const HOLD = 380, SKIP = "button, a, input, select, summary, svg, canvas, audio, .bar, .opt, .flip, .qcard, [data-dflip], .sync";
+  let timer = null, start = null, shown = null, hidden = null, justPeeked = false;
+  const partner = (el) => {
+    const other = el.dataset.l === "en" ? "ta" : "en", sib = [...el.parentElement.children];
+    const mine = sib.filter((c) => c.dataset.l === el.dataset.l), theirs = sib.filter((c) => c.dataset.l === other);
+    return theirs[mine.indexOf(el)] || null;
+  };
+  const cancel = () => { clearTimeout(timer); timer = null; };
+  const end = () => {
+    cancel();
+    if (!shown) return;
+    shown.classList.remove("peek-show"); hidden.classList.remove("peek-hide");
+    const back = hidden;
+    back.classList.remove("peek-back"); void back.offsetWidth; back.classList.add("peek-back");
+    back.addEventListener("animationend", () => back.classList.remove("peek-back"), { once: true });
+    document.documentElement.classList.remove("peeking");
+    shown = hidden = null; justPeeked = true; setTimeout(() => (justPeeked = false), 50);
+  };
+  document.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0 || e.target.closest(SKIP)) return;
+    const el = e.target.closest("[data-l]");
+    if (!el || el.dataset.l !== document.documentElement.lang) return;
+    const p = partner(el);
+    if (!p) return;
+    start = [e.clientX, e.clientY];
+    timer = setTimeout(() => {
+      timer = null; hidden = el; shown = p;
+      el.classList.add("peek-hide"); p.classList.add("peek-show");
+      document.documentElement.classList.add("peeking");
+      window.getSelection()?.removeAllRanges();
+    }, HOLD);
+  });
+  document.addEventListener("pointermove", (e) => { if (timer && Math.hypot(e.clientX - start[0], e.clientY - start[1]) > 10) cancel(); });
+  ["pointerup", "pointercancel", "blur", "scroll"].forEach((ev) => window.addEventListener(ev, end, { passive: true }));
+  document.addEventListener("contextmenu", (e) => { if (shown || timer) e.preventDefault(); });
+  document.addEventListener("click", (e) => { if (justPeeked) { e.preventDefault(); e.stopPropagation(); } }, true);
+})();

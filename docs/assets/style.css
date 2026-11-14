@@ -15,7 +15,7 @@
   --ins: #1baf7a40; --del: #e3494840; --sub: #eda10050;
 }
 
-html[lang="en"] [data-l="ta"], html[lang="ta"] [data-l="en"] { display: none !important; }
+html[lang="en"] [data-l="ta"]:not(.peek-show), html[lang="ta"] [data-l="en"]:not(.peek-show), .peek-hide { display: none !important; }
 html[lang="ta"] body { font-family: var(--ta); }
 .ta { font-family: var(--ta); }
 
@@ -395,3 +395,13 @@ html[lang="ta"] .meme.photo .aigen { font-family: var(--ta); }
   #vmap, #vdial-chart { overflow: visible; }
 }
 @media (max-width: 600px) { html[lang="ta"] h3 { font-size: min(1.4rem, 4.9vw); } }
+
+/* press-and-hold peek at the other language */
+.peek-show, .peek-back { animation: peek-in .38s cubic-bezier(.2, .7, .2, 1); }
+.peek-show { background: var(--bg-2); border-radius: .35em; box-shadow: 0 0 0 .3em var(--bg-2); }
+.peek-show[data-l="ta"] { font-family: var(--ta); }
+.peek-show[data-l="en"] { font-family: var(--sans); }
+@keyframes peek-in { from { opacity: 0; filter: blur(6px); transform: translateY(5px) scale(.985); } to { opacity: 1; filter: none; transform: none; } }
+html.peeking, html.peeking * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+@media (prefers-reduced-motion: reduce) { .peek-show, .peek-back { animation: none; } }
+.peektip { margin-top: 1rem; font-size: .85rem; color: var(--fg-3); }
