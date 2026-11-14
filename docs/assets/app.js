@@ -59,9 +59,14 @@ function keepPlace(change) {
   place(); requestAnimationFrame(place);
 }
 $("#theme").addEventListener("click", () => {
-  const t = document.documentElement.dataset.theme === "light" ? "" : "light";
-  if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
-  localStorage.setItem("theme", t); redraw.forEach((f) => f());
+  const flip = () => {
+    const t = document.documentElement.dataset.theme === "light" ? "" : "light";
+    if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
+    localStorage.setItem("theme", t); redraw.forEach((f) => f());
+  };
+  // cross-fade the whole page (text, charts, canvases) between themes; instant where unsupported or reduced motion
+  if (!document.startViewTransition || matchMedia("(prefers-reduced-motion: reduce)").matches) return flip();
+  document.startViewTransition(flip);
 });
 addEventListener("scroll", () => { const h = document.documentElement; $("#pbar").style.transform = `scaleX(${h.scrollTop / (h.scrollHeight - h.clientHeight)})`; }, { passive: true });
 const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); e.target.dispatchEvent(new Event("shown")); io.unobserve(e.target); } }), { threshold: 0.12 });

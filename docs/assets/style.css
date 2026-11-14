@@ -425,3 +425,6 @@ html[lang="ta"] .lick { font: 700 .9rem var(--ta); text-transform: none; letter-
 .licrow > span { color: var(--fg-2); font-size: .95rem; }
 .liclinks { display: flex; gap: 1.4rem; padding-top: .9rem; font-size: .95rem; }
 @media (max-width: 640px) { .licrow { grid-template-columns: minmax(0, 1fr) auto; } .licrow > span { grid-column: 1 / -1; } }
+
+/* gradual light/dark switch (View Transitions cross-fade) */
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .7s; animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
