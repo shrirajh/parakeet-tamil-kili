@@ -964,3 +964,63 @@ augRender(); redraw.push(augRender);
   document.addEventListener("contextmenu", (e) => { if (cur || timer) e.preventDefault(); });
   document.addEventListener("click", (e) => { if (cur) { e.preventDefault(); e.stopPropagation(); } }, true);
 })();
+
+/* ---------- ISO 15919 romanisation under Tamil words, like furigana ---------- */
+const ISO_C = { "க": "k", "ங": "ṅ", "ச": "c", "ஞ": "ñ", "ட": "ṭ", "ண": "ṇ", "த": "t", "ந": "n", "ப": "p", "ம": "m", "ய": "y", "ர": "r", "ல": "l", "வ": "v", "ழ": "ḻ", "ள": "ḷ", "ற": "ṟ", "ன": "ṉ", "ஜ": "j", "ஷ": "ṣ", "ஸ": "s", "ஹ": "h", "ஶ": "ś" };
+const ISO_V = { "அ": "a", "ஆ": "ā", "இ": "i", "ஈ": "ī", "உ": "u", "ஊ": "ū", "எ": "e", "ஏ": "ē", "ஐ": "ai", "ஒ": "o", "ஓ": "ō", "ஔ": "au", "ஃ": "ḵ" };
+const ISO_S = { "ா": "ā", "ி": "i", "ீ": "ī", "ு": "u", "ூ": "ū", "ெ": "e", "ே": "ē", "ை": "ai", "ொ": "o", "ோ": "ō", "ௌ": "au", "ௗ": "" };
+function iso(w) {
+  const s = [...w.normalize("NFC")];
+  let o = "";
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (ISO_C[ch]) {
+      o += ISO_C[ch];
+      const nx = s[i + 1];
+      if (nx === "்") i++;
+      else if (nx in ISO_S) { o += ISO_S[nx]; i++; }
+      else o += "a";
+    } else if (ISO_V[ch]) o += ISO_V[ch];
+    else if (!(ch in ISO_S) && ch !== "்") o += ch;
+  }
+  return o;
+}
+const TA_RUN = /[\u0B80-\u0BFF]+/g, ISO_SKIP = "script, style, svg, rt, ruby, textarea, code, pre, .bar, [data-noiso]";
+function rubify(root) {
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT), list = [];
+  let n;
+  while ((n = w.nextNode())) if (/[\u0B80-\u0BFF]/.test(n.nodeValue) && !n.parentElement.closest(ISO_SKIP)) list.push(n);
+  list.forEach((n) => {
+    const f = document.createDocumentFragment(), v = n.nodeValue;
+    let last = 0;
+    v.replace(TA_RUN, (m, at) => {
+      if (at > last) f.append(v.slice(last, at));
+      const r = document.createElement("ruby"), rt = document.createElement("rt");
+      rt.textContent = iso(m); r.append(m, rt); f.append(r);
+      last = at + m.length;
+    });
+    if (last < v.length) f.append(v.slice(last));
+    n.replaceWith(f);
+  });
+}
+function unrubify() {
+  const parents = new Set();
+  $$("ruby").forEach((r) => { if (!r.closest(ISO_SKIP.replace("ruby, ", "").replace("rt, ", ""))) { parents.add(r.parentNode); r.replaceWith(r.firstChild.nodeValue); } });
+  parents.forEach((p) => p.normalize());
+}
+let isoOn = localStorage.getItem("iso") === "1";
+function setIso(on) {
+  isoOn = on; localStorage.setItem("iso", on ? "1" : "");
+  document.documentElement.dataset.iso = on ? "1" : "";
+  $("#iso").setAttribute("aria-pressed", String(on));
+  if (on) rubify(document.body); else unrubify();
+}
+$("#iso").addEventListener("click", () => keepPlace(() => setIso(!isoOn)));
+new MutationObserver((ms) => {
+  if (!isoOn) return;
+  for (const m of ms) m.addedNodes.forEach((n) => {
+    if (n.nodeType === 1 && n.tagName !== "RUBY" && n.tagName !== "RT") rubify(n);
+    else if (n.nodeType === 3 && n.parentElement && n.parentElement.tagName !== "RUBY" && n.parentElement.tagName !== "RT") rubify(n.parentElement);
+  });
+}).observe(document.body, { childList: true, subtree: true });
+if (isoOn) setIso(true);

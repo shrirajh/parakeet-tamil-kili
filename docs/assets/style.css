@@ -405,3 +405,13 @@ html.peeking, html.peeking * { -webkit-user-select: none; user-select: none; -we
 .holdtip { align-self: center; padding: 0 .4rem 0 .7rem; font-size: .78rem; color: var(--fg-3); white-space: nowrap; user-select: none; }
 .holdtip .sm { display: none; }
 @media (max-width: 760px) { .holdtip { padding: 0 .2rem 0 .5rem; font-size: .72rem; } .holdtip .lg { display: none; } .holdtip .sm { display: inline; } }
+
+/* ISO 15919 romanisation under Tamil words */
+#iso { font: 600 .8rem var(--sans); white-space: nowrap; }
+#iso .ta { font-size: .85rem; }
+ruby { ruby-position: under; ruby-align: center; }
+rt { font: 500 max(.5em, 10px)/1.1 var(--sans); color: var(--fg-3); letter-spacing: 0; text-transform: none; font-style: normal; font-weight: 500; -webkit-user-select: none; user-select: none; }
+html[data-iso="1"] :is(p, li, h1, h2, h3, .karaoke, .sync, .small, .tag, .hint, .opt, .pair span, .lines p, .big, .plain, .vcap) { line-height: max(1.9, var(--iso-lh, 1.9)); }
+html[data-iso="1"] h2 { line-height: 1.55; }
+@media (max-width: 480px) { .isoarr { display: none; } .toggles button { padding: .3rem .45rem; } .holdtip { padding: 0 .1rem 0 .4rem; letter-spacing: -.01em; } }
+@media (max-width: 380px) { html[lang="ta"] .holdtip { display: none; } }
