@@ -488,3 +488,7 @@ html[lang="ta"] .toc a { padding-top: .12rem; padding-bottom: .12rem; }
 .scrollhint b { display: inline-block; animation: bob 2s infinite; }
 @media (prefers-reduced-motion: reduce) { .scrollhint, .scrollhint b { transition: none; animation: none; } }
 @media (max-width: 760px) { .scrollhint { bottom: 82px; font-size: .85rem; } }
+
+.trylink { display: inline-flex; gap: .45rem; align-items: center; margin-top: 1.4rem; padding: .6rem 1.2rem; border-radius: 999px;
+  text-decoration: none; font-weight: 600; color: var(--bg); background: var(--fg); transition: transform .2s, box-shadow .2s; margin-bottom: .8rem; }
+.trylink:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0, 0, 0, .25); }
