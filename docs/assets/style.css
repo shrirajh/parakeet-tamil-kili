@@ -289,3 +289,5 @@ p.plain.sents .s:first-child { font-weight: 650; }
 .howto summary { cursor: pointer; font-weight: 600; color: var(--fg); }
 .howto p { margin-top: .8rem; }
 #mix-table table.dt th, #mix-table table.dt td { white-space: normal; } #mix-table table.dt td:nth-child(n+5), #mix-table table.dt th:nth-child(n+5) { white-space: nowrap; }
+#mix-table table.dt th { white-space: normal !important; vertical-align: bottom; } #mix-table table.dt td:first-child { min-width: 9rem; }
+#open-table table.dt th { white-space: normal; vertical-align: bottom; }
