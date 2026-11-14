@@ -1,4 +1,68 @@
 {
+ "gemma4_e4b": {
+  "eval_cv_en": {
+   "n": 2000,
+   "ta_script": 0.0,
+   "wer": 14.7
+  },
+  "eval_cv_ta": {
+   "cer": 14.54,
+   "eer": 3.91,
+   "n": 2000,
+   "per": 7.61,
+   "wer": 53.45
+  },
+  "eval_fleurs_ta": {
+   "cer": 15.41,
+   "eer": 3.62,
+   "n": 580,
+   "per": 10.68,
+   "wer": 39.59
+  },
+  "eval_indicvoices": {
+   "cer": 25.2,
+   "eer": 6.0,
+   "n": 2000,
+   "per": 19.24,
+   "wer": 57.4
+  },
+  "eval_kathbath": {
+   "cer": 13.24,
+   "eer": 3.67,
+   "n": 2000,
+   "per": 7.96,
+   "wer": 43.39
+  },
+  "eval_ls_clean": {
+   "n": 2000,
+   "ta_script": 0.0,
+   "wer": 3.37
+  },
+  "eval_ls_other": {
+   "n": 2000,
+   "ta_script": 0.0,
+   "wer": 7.53
+  },
+  "eval_mile_ta": {
+   "cer": 14.41,
+   "eer": 4.54,
+   "n": 1333,
+   "per": 8.74,
+   "wer": 48.46
+  },
+  "eval_openslr65": {
+   "cer": 9.19,
+   "eer": 3.06,
+   "n": 2000,
+   "per": 5.75,
+   "wer": 34.6
+  },
+  "eval_svarah": {
+   "n": 2000,
+   "ta_script": 0.0,
+   "wer": 8.79
+  }
+ },
  "indicwhisper": {
   "eval_cv_ta": {
    "cer": 5.2,
@@ -41,6 +105,70 @@
    "n": 2000,
    "per": 13.24,
    "wer": 24.43
+  }
+ },
+ "omni_llm7b": {
+  "eval_cv_en": {
+   "n": 2000,
+   "ta_script": 0.0,
+   "wer": 11.76
+  },
+  "eval_cv_ta": {
+   "cer": 4.41,
+   "eer": 1.78,
+   "n": 2000,
+   "per": 1.83,
+   "wer": 27.48
+  },
+  "eval_fleurs_ta": {
+   "cer": 7.71,
+   "eer": 1.9,
+   "n": 580,
+   "per": 5.17,
+   "wer": 25.98
+  },
+  "eval_indicvoices": {
+   "cer": 28.03,
+   "eer": 7.24,
+   "n": 2000,
+   "per": 20.2,
+   "wer": 65.05
+  },
+  "eval_kathbath": {
+   "cer": 6.02,
+   "eer": 1.98,
+   "n": 2000,
+   "per": 2.24,
+   "wer": 31.55
+  },
+  "eval_ls_clean": {
+   "n": 2000,
+   "ta_script": 0.0,
+   "wer": 1.67
+  },
+  "eval_ls_other": {
+   "n": 2000,
+   "ta_script": 0.0,
+   "wer": 3.22
+  },
+  "eval_mile_ta": {
+   "cer": 5.95,
+   "eer": 1.93,
+   "n": 1333,
+   "per": 2.45,
+   "wer": 31.14
+  },
+  "eval_openslr65": {
+   "cer": 5.31,
+   "eer": 1.55,
+   "n": 2000,
+   "per": 2.42,
+   "wer": 26.62
+  },
+  "eval_svarah": {
+   "n": 2000,
+   "ta_script": 0.0,
+   "wer": 10.37
   }
  },
  "shruti": {
@@ -129,7 +257,7 @@
   "eval_ls_other": {
    "n": 2000,
    "ta_script": 0.0,
-   "wer": 3.5
+   "wer": 3.51
   },
   "eval_mile_ta": {
    "cer": 59.76,

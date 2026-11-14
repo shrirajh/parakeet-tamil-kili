@@ -6,7 +6,7 @@ const L = (o) => (o && typeof o === "object" ? o[lang()] ?? o.en : o);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const J = async (p) => (await fetch(p)).json();
+const J = async (p) => (await fetch(p, { cache: "no-cache" })).json();
 let metric = "per", withLM = false;
 
 /* ---------- language, theme, progress, reveal ---------- */
@@ -514,13 +514,13 @@ function openTable() {
   if (!SC) return;
   const keyOf = (c) => Object.keys(OPEN).find((k) => k === c || k.startsWith(c)) || c;
   const val = (c, s) => (c === "e5" || c === "e5_lm" || c === "itcore" ? SC.scores[c]?.[s] : OPEN[keyOf(c)]?.[s]) || null;
-  const m = metric === "eer" ? "wer" : metric;
+  const m = metric;
   let t = `<table class="dt"><thead><tr><th>${L({ en: "test set", ta: "தேர்வு" })} · ${m.toUpperCase()}</th>${OCOLS.map((c) => `<th>${esc(ONAME[c])}</th>`).join("")}</tr></thead><tbody>`;
   Object.keys(SC.sets).forEach((s) => {
     const en = SC.sets[s].kind === "english", mm = en ? "wer" : m;
     const vs = OCOLS.map((c) => { const r = val(c, s); return r ? r[mm] : undefined; });
     const ok = vs.filter((v) => v != null), best = ok.length ? Math.min(...ok) : null;
-    t += `<tr><td>${esc(L(SC.sets[s]))}</td>${vs.map((v, i) => { const c = OCOLS[i]; if (v == null) return c === "shruti" && en ? `<td class="pending">–</td>` : `<td class="pending">${L({ en: "scoring…", ta: "மதிப்பிடுகிறது…" })}</td>`; return `<td class="${v === best ? "best" : ""}">${v.toFixed(2)}</td>`; }).join("")}</tr>`;
+    t += `<tr><td>${esc(L(SC.sets[s]))}</td>${vs.map((v, i) => { const c = OCOLS[i]; if (v == null) return (c === "shruti" || c === "indicwhisper") && en ? `<td class="pending" title="Tamil-only model">–</td>` : `<td class="pending">${L({ en: "scoring…", ta: "மதிப்பிடுகிறது…" })}</td>`; return `<td class="${v === best ? "best" : ""}">${v.toFixed(2)}</td>`; }).join("")}</tr>`;
   });
   $("#open-table").innerHTML = t + "</tbody></table>";
 }
