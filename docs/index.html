@@ -78,7 +78,7 @@
     <p class="reveal" data-l="en">I wanted something they could talk to in Tamil, in English, or in both at once, like they do. <span class="dim">Many Tamil speakers live in the West, me included. We switch between Tamil and Western-accented English mid-sentence.</span></p>
     <p class="reveal" data-l="ta">அவர்கள் வழக்கமாகப் பேசுவது போலவே, தமிழிலோ ஆங்கிலத்திலோ இரண்டும் கலந்தும் பேசக்கூடிய ஒன்று வேண்டும் என்று நினைத்தேன். <span class="dim">நான் உட்படப் பல தமிழர்கள் மேற்கத்திய நாடுகளில் வசிக்கிறோம். ஒரே வாக்கியத்துக்குள்ளேயே தமிழுக்கும், மேற்கத்திய உச்சரிப்பு ஆங்கிலத்துக்கும் மாறி மாறிப் பேசுவோம்.</span></p>
     <p class="reveal" data-l="en">It had to be free and run at home. So I built one. It runs in their house today.</p>
-    <p class="reveal" data-l="ta">அது இலவசமாக இருக்க வேண்டும், வீட்டுக்குள்ளேயே இயங்க வேண்டும். அதனால் அதை நான் உருவாக்கினேன். இன்று அது அவர்கள் வீட்டில் இயங்கிக்கொண்டிருக்கிறது.</p>
+    <p class="reveal" data-l="ta">அது இலவசமாக இருக்க வேண்டும், வீட்டுக்குள்ளேயே இயங்க வேண்டும். அதனால் இதை நான் உருவாக்கினேன். இன்று இது அவர்கள் வீட்டில் இயங்கிக்கொண்டிருக்கிறது.</p>
   </div>
 </section>
 
@@ -152,7 +152,7 @@
 <section class="chapter" id="recipe">
   <div class="inner">
     <h2 class="reveal" data-l="en">What it learned from</h2>
-    <h2 class="reveal" data-l="ta">அது எதைக் கேட்டுக் கற்றது?</h2>
+    <h2 class="reveal" data-l="ta">இது எதைக் கேட்டுக் கற்றது?</h2>
     <p class="plain reveal" data-l="en">First, we needed recordings of people speaking Tamil, with the words written down. 6,534 hours of recordings: news, conversations, YouTube, read sentences, and English. That is 9 months of nonstop listening. The final version heard most of it 5 times.</p>
     <p class="plain reveal" data-l="ta">முதலில், மக்கள் தமிழ் பேசும் பதிவுகள் தேவைப்பட்டன. ஒவ்வொன்றிலும் பேசியது எழுத்தில் இருக்க வேண்டும். மொத்தம் 6,534 மணி நேரப் பதிவுகள்: செய்திகள், உரையாடல்கள், YouTube, வாசித்த வாக்கியங்கள், ஆங்கிலம். இடைவிடாமல் கேட்டால் 9 மாதம் ஆகும். இறுதிப் பதிப்பு இவற்றில் பெரும்பகுதியை மறுபடியும் மறுபடியும் 5 முறை கேட்டது.</p>
     <div class="chart reveal" id="mix-bars"></div>
@@ -215,7 +215,7 @@
         <div class="controls"><button id="aug-play">▶ <span data-l="en">play</span><span data-l="ta">கேளுங்கள்</span></button><span class="small" id="aug-desc"></span></div>
       </div>
       <p data-l="en">One thing we do not train on is volume. The model went deaf on very quiet recordings, so instead it evens out the volume before it listens. That costs nothing on normal recordings.</p>
-      <p data-l="ta">ஒலியின் அளவை (சத்தமாகவா, மெதுவாகவா என்பதை) மட்டும் நாங்கள் பயிற்சியில் மாற்றுவதில்லை. மிக மெல்லிய சத்தத்தில் உள்ள பதிவுகளில், எங்கள் மென்பொருளுக்குக் காதே கேட்காமல் போனது. அதனால், கேட்பதற்கு முன் அது ஒலியின் அளவைச் சீராக்கிக்கொள்கிறது. சாதாரணப் பதிவுகளில் இதனால் எந்த இழப்பும் இல்லை.</p>
+      <p data-l="ta">ஒலியின் அளவை (சத்தமாகவா, மெதுவாகவா என்பதை) மட்டும் நாங்கள் பயிற்சியில் மாற்றுவதில்லை. மிக மெல்லிய சத்தத்தில் உள்ள பதிவுகளில், எங்கள் மென்பொருளுக்குக் காதே கேட்காமல் போனது. அதனால், கேட்பதற்கு முன் இது ஒலியின் அளவைச் சீராக்கிக்கொள்கிறது. சாதாரணப் பதிவுகளில் இதனால் எந்த இழப்பும் இல்லை.</p>
       <div class="tablewrap" data-d="d" style="margin-top:1rem"><table class="dt"><thead><tr><th style="text-align:left">augmentation</th><th style="text-align:left">how</th><th>share of clips</th></tr></thead><tbody>
         <tr><td>background noise</td><td style="text-align:left">our own room-tone recordings, SNR 0–20 dB</td><td>30%</td></tr>
         <tr><td>echo (reverb)</td><td style="text-align:left">synthetic rooms, RT60 0.2–1.0 s, on the GPU</td><td>30%</td></tr>
@@ -524,9 +524,9 @@
   <div class="inner split">
     <div class="sticky">
       <h2 class="reveal" data-l="en">Where it still struggles.</h2>
-      <h2 class="reveal" data-l="ta">அது இன்னும் தடுமாறும் இடங்கள்.</h2>
+      <h2 class="reveal" data-l="ta">இது இன்னும் தடுமாறும் இடங்கள்.</h2>
       <p class="reveal" data-l="en">So where does it still lose? Words that differ by one sound and mean different things, like மழை (rain) and மலை (hill). Many speakers use these sounds interchangeably, so the sound alone often can't tell you which word was meant. A person uses the rest of the sentence to tell them apart. Our model doesn't do that well enough yet. We think this matters less in practice: the text usually goes on to an AI assistant like Claude or ChatGPT, which reads the whole sentence and works out that மலை was meant to be மழை. Tap a card.</p>
-      <p class="reveal" data-l="ta">அப்படியென்றால், அது இன்னும் எங்கே தோற்கிறது? ஒரே ஒரு ஒலியில் மட்டும் வேறுபட்டு, வேறு வேறு பொருள் தரும் சொற்களில். பலர் இந்த ஒலிகளை மாற்றி மாற்றிப் பயன்படுத்துவதால், ஒலியை மட்டும் வைத்து எந்தச் சொல் என்று சொல்ல முடிவதில்லை. உதாரணம்: மழை, மலை. ஒரு மனிதர் வாக்கியத்தின் மற்ற பகுதியை வைத்து இவற்றை வேறுபடுத்திக்கொள்வார். எங்கள் மென்பொருள் இதை இன்னும் போதுமான அளவு நன்றாகச் செய்வதில்லை. ஆனால் நடைமுறையில் இது அவ்வளவு பெரிய பிரச்சினை இல்லை என்று நினைக்கிறோம். ஏனென்றால், இந்த எழுத்து பொதுவாக Claude, ChatGPT போன்ற ஒரு AI உதவியாளரிடம் போகும். அது முழு வாக்கியத்தையும் படித்து, மலை என்பது உண்மையில் மழை என்று புரிந்துகொள்ளும். ஓர் அட்டையைத் தொட்டுப் பாருங்கள்.</p>
+      <p class="reveal" data-l="ta">அப்படியென்றால், இது இன்னும் எங்கே தோற்கிறது? ஒரே ஒரு ஒலியில் மட்டும் வேறுபட்டு, வேறு வேறு பொருள் தரும் சொற்களில். பலர் இந்த ஒலிகளை மாற்றி மாற்றிப் பயன்படுத்துவதால், ஒலியை மட்டும் வைத்து எந்தச் சொல் என்று சொல்ல முடிவதில்லை. உதாரணம்: மழை, மலை. ஒரு மனிதர் வாக்கியத்தின் மற்ற பகுதியை வைத்து இவற்றை வேறுபடுத்திக்கொள்வார். எங்கள் மென்பொருள் இதை இன்னும் போதுமான அளவு நன்றாகச் செய்வதில்லை. ஆனால் நடைமுறையில் இது அவ்வளவு பெரிய பிரச்சினை இல்லை என்று நினைக்கிறோம். ஏனென்றால், இந்த எழுத்து பொதுவாக Claude, ChatGPT போன்ற ஒரு AI உதவியாளரிடம் போகும். அது முழு வாக்கியத்தையும் படித்து, மலை என்பது உண்மையில் மழை என்று புரிந்துகொள்ளும். ஓர் அட்டையைத் தொட்டுப் பாருங்கள்.</p>
       <div class="flips reveal" id="homophones"></div>
     </div>
     <div>
@@ -542,7 +542,7 @@
     <h2 class="reveal" data-l="en">A second opinion that has read the Tamil internet</h2>
     <h2 class="reveal" data-l="ta">இன்னொரு கருத்து: தமிழ் இணையத்தைப் படித்த ஒரு மென்பொருள்</h2>
     <p class="plain reveal" data-l="en">Our hunch: most of those losses are spelling, not hearing, and spelling is exactly what a language model knows. So we tested whether one could close the gap. A language model is a program that guesses the next word. Your phone keyboard has a small one. ChatGPT and Claude are enormous ones. Ours is small and simple: it looks only at the last 4 words, and it learned which words tend to follow which by reading 8 million Tamil sentences from the web.</p>
-    <p class="plain reveal" data-l="ta">எங்கள் ஊகம் இது: அந்தத் தோல்விகளில் பெரும்பாலானவை கேட்பதில் வந்த தவறுகள் அல்ல, எழுத்துப் பிழைகள். சரியாக எழுதுவது எப்படி என்பதுதான் மொழி மாதிரிக்கு நன்றாகத் தெரிந்த விஷயம். அதனால், ஒரு மொழி மாதிரியால் இந்த இடைவெளியை நிரப்ப முடியுமா என்று சோதித்தோம். மொழி மாதிரி என்பது, அடுத்து வரும் சொல்லை ஊகிக்கும் ஒரு மென்பொருள். உங்கள் கைபேசி விசைப்பலகையிலேயே ஒரு சிறிய மொழி மாதிரி இருக்கிறது. ChatGPT-யும் Claude-உம் மிகப் பெரிய மொழி மாதிரிகள். எங்களுடையது சிறியது, எளிமையானது. அது கடைசி 4 சொற்களை மட்டுமே பார்க்கிறது. இணையத்திலிருந்து எடுத்த 80 லட்சம் தமிழ் வாக்கியங்களைப் படித்து, எந்தச் சொல்லுக்குப் பின் எந்தச் சொல் வழக்கமாக வரும் என்று அது கற்றுக்கொண்டது.</p>
+    <p class="plain reveal" data-l="ta">எங்கள் ஊகம் இது: அந்தத் தோல்விகளில் பெரும்பாலானவை கேட்பதில் வந்த தவறுகள் அல்ல, எழுத்துப் பிழைகள். சரியாக எழுதுவது எப்படி என்பதுதான் மொழி மாதிரிக்கு நன்றாகத் தெரிந்த விஷயம். அதனால், ஒரு மொழி மாதிரியால் இந்த இடைவெளியை நிரப்ப முடியுமா என்று சோதித்தோம். மொழி மாதிரி என்பது, அடுத்து வரும் சொல்லை ஊகிக்கும் ஒரு மென்பொருள். உங்கள் கைபேசி விசைப்பலகையிலேயே ஒரு சிறிய மொழி மாதிரி இருக்கிறது. ChatGPT-யும் Claude-உம் மிகப் பெரிய மொழி மாதிரிகள். எங்களுடையது சிறியது, எளிமையானது. இது கடைசி 4 சொற்களை மட்டுமே பார்க்கிறது. இணையத்திலிருந்து எடுத்த 80 லட்சம் தமிழ் வாக்கியங்களைப் படித்து, எந்தச் சொல்லுக்குப் பின் எந்தச் சொல் வழக்கமாக வரும் என்று இது கற்றுக்கொண்டது.</p>
     <div class="family reveal" id="family"></div>
     <p class="plain reveal" data-l="en">Our speech model writes what it hears. When it is torn between 2 spellings, the language model votes for the one Tamil writers actually use after those words. Pick the words that come before:</p>
     <p class="plain reveal" data-l="ta">பேச்சை எழுத்தாக மாற்றும் எங்கள் மென்பொருள், தான் கேட்பதை எழுதுகிறது. சில நேரம், ஒரு சொல்லை 2 விதமாக எழுதலாமே என்று அது தயங்கும். அப்போது மொழி மாதிரி ஒரு கேள்வி கேட்கிறது: இதற்கு முன் வந்த சொற்களுக்குப் பிறகு, தமிழில் எழுதுபவர்கள் உண்மையில் எதைப் பயன்படுத்துகிறார்கள்? அதற்கே அது வாக்களிக்கிறது. முன்னால் வரும் சொல்லைத் தேர்ந்தெடுங்கள்:</p>
@@ -661,7 +661,7 @@
       <div class="licrow"><b class="lick"><span data-l="en">the code</span><span data-l="ta">நிரல் (code)</span></b><b class="licv"><a href="https://www.apache.org/licenses/LICENSE-2.0">Apache-2.0</a></b>
         <span data-l="en">Inference, ONNX, training kernels, metrics and evaluation.</span>
         <span data-l="ta">இயக்குவது, ONNX, பயிற்சிக் கருவிகள், அளவீடுகள், மதிப்பீடு.</span></div>
-      <div class="licrow"><b class="lick"><span data-l="en">what it writes</span><span data-l="ta">அது எழுதுவது</span></b><b class="licv"><span data-l="en">yours</span><span data-l="ta">உங்களுடையது</span></b>
+      <div class="licrow"><b class="lick"><span data-l="en">what it writes</span><span data-l="ta">இது எழுதுவது</span></b><b class="licv"><span data-l="en">yours</span><span data-l="ta">உங்களுடையது</span></b>
         <span data-l="en">Transcripts are not covered by either licence.</span>
         <span data-l="ta">எழுத்துப்படிகளுக்கு இந்த இரண்டு உரிமங்களும் பொருந்தாது.</span></div>
       <div class="licask">
