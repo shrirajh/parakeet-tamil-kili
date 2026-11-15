@@ -544,3 +544,14 @@ html[lang="ta"] .vb-lab { letter-spacing: 0; text-transform: none; font-family: 
 #read .choices button.flash { border-color: var(--ours); animation: ctlpulse 1.1s ease-out 2; }
 #read .choices button.flash:nth-child(2) { animation-delay: .18s; }
 @media (prefers-reduced-motion: reduce) { #read .choices button.flash { animation: none; outline: 2px solid var(--ours); outline-offset: 3px; } }
+
+/* ---------- what others can take from this ---------- */
+.nvgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: .9rem; margin-top: 1.6rem; }
+.nv { background: var(--bg-2); border: 1px solid var(--rule); border-left: 4px solid var(--fg-3); border-radius: 14px; padding: 1rem 1.15rem; }
+.nv.nv-f { border-left-color: var(--ours); } .nv.nv-r { border-left-color: var(--good); } .nv.nv-w { border-left-color: var(--warn); }
+.nv .k { font: 700 .68rem var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--fg-3); }
+html[lang="ta"] .nv .k { letter-spacing: 0; text-transform: none; font-family: var(--ta); }
+.nv .nvt { font-weight: 750; font-size: 1.05rem; margin: .35rem 0 .45rem; line-height: 1.35; color: var(--fg); }
+.nv p { font-size: .92rem; margin: 0; color: var(--fg-2); }
+table.nvtable td, table.nvtable th { white-space: normal; text-align: left; vertical-align: top; }
+table.nvtable td:first-child { font-weight: 650; min-width: 11rem; }

@@ -103,6 +103,26 @@ parakeet v3 at 6,482× real time on one A100 and 19,399× on a B300 (batch 256);
   Against blind meaning judgements it separates same-meaning from wrong-meaning outputs at AUC 0.88.
   (`kili.metrics.eer`)
 
+## What's new here
+
+Findings, reusable components and method, with the evidence and the relation to existing work for each. The
+write-up covers the same items in plain language ([What others can take from this](https://shrirajh.github.io/parakeet-tamil-kili/#new)).
+
+| | What we did | Evidence | Relation to existing work |
+|---|---|---|---|
+| **Findings** | | | |
+| Spoken-to-written normalisation in Tamil ASR | Measured how often open Tamil models turn spoken forms into written Tamil (நாங்க → நாங்கள், இல்ல → இல்லை) | The three strongest other open models: 53–54% of 976 spoken forms on IndicVoices; kili 0. Those three agree with each other (21–29% of words differ) far more than with what was said (51–56%) | Verbatim vs clean transcription is an old distinction, and some models expose it as an option. New: how much current Tamil models normalise without being asked. Our spoken/written switch trained on LLM-made formal labels cost 1.3 WER, but 70% of those labels had errors |
+| Loanword script convention from partial labels | Converted English loanwords in Tamil labels to Latin script with the Tamil suffix attached (`office-ல`), only where a context-checked lexicon was sure | 99% precision on a hand-checked sample, 64% recall on the labels; the model writes 89% of English words in conversational Tamil in Latin script | Transliteration for code-switched ASR is established. New: precision-first conversion of only part of the labels was enough for the model to learn the rule |
+| Tamil word-timestamp accuracy | Tested word times of three models on 120 spliced Tamil recordings against an independent forced aligner (Meta MMS) | Word starts within 0.2 s: kili 94%, IndicWhisper 90%, Nemotron 24%; words placed in silence: 1.1%, 7.5%, 0.3% | We know of no published like-for-like comparison on Tamil |
+| Reference errors in Tamil test sets | Audited test references and training labels by ear and with blind reviewers | Kathbath: 7% of kili's and 13% of indic-transcribe-core's marked errors are reference errors (prompt typos, readers saying something else); 30,895 training recordings with wrong text or duplicates removed; a prank recording in the Common Voice English test set | Label errors in test sets are well documented (Northcutt et al., 2021). New: measured on Tamil read-speech benchmarks |
+| **Reusable pieces** | | | |
+| Label-free pitch direction in a TTS speaker space | Random speaker vectors for Maya2 TTS, plus one direction in its 192-d speaker space fitted to log-pitch | Cross-validated R² 0.68; orders 346 real speakers by pitch (Spearman 0.77, ceiling 0.87) and separates their gender labels at AUC 0.92 without seeing them (`kili.synth`) | Latent-direction steering (Shen et al., 2020) and random-speaker augmentation exist. New: label-free pitch control in a TTS speaker space, checked on real voices |
+| Tamil PER and EER | PER: Tamil phoneme edit distance where merged sounds (ல/ள/ழ, ண/ந/ன, ர/ற, vowel length) cost 0.25; EER: 1 − cosine of EmbeddingGemma 2 embeddings | EER separates same- from wrong-meaning outputs at AUC 0.88 against blind judges on 5,232 sentences (`kili.metrics`) | Weighted phonetic distances exist; EER is close to SemDist (Kim et al., 2021). New: Tamil merger-aware weights, and the validation |
+| Cross-script vocabulary extension, romanisation-based init | Appended 2,044 Tamil pieces to the original parakeet v3's tokenizer; each new embedding starts as the mean of the pieces of its romanisation (க்கு ← "kku") | English tokenisation and every old weight unchanged (scores identical before training); Tamil sentences 57 → 27 tokens (`kili.tokenizer`) | Embedding initialisation from existing subwords is known (WECHSEL, Minixhofer et al., 2022; FOCUS, Dobler and de Melo, 2023). Not compared against random initialisation |
+| Triton kernels for FastConformer-TDT training | Triton kernels for NeMo FastConformer-TDT training, one call: `kili.kernels.apply(model)`, with exactness tests | 358 → 911 audio hours per GPU-hour on Blackwell (2.54×), about 60% less compute per audio hour (`kili.kernels`) | Fused attention and loss kernels are common; these are drop-ins for this model family |
+| **Way of working** | | | |
+| AI-assisted engineering (case study) | One person and Claude Opus 5.5 (Claude Code) did data, labelling, training, kernels, evaluation and release | 5 days, about $400 of compute; 718 messages from the person, 12,517 replies from Claude (76 helper agents), 11.9M tokens written. A person directed every step and checked every result | AI coding assistants are widely used. New: a whole open ML project of this scope, with the effort logged and the way of working described in the write-up |
+
 ## Use
 
 The code is one package, `kili`. Install what you need with [uv](https://docs.astral.sh/uv/):

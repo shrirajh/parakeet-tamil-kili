@@ -510,9 +510,10 @@ const MAP = {
     lm: [770, 480, { en: "A second opinion", ta: "இன்னொரு கருத்து" }],
     claude: [935, 170, { en: "Made with Claude", ta: "Claude-இன் துணையோடு" }],
     use: [935, 350, { en: "Use it", ta: "பயன்படுத்துங்கள்" }],
+    new: [935, 460, { en: "What others can take", ta: "மற்றவர்களுக்கு" }],
   },
   edges: [["why", "hard"], ["hard", "recipe"], ["hard", "data"], ["hard", "lose"], ["recipe", "epochs"], ["recipe", "runs"], ["why", "listen"], ["why", "speed"], ["why", "runs"], ["runs", "epochs"], ["runs", "spot"], ["runs", "two-tamils"], ["spot", "kernels"], ["kernels", "runs"], ["kernels", "speed"], ["teacher", "two-tamils"], ["teacher", "data"],
-    ["two-tamils", "listen"], ["data", "measure"], ["data", "scores"], ["measure", "scores"], ["measure", "lose"], ["scores", "listen"], ["scores", "verbatim"], ["verbatim", "lose"], ["two-tamils", "verbatim"], ["verbatim", "lm"], ["epochs", "scores"], ["lose", "use"], ["lose", "lm"], ["loans", "runs"], ["loans", "measure"], ["loans", "data"], ["hard", "loans"], ["lm", "use"], ["lm", "scores"], ["claude", "runs"], ["speed", "use"]],
+    ["two-tamils", "listen"], ["data", "measure"], ["data", "scores"], ["measure", "scores"], ["measure", "lose"], ["scores", "listen"], ["scores", "verbatim"], ["verbatim", "lose"], ["two-tamils", "verbatim"], ["verbatim", "lm"], ["epochs", "scores"], ["lose", "use"], ["lose", "lm"], ["loans", "runs"], ["loans", "measure"], ["loans", "data"], ["hard", "loans"], ["lm", "use"], ["lm", "scores"], ["claude", "runs"], ["speed", "use"], ["use", "new"], ["claude", "new"]],
 };
 function mapDraw() {
   const W = 1020, H = 520, N = MAP.nodes;
@@ -545,7 +546,7 @@ const TOC = [
   [MAP.stages[1][1], ["recipe", "data", "loans", "teacher", "two-tamils", "spot", "kernels", "runs", "epochs"]],
   [MAP.stages[2][1], ["measure", "listen", "scores", "verbatim"]],
   [MAP.stages[3][1], ["lose", "lm", "speed"]],
-  [MAP.stages[4][1], ["claude", "use"]],
+  [MAP.stages[4][1], ["claude", "use", "new"]],
 ];
 const tocIds = TOC.flatMap(([, ids]) => ids.map((x) => (Array.isArray(x) ? x[0] : x)));
 const plain = (el) => { const c = el.cloneNode(true); c.querySelectorAll("rt").forEach((r) => r.remove()); return c.textContent.replace(/\s+/g, " ").trim(); };
@@ -760,7 +761,7 @@ function storyScore() {
 
 /* ---------- one sentence per line, everywhere (static and script-rendered text) ---------- */
 const SENT_SEL = "h2, h3, p, li, .vlist li > span, .okmstat span, .verdict, .flip .g, .small, .tile p, .hint, .tag, figcaption";
-const SENT_SKIP = ".lines, svg, table, .karaoke, .numbers, .simlog, .pair, .prompt, .heard, pre, .opt, .loanrow, .bar, footer, .techdlg";
+const SENT_SKIP = ".lines, svg, table, .karaoke, .numbers, .simlog, .pair, .prompt, .heard, pre, .opt, .loanrow, .bar, footer, .techdlg, .nv";
 // widow control: the last space inside an element becomes a no-break space, across inline tags
 function glueNode(el) {
   const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), nodes = [];
