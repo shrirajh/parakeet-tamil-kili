@@ -111,7 +111,7 @@ write-up covers the same items in plain language ([What others can take from thi
 | | What we did | Evidence | Relation to existing work |
 |---|---|---|---|
 | **Findings** | | | |
-| Spoken-to-written normalisation in Tamil ASR | Measured how often open Tamil models turn spoken forms into written Tamil (நாங்க → நாங்கள், இல்ல → இல்லை) | The three strongest other open models: 53–54% of 976 spoken forms on IndicVoices; kili 0. Those three agree with each other (21–29% of words differ) far more than with what was said (51–56%) | Verbatim vs clean transcription is an old distinction, and some models expose it as an option. New: how much current Tamil models normalise without being asked. Our spoken/written switch trained on LLM-made formal labels cost 1.3 WER, but 70% of those labels had errors |
+| Spoken-to-written normalisation in Tamil ASR | Measured how often open Tamil models turn spoken forms into written Tamil (நாங்க → நாங்கள், இல்ல → இல்லை) | The three strongest other open models: 53–54% of 976 spoken forms on IndicVoices; kili 0. Those three agree with each other (21–29% of words differ) far more than with what was said (51–56%) | Verbatim vs clean transcription is an old distinction, and some models expose it as an option. New: how much current Tamil models normalise without being asked. Applies to any diglossic language (see below). Our spoken/written switch trained on LLM-made formal labels cost 1.3 WER, but 70% of those labels had errors |
 | Loanword script convention from partial labels | Converted English loanwords in Tamil labels to Latin script with the Tamil suffix attached (`office-ல`), only where a context-checked lexicon was sure | 99% precision on a hand-checked sample, 64% recall on the labels; the model writes 89% of English words in conversational Tamil in Latin script | Transliteration for code-switched ASR is established. New: precision-first conversion of only part of the labels was enough for the model to learn the rule |
 | Tamil word-timestamp accuracy | Tested word times of three models on 120 spliced Tamil recordings against an independent forced aligner (Meta MMS) | Word starts within 0.2 s: kili 94%, IndicWhisper 90%, Nemotron 24%; words placed in silence: 1.1%, 7.5%, 0.3% | We know of no published like-for-like comparison on Tamil |
 | Reference errors in Tamil test sets | Audited test references and training labels by ear and with blind reviewers | Kathbath: 7% of kili's and 13% of indic-transcribe-core's marked errors are reference errors (prompt typos, readers saying something else); 30,895 training recordings with wrong text or duplicates removed; a prank recording in the Common Voice English test set | Label errors in test sets are well documented (Northcutt et al., 2021). New: measured on Tamil read-speech benchmarks |
@@ -122,6 +122,27 @@ write-up covers the same items in plain language ([What others can take from thi
 | Triton kernels for FastConformer-TDT training | Triton kernels for NeMo FastConformer-TDT training, one call: `kili.kernels.apply(model)`, with exactness tests | 358 → 911 audio hours per GPU-hour on Blackwell (2.54×), about 60% less compute per audio hour (`kili.kernels`) | Fused attention and loss kernels are common; these are drop-ins for this model family |
 | **Way of working** | | | |
 | AI-assisted engineering (case study) | One person and Claude Opus 5.5 (Claude Code) did data, labelling, training, kernels, evaluation and release | 5 days, about $400 of compute; 718 messages from the person, 12,517 replies from Claude (76 helper agents), 11.9M tokens written. A person directed every step and checked every result | AI coding assistants are widely used. New: a whole open ML project of this scope, with the effort logged and the way of working described in the write-up |
+
+### Beyond Tamil
+
+Only Tamil was measured, but most of this is not specific to Tamil:
+
+- **Diglossic languages.** Tamil is a textbook case of diglossia: one variety is spoken, another written (Ferguson,
+  1959; Britto, 1986). Arabic, Sinhala, Greek and Swiss German are others. In any of them, ASR training text mixes the
+  two varieties, and a decoder with a strong language model is pulled towards the written one, so a model can score
+  well on read speech while rewriting what people actually say. The design here (a verbatim ASR model, with
+  formalisation left to a separate text model) and the measurement (count rewrites of spoken forms against verbatim
+  references) transfer directly; they are worth running before trusting a WER in any diglossic language.
+- **Code-switching.** Converting only the loanwords one is sure of, and letting the model generalise the convention,
+  should carry over to other mixed-script pairs (Hindi–English, Arabic–French, Malay–English).
+- **Synthetic voices for low-resource languages.** The pitch direction needs only a TTS model with a speaker-embedding
+  space: no labels and no recordings of real people.
+- **Evaluation.** Merger-aware phoneme weights are a template for any language whose speakers merge sounds that the
+  spelling keeps apart; EER needs only a multilingual sentence-embedding model.
+- **New scripts in an existing model.** The romanisation-based warm start applies to any script added to a model
+  whose vocabulary is Latin only. The kernels apply to any FastConformer-TDT fine-tune, in any language.
+- **Method.** A speaker of the language, an AI assistant and about $400 of compute were enough for a leading open
+  model of conversational Tamil. Many languages have no one else building one.
 
 ## Use
 

@@ -555,3 +555,5 @@ html[lang="ta"] .nv .k { letter-spacing: 0; text-transform: none; font-family: v
 .nv p { font-size: .92rem; margin: 0; color: var(--fg-2); }
 table.nvtable td, table.nvtable th { white-space: normal; text-align: left; vertical-align: top; }
 table.nvtable td:first-child { font-weight: 650; min-width: 11rem; }
+.nvbeyond { margin-top: 2rem; background: var(--bg-2); border: 1px solid var(--rule); border-radius: 16px; padding: 1.2rem 1.4rem .6rem; }
+.nvbeyond h3 { margin-top: 0; }
