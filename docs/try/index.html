@@ -43,6 +43,8 @@
   .row + .row { margin-top: .8rem; }
   button:disabled { opacity: .4; cursor: not-allowed; }
   #out { font-family: var(--ta); font-size: 1.3rem; line-height: 1.7; min-height: 3.4em; white-space: pre-wrap; }
+  #out .w { border-radius: 4px; padding: 0 .06em; transition: background .1s, color .1s; } #out .w:hover { background: var(--bg-2); }
+  #out.playing .w { color: var(--fg-3); } #out.playing .w.on { color: var(--fg); } #out .w.now { background: color-mix(in srgb, var(--ours) 35%, transparent); color: var(--fg); }
   #src { font-size: .8rem; color: var(--fg-3); margin-bottom: .4rem; }
   .stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: .6rem; }
   .stats div { background: var(--bg-2); border-radius: 10px; padding: .5rem .7rem; }
@@ -111,6 +113,11 @@
     <h2><span data-l="en">3 · What it heard</span><span data-l="ta">3 · இது கேட்டது</span></h2>
     <div id="src"></div>
     <div id="out"></div>
+    <div class="row" id="wordbar" hidden style="margin-top:.6rem">
+      <button id="playalong" aria-pressed="false"><span data-l="en">▶ play along</span><span data-l="ta">▶ சேர்ந்து கேளுங்கள்</span></button>
+      <button id="dlwords"><span data-l="en">word times (.json)</span><span data-l="ta">சொல் நேரங்கள் (.json)</span></button>
+      <span class="note"><span data-l="en">Each word's start and end come from the decoder itself (80 ms steps). Hover a word to see them.</span><span data-l="ta">ஒவ்வொரு சொல்லின் தொடக்க, முடிவு நேரங்களும் குறிவிலக்கியிடமிருந்தே வருகின்றன (80 மில்லிவினாடிப் படிகள்). நேரத்தைப் பார்க்க ஒரு சொல்லின் மேல் சுட்டியை வையுங்கள்.</span></span>
+    </div>
   </section>
 
   <section class="box">
@@ -139,6 +146,6 @@
     <h2><span data-l="en">Errors</span><span data-l="ta">பிழைகள்</span></h2>
   </section>
 </main>
-<script src="try.js?v=2"></script>
+<script src="try.js?v=3"></script>
 </body>
 </html>

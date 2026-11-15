@@ -319,7 +319,7 @@ async function newState() {
   const L_ = 2, H = 640;  // pred.onnx state h, c: [2, 1, 640]
   const z = () => new ort.Tensor("float32", new Float32Array(L_ * H), [L_, 1, H]);
   const p = await predStep(M.blank, z(), z());  // the blank id is the start symbol
-  return { g: p.g, h: p.h, c: p.c, ids: [], f0: 0, sym: 0, decMs: 0, steps: 0 };
+  return { g: p.g, h: p.h, c: p.c, ids: [], ts: [], f0: 0, sym: 0, decMs: 0, steps: 0 };
 }
 // Greedy TDT over global frames [t, tEnd) of f (f row i = global frame st.f0 + i), as kili.infer.onnx_run.tdt_greedy.
 async function tdtGreedy(enc, t, tEnd, st) {
@@ -332,7 +332,7 @@ async function tdtGreedy(enc, t, tEnd, st) {
     for (let i = 0; i < V1; i++) if (lo[i] > kv) { kv = lo[i]; k = i; }
     for (let i = V1; i < lo.length; i++) if (lo[i] > dv) { dv = lo[i]; d = M.durations[i - V1]; }
     if (k === M.blank) { t += Math.max(d, 1); st.sym = 0; continue; }
-    st.ids.push(k);
+    st.ids.push(k); st.ts.push([t, d]);  // global frame and duration: word timestamps
     const p = await predStep(k, st.h, st.c);
     st.g = p.g; st.h = p.h; st.c = p.c;
     if (d === 0) { if (++st.sym >= M.maxSym) { t++; st.sym = 0; } }
@@ -342,6 +342,19 @@ async function tdtGreedy(enc, t, tEnd, st) {
   return t;
 }
 const text = (ids) => ids.map((i) => M.pieces[i]).join("").replace(/▁/g, " ").trim();
+// tokens -> [word, start s, end s], as kili.infer.onnx_run.OnnxASR.words (NeMo's TDT word offsets): a "▁" piece starts a
+// word; start = first token's frame, end = last token's frame + duration; punctuation joins without moving the end
+function words(ids, ts) {
+  const out = [];
+  ids.forEach((i, n) => {
+    const p = M.pieces[i], core = p.replace(/^▁/, ""), [t, d] = ts[n];
+    if (out.length && core && !/[\p{L}\p{M}\p{N}]/u.test(core)) { out[out.length - 1][0] += core; return; }
+    if (p.startsWith("▁") || !out.length) out.push([core, t, t + d]);
+    else { const w = out[out.length - 1]; w[0] += core; w[2] = t + d; }
+  });
+  const fs = HOP / SR;
+  return out.filter((w) => w[0]).map(([w, s, e]) => [w, +(s * fs).toFixed(2), +(e * fs).toFixed(2)]);
+}
 
 async function transcribeOffline(audio, onStats) {
   const t0 = performance.now(), st = await newState();
@@ -363,7 +376,7 @@ async function transcribeOffline(audio, onStats) {
     }
   }
   const ms = performance.now() - t0, sec = audio.length / SR;
-  return { text: text(st.ids), stats: { audio: sec, frontMs, encMs, decMs: st.decMs, totalMs: ms, rtfx: sec / (ms / 1000), tokens: st.ids.length, steps: st.steps } };
+  return { text: text(st.ids), words: words(st.ids, st.ts), stats: { audio: sec, frontMs, encMs, decMs: st.decMs, totalMs: ms, rtfx: sec / (ms / 1000), tokens: st.ids.length, steps: st.steps } };
 }
 
 /* ------------------------------------------------------------------------------------------------------- audio */
@@ -512,12 +525,45 @@ async function boot() {
   });
   $("#clear").addEventListener("click", async () => { await caches.delete(CACHE); location.reload(); });
 
+  // word timestamps: hoverable words, play along, download
+  let last = null, player = null;
+  const stopPlay = () => { if (player) { player.src.onended = null; try { player.src.stop(); } catch (e) {} player.ctx.close(); player = null; } $("#out").classList.remove("playing"); $("#playalong").setAttribute("aria-pressed", "false"); };
+  const showWords = (ws, audio, label) => {
+    last = { ws, audio, label };
+    $("#out").innerHTML = ws.map(([w, s, e]) => `<span class="w" data-s="${s}" data-e="${e}" title="${s.toFixed(2)}–${e.toFixed(2)} s">${w.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c])}</span>`).join(" ");
+    $("#wordbar").hidden = false;
+  };
+  $("#playalong").addEventListener("click", () => {
+    if (player) return stopPlay();
+    if (!last) return;
+    const ctx = new AudioContext(), buf = ctx.createBuffer(1, last.audio.length, SR);
+    buf.copyToChannel(last.audio, 0);
+    const src = ctx.createBufferSource(); src.buffer = buf; src.connect(ctx.destination);
+    player = { ctx, src, t0: ctx.currentTime }; src.start();
+    $("#out").classList.add("playing"); $("#playalong").setAttribute("aria-pressed", "true");
+    const sp = [...document.querySelectorAll("#out .w")];
+    const tick = () => {
+      if (!player) { sp.forEach((s) => s.classList.remove("on", "now")); return; }
+      const tt = player.ctx.currentTime - player.t0; let cur = -1;
+      sp.forEach((s, i) => { const on = +s.dataset.s <= tt; s.classList.toggle("on", on); if (on) cur = i; });
+      sp.forEach((s, i) => s.classList.toggle("now", i === cur && tt <= +sp[i].dataset.e + 0.3));
+      requestAnimationFrame(tick);
+    };
+    src.onended = stopPlay; tick();
+  });
+  $("#dlwords").addEventListener("click", () => {
+    if (!last) return;
+    const blob = new Blob([JSON.stringify({ source: last.label, words: last.ws.map(([w, s, e]) => ({ word: w, start: s, end: e })) }, null, 1)], { type: "application/json" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "words.json"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  });
+
   const run = async (audio, label) => {
-    busy(true);
+    busy(true); stopPlay(); $("#wordbar").hidden = true; last = null;
     $("#out").textContent = "…"; $("#src").textContent = label;
     try {
       const r = await transcribeOffline(audio, (s) => s.partial && ($("#out").textContent = s.partial + " …"));
       $("#out").textContent = r.text || L({ en: "(nothing recognised)", ta: "(எதுவும் கேட்கவில்லை)" });
+      if (r.words.length) showWords(r.words, audio, label);
       showStats(r.stats);
     } catch (e) { showError(e, "transcribe"); $("#out").textContent = ""; }
     busy(false);
@@ -576,7 +622,7 @@ async function boot() {
       liveMic = new Mic(); liveMic.onLevel = level; await liveMic.start();
     } catch (e) { showError(e, "microphone"); liveMic = null; return; }
     $("#live").setAttribute("aria-pressed", "true"); $("#rec").disabled = true;
-    $("#src").textContent = L({ en: "live microphone", ta: "நேரடி மைக்ரோஃபோன்" }); $("#out").textContent = "…";
+    $("#src").textContent = L({ en: "live microphone", ta: "நேரடி மைக்ரோஃபோன்" }); $("#out").textContent = "…"; stopPlay(); $("#wordbar").hidden = true; last = null;
     const t0 = performance.now();
     try {
       await live(liveMic, cfg, (u) => {

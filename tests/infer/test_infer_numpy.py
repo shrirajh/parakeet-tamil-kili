@@ -133,3 +133,31 @@ def test_numpy_decoder_lstm_step():
     assert np.allclose(c1[0], c_ref, atol=1e-6) and np.allclose(h1[0], h_ref, atol=1e-6) and np.allclose(g, h_ref)
     g0, (h, c) = dec.init_state(V)  # start symbol = blank (zero embedding row), zero state
     assert np.allclose(c[0], s(w["b0"][H:2 * H]) * 0 + s(w["b0"][:H]) * np.tanh(w["b0"][2 * H:3 * H]), atol=1e-6)
+
+
+class _Words:
+    """Just enough of OnnxASR for .words(): a piece table."""
+    pieces = ["▁ஆமா", ",", "▁meet", "ing", "-க்கு", "▁வா", "."]
+    words = OnnxASR.words
+
+
+def test_word_timestamps_follow_nemo_tdt_offsets():
+    # (frame, duration) per emitted token; word = first token's frame .. last token's frame + duration, x 80 ms;
+    # punctuation joins the word without moving its end (NeMo); "-க்கு" has letters, so it does move the end
+    ids = [0, 1, 2, 3, 4, 5, 6]
+    ts = [(4, 3), (11, 4), (12, 2), (14, 1), (15, 2), (20, 3), (24, 4)]
+    w = _Words().words(ids, ts)
+    assert [x[0] for x in w] == ["ஆமா,", "meeting-க்கு", "வா."]
+    assert w[0][1:] == (round(4 * 0.08, 2), round(7 * 0.08, 2))     # the comma (frame 11) does not stretch "ஆமா"
+    assert w[1][1:] == (round(12 * 0.08, 2), round(17 * 0.08, 2))
+    assert w[2][1:] == (round(20 * 0.08, 2), round(23 * 0.08, 2))
+
+
+def test_tdt_greedy_records_frame_and_duration_per_token():
+    # token 0 at frame 0 (duration 2), token 1 at frame 2 (duration 0, same frame), token 2 at frame 2 (duration 3)
+    script = {(0, 0): (0, 2), (2, 1): (1, 0), (2, 2): (2, 3)}
+    dec = ScriptDec(lambda t, n: script.get((t, n), (BLANK, 1)))
+    st = new_state(dec, BLANK)
+    tdt_greedy(dec, np.arange(8, dtype=float)[:, None], 0, 8, st, BLANK, DUR)
+    assert st["ids"] == [0, 1, 2]
+    assert st["ts"] == [(0, 2), (2, 0), (2, 3)]

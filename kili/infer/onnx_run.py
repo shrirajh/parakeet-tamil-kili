@@ -3,6 +3,7 @@
 Reads a directory written by `kili.infer.onnx_export` (encoder_int8.onnx, dec.npz, frontend.npz, meta.json).
 
   python -m kili.infer.onnx_run --dir onnx_dir a.wav b.wav [--threads 8] [--precision int8|fp32] [--decoder np|int8]
+                                [--timestamps]
 
 Default = the deployed configuration: int8 encoder (ONNX Runtime dynamic quantisation, per-channel weights) and the
 prediction network + joint in numpy fp32. Measured on run 10 (5 epochs): int8 vs the bf16 GPU eval differs by
@@ -14,6 +15,10 @@ Audio is decoded in one pass up to `max_seconds` (120 s). The exported encoder u
 the same +-256-frame band as NeMo's rel_pos_local_attn, so memory grows with the square of the length; longer audio
 is decoded in overlapping windows (`decode_windows`): 60 s chunks, each encoded with 20.48 s (the attention band)
 of audio on both sides, decoder state carried across chunks.
+
+Word timestamps (`transcribe_words`, `--timestamps`) come from the decode itself, as in NeMo: each token is emitted at
+an encoder frame t with a duration d; a word starts at its first token's t and ends at its last token's t + d, times
+80 ms. No separate aligner.
 """
 from __future__ import annotations
 
@@ -22,11 +27,13 @@ import json
 import os
 import sys
 import time
+import unicodedata
 
 import numpy as np
 
 SR = 16000
 HOP = 1280  # samples per encoder frame: 10 ms mel hop x 8 subsampling
+FRAME_S = HOP / SR  # 0.08 s
 
 
 # --------------------------------------------------------------------------------------------------------------- audio
@@ -187,7 +194,7 @@ class OrtDecoder:
 # ------------------------------------------------------------------------------------------------------ greedy TDT loop
 def new_state(dec, blank: int) -> dict:
     g, state = dec.init_state(blank)
-    return {"g": g, "state": state, "ids": [], "f0": 0, "sym": 0}
+    return {"g": g, "state": state, "ids": [], "ts": [], "f0": 0, "sym": 0}
 
 
 def tdt_greedy(dec, f: np.ndarray, t: int, t_end: int, st: dict, blank: int, durations, max_symbols: int = 10) -> int:
@@ -195,10 +202,10 @@ def tdt_greedy(dec, f: np.ndarray, t: int, t_end: int, st: dict, blank: int, dur
 
     Per step: token = argmax of the first blank + 1 logits, duration = argmax of the rest. A blank advances
     max(duration, 1) frames; a label is emitted, the prediction network steps, and time advances by its duration;
-    at most `max_symbols` labels per frame. Emits into st['ids'] and returns the next frame to decode, which may lie
-    past t_end (a duration jump into the next window)."""
+    at most `max_symbols` labels per frame. Emits into st['ids'] (and the global frame and duration of each label into
+    st['ts']) and returns the next frame to decode, which may lie past t_end (a duration jump into the next window)."""
     V1 = blank + 1
-    g, state, ids, f0, sym = st["g"], st["state"], st["ids"], st["f0"], st["sym"]
+    g, state, ids, ts, f0, sym = st["g"], st["state"], st["ids"], st["ts"], st["f0"], st["sym"]
     while t < t_end:
         lo = dec.joint(f[t - f0], g)
         k, d = int(lo[:V1].argmax()), durations[int(lo[V1:].argmax())]
@@ -207,6 +214,7 @@ def tdt_greedy(dec, f: np.ndarray, t: int, t_end: int, st: dict, blank: int, dur
             sym = 0
             continue
         ids.append(k)
+        ts.append((t, d))
         g, state = dec.pred(k, state)
         if d == 0:
             sym += 1
@@ -261,6 +269,7 @@ class OnnxASR:
         f, n = self.encode(audio)
         st = new_state(self.dec, self.blank)
         tdt_greedy(self.dec, f, 0, n, st, self.blank, self.durations, self.max_symbols)
+        self.last = st
         return st["ids"]
 
     def decode_windows(self, audio: np.ndarray, chunk_s: float = 60.0, context_s: float = 20.48) -> list[int]:
@@ -280,6 +289,7 @@ class OnnxASR:
             t = tdt_greedy(self.dec, f, max(t, w0), w0 + n if last else c1, st, self.blank, self.durations,
                            self.max_symbols)
             if last:
+                self.last = st
                 return st["ids"]
             c0 = c1
 
@@ -290,6 +300,31 @@ class OnnxASR:
         ids = self.decode_offline(audio) if len(audio) <= max_seconds * SR else self.decode_windows(audio)
         return self.text(ids)
 
+    def words(self, ids: list[int], ts: list[tuple[int, int]]) -> list[tuple[str, float, float]]:
+        """Tokens -> (word, start s, end s). A piece starting with "▁" begins a word; start = first token's frame,
+        end = last token's frame + duration (NeMo's TDT word offsets), in seconds. Punctuation tokens join the previous
+        word without moving its end (NeMo: a comma is emitted after the word, not spoken)."""
+        out = []
+        for i, (t, d) in zip(ids, ts):
+            p = self.pieces[i]
+            core = p.lstrip("▁")
+            if out and core and not any(unicodedata.category(c)[0] in "LMN" for c in core):
+                out[-1][0] += core
+                continue
+            if p.startswith("▁") or not out:
+                out.append([p.lstrip("▁"), t, t + d])
+            else:
+                out[-1][0] += p
+                out[-1][2] = t + d
+        return [(w, round(s * FRAME_S, 2), round(e * FRAME_S, 2)) for w, s, e in out if w]
+
+    def transcribe_words(self, audio: np.ndarray, max_seconds: float = 120.0) -> tuple[str, list[tuple[str, float, float]]]:
+        """float32 mono 16 kHz audio -> (text, [(word, start s, end s), ...])."""
+        if len(audio) == 0:
+            return "", []
+        text = self.transcribe(audio, max_seconds)
+        return text, self.words(self.last["ids"], self.last["ts"])
+
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
@@ -299,16 +334,22 @@ def main() -> None:
     ap.add_argument("--precision", choices=["int8", "fp32"], default="int8")
     ap.add_argument("--decoder", choices=["np", "int8"], default="np")
     ap.add_argument("--max-seconds", type=float, default=120.0, help="longer audio is decoded in windows")
+    ap.add_argument("--timestamps", action="store_true", help="also print word start / end times (s)")
     a = ap.parse_args()
     asr = OnnxASR(a.dir, a.threads, a.precision, a.decoder)
     tot_audio = tot_s = 0.0
     for p in a.audio:
         x = load_audio(p)
         t0 = time.perf_counter()
-        text = asr.transcribe(x, a.max_seconds)
+        if a.timestamps:
+            text, words = asr.transcribe_words(x, a.max_seconds)
+        else:
+            text, words = asr.transcribe(x, a.max_seconds), []
         tot_s += time.perf_counter() - t0
         tot_audio += len(x) / SR
         print(f"{p}\t{text}", flush=True)
+        for w, s0, s1 in words:
+            print(f"  {s0:7.2f} {s1:7.2f}  {w}", flush=True)
     print(f"[onnx_run] {tot_audio:.1f} s of audio in {tot_s:.2f} s (RTFx {tot_audio / max(tot_s, 1e-9):.1f})",
           file=sys.stderr)
 

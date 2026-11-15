@@ -133,11 +133,14 @@ The model was trained with local attention and a ±256-frame window (±20.48 s).
 ```bash
 uvx hf download shrirajh/parakeet-tamil-kili --include "onnx/*" --local-dir kili
 uv run python -m kili.infer.onnx_run --dir kili/onnx clip.wav
+uv run python -m kili.infer.onnx_run --dir kili/onnx clip.wav --timestamps   # word start / end times
 ```
 
 `onnx/` holds the int8 encoder (0.9 GB, the default) and the fp32 encoder (2.4 GB, `--precision fp32`), with the
 prediction network and joint as numpy weights (`dec.npz`). The fp32 export transcribes identically to NeMo; int8
-costs at most about 0.3 WER.
+costs at most about 0.3 WER. Word timestamps come from the decoder itself (`OnnxASR.transcribe_words`); with the fp32
+encoder they match NeMo's to the 80 ms frame (identical in 115 of 119 test recordings, the rest within one frame).
+The browser demo shows them too: hover a word, or play along.
 
 **Home Assistant** (Wyoming speech-to-text, CPU):
 
