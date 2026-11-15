@@ -68,6 +68,9 @@ What this says:
   18% fewer sound errors than the next best on IndicVoices (PER 9.4 vs 11.5) and the best PER on long recordings.
 - **Read Tamil** (news, prompts) is competitive: 0.7 to 1.8 PER points behind the best. The gap is mostly spelling, not
   hearing: PER (sounds) differs far less than WER (spellings).
+  Why that gap is not a bad thing, and why benchmarks like these are a poor measure of real-world use: see
+  [It writes what you said](https://shrirajh.github.io/parakeet-tamil-kili/#verbatim), [How do you mark a Tamil test?](https://shrirajh.github.io/parakeet-tamil-kili/#measure) and
+  [Who heard it right?](https://shrirajh.github.io/parakeet-tamil-kili/#listen) in the write-up.
 - **It writes what was said, and does not editorialise.** In 2,000 everyday recordings the three strongest other
   models rewrote spoken Tamil as written Tamil about half the time (நாங்க → நாங்கள், இல்ல → இல்லை: 53–54% of
   976 cases); kili did it 0 times, and it keeps the most fillers, backchannels and repetitions. Use it for formal
