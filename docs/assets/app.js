@@ -612,6 +612,17 @@ addEventListener("keydown", (e) => { if (e.key === "Escape") tocOpen(false); });
 tocDraw(); redraw.push(tocDraw);
 let hintT = setTimeout(() => scrollY < 40 && $("#scrollhint").classList.add("on"), 1400);
 addEventListener("scroll", () => { if (scrollY > 40) { clearTimeout(hintT); $("#scrollhint").classList.remove("on"); } }, { passive: true });
+$("#scrollhint").addEventListener("click", (e) => {
+  e.preventDefault();
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  $("#read").scrollIntoView({ behavior: still ? "auto" : "smooth", block: "center" });
+  // then pulse the two reading-mode buttons so they read as controls
+  setTimeout(() => {
+    const bs = $$("#read .choices button");
+    bs.forEach((b) => { b.classList.remove("flash"); void b.offsetWidth; b.classList.add("flash"); });
+    setTimeout(() => bs.forEach((b) => b.classList.remove("flash")), 2600);
+  }, still ? 50 : 650);
+});
 
 /* ---------- "a computer can't hear": the voice as numbers ---------- */
 let numTimer = null;
