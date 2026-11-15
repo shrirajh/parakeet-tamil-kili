@@ -761,7 +761,7 @@ function storyScore() {
 
 /* ---------- one sentence per line, everywhere (static and script-rendered text) ---------- */
 const SENT_SEL = "h2, h3, p, li, .vlist li > span, .okmstat span, .verdict, .flip .g, .small, .tile p, .hint, .tag, figcaption";
-const SENT_SKIP = ".lines, svg, table, .karaoke, .numbers, .simlog, .pair, .prompt, .heard, pre, .opt, .loanrow, .bar, footer, .techdlg, .nv";
+const SENT_SKIP = ".lines, svg, table, .karaoke, .numbers, .simlog, .pair, .prompt, .heard, pre, .opt, .loanrow, .bar, footer, .techdlg, .tk";
 // widow control: the last space inside an element becomes a no-break space, across inline tags
 function glueNode(el) {
   const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), nodes = [];

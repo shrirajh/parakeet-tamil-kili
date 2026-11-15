@@ -546,14 +546,14 @@ html[lang="ta"] .vb-lab { letter-spacing: 0; text-transform: none; font-family: 
 @media (prefers-reduced-motion: reduce) { #read .choices button.flash { animation: none; outline: 2px solid var(--ours); outline-offset: 3px; } }
 
 /* ---------- what others can take from this ---------- */
-.nvgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: .9rem; margin-top: 1.6rem; }
-.nv { background: var(--bg-2); border: 1px solid var(--rule); border-left: 4px solid var(--fg-3); border-radius: 14px; padding: 1rem 1.15rem; }
-.nv.nv-f { border-left-color: var(--ours); } .nv.nv-r { border-left-color: var(--good); } .nv.nv-w { border-left-color: var(--warn); }
-.nv .k { font: 700 .68rem var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--fg-3); }
-html[lang="ta"] .nv .k { letter-spacing: 0; text-transform: none; font-family: var(--ta); }
-.nv .nvt { font-weight: 750; font-size: 1.05rem; margin: .35rem 0 .45rem; line-height: 1.35; color: var(--fg); }
-.nv p { font-size: .92rem; margin: 0; color: var(--fg-2); }
-table.nvtable td, table.nvtable th { white-space: normal; text-align: left; vertical-align: top; }
-table.nvtable td:first-child { font-weight: 650; min-width: 11rem; }
-.nvbeyond { margin-top: 2rem; background: var(--bg-2); border: 1px solid var(--rule); border-radius: 16px; padding: 1.2rem 1.4rem .6rem; }
-.nvbeyond h3 { margin-top: 0; }
+.tk { list-style: none; counter-reset: tk; margin: 1.8rem 0 0; padding: 0; border-top: 1px solid var(--rule); }
+.tk li { counter-increment: tk; display: grid; grid-template-columns: 2.2rem minmax(0, 1.5fr) minmax(0, 1fr); gap: .3rem 1.6rem; padding: 1.05rem 0; border-bottom: 1px solid var(--rule); }
+.tk li::before { content: counter(tk, decimal-leading-zero); font: 700 .8rem var(--mono); color: var(--fg-3); padding-top: .25rem; }
+.tk .t { font-weight: 750; font-size: 1.08rem; color: var(--fg); line-height: 1.35; }
+.tk .d { font-size: .95rem; color: var(--fg-2); margin-top: .25rem; line-height: 1.55; }
+.tk .a { font-size: .9rem; color: var(--fg-2); line-height: 1.5; }
+.tk .a .lab { display: block; font: 700 .66rem var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--fg-3); margin-bottom: .2rem; }
+html[lang="ta"] .tk .a .lab { letter-spacing: 0; text-transform: none; font-family: var(--ta); }
+.tk .a a { display: block; margin-top: .35rem; font-size: .85rem; }
+.tk .p { grid-column: 2 / -1; font-size: .78rem; color: var(--fg-3); }
+@media (max-width: 720px) { .tk li { grid-template-columns: 1.8rem minmax(0, 1fr); } .tk .a, .tk .p { grid-column: 2; } .tk .a { margin-top: .6rem; } }

@@ -125,24 +125,13 @@ write-up covers the same items in plain language ([What others can take from thi
 
 ### Beyond Tamil
 
-Only Tamil was measured, but most of this is not specific to Tamil:
-
-- **Diglossic languages.** Tamil is a textbook case of diglossia: one variety is spoken, another written (Ferguson,
-  1959; Britto, 1986). Arabic, Sinhala, Greek and Swiss German are others. In any of them, ASR training text mixes the
-  two varieties, and a decoder with a strong language model is pulled towards the written one, so a model can score
-  well on read speech while rewriting what people actually say. The design here (a verbatim ASR model, with
-  formalisation left to a separate text model) and the measurement (count rewrites of spoken forms against verbatim
-  references) transfer directly; they are worth running before trusting a WER in any diglossic language.
-- **Code-switching.** Converting only the loanwords one is sure of, and letting the model generalise the convention,
-  should carry over to other mixed-script pairs (Hindi–English, Arabic–French, Malay–English).
-- **Synthetic voices for low-resource languages.** The pitch direction needs only a TTS model with a speaker-embedding
-  space: no labels and no recordings of real people.
-- **Evaluation.** Merger-aware phoneme weights are a template for any language whose speakers merge sounds that the
-  spelling keeps apart; EER needs only a multilingual sentence-embedding model.
-- **New scripts in an existing model.** The romanisation-based warm start applies to any script added to a model
-  whose vocabulary is Latin only. The kernels apply to any FastConformer-TDT fine-tune, in any language.
-- **Method.** A speaker of the language, an AI assistant and about $400 of compute were enough for a leading open
-  model of conversational Tamil. Many languages have no one else building one.
+Only Tamil was measured. Tamil is a textbook case of diglossia (Ferguson, 1959; Britto, 1986), as are Arabic,
+Sinhala, Greek and Swiss German: ASR training text in each mixes a spoken and a written variety, and a decoder with a
+strong language model drifts towards the written one. The split used here (verbatim ASR, formalisation in a separate
+text model) and the rewrite count that measures it apply to all of them. The rest is language-independent:
+partial-label conversion for any code-switched pair, the pitch direction for any TTS speaker space, merger-aware PER
+for any language whose speakers merge sounds that the spelling keeps apart, the romanisation warm start for any new
+script, and the kernels for any FastConformer-TDT model.
 
 ## Use
 
