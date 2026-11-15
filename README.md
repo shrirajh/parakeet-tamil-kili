@@ -125,13 +125,17 @@ write-up covers the same items in plain language ([What others can take from thi
 
 ### Beyond Tamil
 
-Only Tamil was measured. Tamil is a textbook case of diglossia (Ferguson, 1959; Britto, 1986), as are Arabic,
-Sinhala, Greek and Swiss German: ASR training text in each mixes a spoken and a written variety, and a decoder with a
-strong language model drifts towards the written one. The split used here (verbatim ASR, formalisation in a separate
-text model) and the rewrite count that measures it apply to all of them. The rest is language-independent:
-partial-label conversion for any code-switched pair, the pitch direction for any TTS speaker space, merger-aware PER
-for any language whose speakers merge sounds that the spelling keeps apart, the romanisation warm start for any new
-script, and the kernels for any FastConformer-TDT model.
+Only Tamil was measured. In diglossic languages, ASR training text mixes a spoken and a written variety, and a decoder
+with a strong language model drifts towards the written one.
+
+| Component | Applies to |
+|---|---|
+| Verbatim ASR, formalisation in a separate text model; the spoken-form rewrite count | Diglossic languages: Arabic, Sinhala, Greek, Swiss German (Ferguson, 1959; for Tamil, Britto, 1986) |
+| Partial-label loanword conversion | Code-switched pairs: Hindi–English, Arabic–French, Malay–English |
+| Label-free pitch direction | Any TTS model with a speaker-embedding space |
+| Merger-aware PER | Languages whose speakers merge sounds that the spelling keeps apart |
+| Romanisation warm start | Any script added to a Latin-only vocabulary |
+| Training kernels | Any FastConformer-TDT model |
 
 ## Use
 
