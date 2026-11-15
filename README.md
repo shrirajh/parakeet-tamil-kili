@@ -214,7 +214,8 @@ uv run python -m kili.infer.transcribe --model shrirajh/parakeet-tamil-kili --lm
   - Punctuation was added with Gemma 4 12B, which may only add marks, never change letters (`kili.punct`).
   - About 31k recordings with broken or duplicate labels were removed.
 - **Synthetic speech**:
-  - Maya2 TTS with random speaker vectors, so nobody's voice is cloned.
+  - [Maya2](https://huggingface.co/maya-research/maya2-native) TTS with random speaker vectors, so nobody's voice is cloned, reading sentences from
+    [Tanglish-Corpus-185k](https://huggingface.co/datasets/vishnu-n/Tanglish-Corpus-185k).
   - The voices are spread along a pitch direction learned from synthetic audio alone, with no gender labels
     (`kili.synth`).
 - **Recipe**:
@@ -271,7 +272,7 @@ model with `KILI_TEST_MODEL`, `KILI_ONNX_DIR`, `KILI_TEST_LM` and `KILI_TEST_AUD
 back: share what you learn, keep knowledge open, teach someone, and don't use it to harm people.
 
 Training data: IndicVoices, Shrutilipi, SPRING-INX (CC BY 4.0); Kathbath; YODAS and Granary (CC BY 3.0); synthetic
-speech from Maya2 (Apache-2.0) with Kyutai Mimi (CC BY 4.0) on text from Tanglish-Corpus-185k (CC BY 4.0). The
+speech from [Maya2](https://huggingface.co/maya-research/maya2-native) (Apache-2.0) with Kyutai Mimi (CC BY 4.0) on text from [Tanglish-Corpus-185k](https://huggingface.co/datasets/vishnu-n/Tanglish-Corpus-185k) (CC BY 4.0). The
 punctuation few-shot examples in `kili/punct/prompts.py` are IndicVoices transcripts (CC BY 4.0). Full credits are
 in the write-up.
 
